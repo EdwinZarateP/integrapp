@@ -3,6 +3,12 @@ import logo from '../../Imagenes/logo2.png'; // Importación del logo
 import './estilos.css'; // Importación del archivo CSS
 
 const Olvidoclave: React.FC = () => {
+  
+  // Manejador para el evento de enviar el formulario
+  const manejarEnvioFormulario = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); // Evita el comportamiento por defecto del formulario (recargar la página)
+    alert('restauración de clave en construcción'); // Muestra el mensaje emergente
+  };
 
   return (
     <div className="contenedor">
@@ -13,7 +19,7 @@ const Olvidoclave: React.FC = () => {
         <h1>App</h1>
       </div>
 
-      <form className="formulario">
+      <form className="formulario" onSubmit={manejarEnvioFormulario}>
         <div className="contenedorInput">
           <label htmlFor="email" className="etiqueta">Email</label>
           <input

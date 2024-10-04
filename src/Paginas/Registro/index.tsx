@@ -14,6 +14,12 @@ const Registro: React.FC = () => {
     setVerifyPasswordVisible(!verifyPasswordVisible);
   };
 
+    // Manejador para el evento de enviar el formulario
+    const manejarEnvioFormulario = (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault(); // Evita el comportamiento por defecto del formulario (recargar la página)
+      alert('Registro en construcción'); // Muestra el mensaje emergente
+    };
+
   return (
     <div className="contenedor">
       <img src={logo} alt="Logo Integra" className="logo" />
@@ -23,7 +29,7 @@ const Registro: React.FC = () => {
         <h1>App</h1>
       </div>
 
-      <form className="formulario">
+      <form className="formulario" onSubmit={manejarEnvioFormulario}>
         <div className="contenedorInput">
           <label htmlFor="email" className="etiqueta">Email</label>
           <input

@@ -3,17 +3,21 @@ import logo from '../../Imagenes/logo2.png'; // Importación del logo
 import './estilos.css'; // Importación del archivo CSS
 
 const Registro: React.FC = () => {
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [passwordVisible, setVisibilidadPassword] = useState(false);
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
+  const manejarVisibilidadPassword = () => {
+    setVisibilidadPassword(!passwordVisible);
   };
 
   return (
     <div className="contenedor">
       <img src={logo} alt="Logo Integra" className="logo" />
 
-      <h1 className="titulo">IntegrApp</h1>
+      <div className="titulo">
+        <h1>Integr</h1>
+        <h1>App</h1>
+      </div>
+
 
       <form className="formulario">
         <div className="contenedorInput">
@@ -38,10 +42,14 @@ const Registro: React.FC = () => {
             />
             <button
               type="button"
-              onClick={togglePasswordVisibility}
-              className="verContraseñaBtn"
+              onClick={manejarVisibilidadPassword}
+              className="verContrasenaBtn"
             >
-              {passwordVisible ? "Ocultar" : "Ver"}
+              {passwordVisible ? (
+                <span role="img" aria-label="Hide password">👁️</span> // Ícono de ojo abierto
+              ) : (
+                <span role="img" aria-label="Show password">👁️‍🗨️</span> // Ícono de ojo cerrado
+              )}
             </button>
           </div>
         </div>

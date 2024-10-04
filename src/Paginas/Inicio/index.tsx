@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';  // Importamos Link
-import logo2 from '../../Imagenes/albatros.png'; // Importación del logo
+import logo from '../../Imagenes/logo.png'; // Importación del logo
 import './estilos.css'; // Importación del archivo CSS
 
 const Inicio: React.FC = () => {
@@ -18,7 +18,7 @@ const Inicio: React.FC = () => {
 
   return (
     <div className="contenedor">
-      <img src={logo2} alt="Logo Integra" className="logo2" />
+      <img src={logo} alt="Logo Integra" className="logo" />
 
       <div className="titulo">
         <h1>Integr</h1>

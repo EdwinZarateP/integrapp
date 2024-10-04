@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';  // Importamos Link
 import logo from '../../Imagenes/logo2.png'; // Importación del logo
 import './estilos.css'; // Importación del archivo CSS
 
@@ -17,7 +18,6 @@ const Inicio: React.FC = () => {
         <h1>Integr</h1>
         <h1>App</h1>
       </div>
-
 
       <form className="formulario">
         <div className="contenedorInput">
@@ -57,8 +57,8 @@ const Inicio: React.FC = () => {
       </form>
 
       <div className="pieDePagina">
-        <a href="/integrapp/Olvidoclave" className="enlace">Olvidé la clave</a>
-        <a href="/integrapp/Registro" className="enlace">Registrarse</a>
+        <Link to="/Olvidoclave" className="enlace">Olvidé la clave</Link>
+        <Link to="/Registro" className="enlace">Registrarse</Link>
       </div>
     </div>
   );

@@ -14,7 +14,7 @@ const App: React.FC = () => {
     <Router basename="/integrapp">
       <Routes>
         <Route path="/" element={<Inicio />} />
-        <Route path="/Registro" element={<Registro />} />        
+        <Route path="/Registro" element={<Registro />} />
         <Route path="/Olvidoclave" element={<Olvidoclave />} />
         <Route path="*" element={<NoEncontrado />} />
       </Routes>

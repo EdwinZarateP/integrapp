@@ -22,9 +22,9 @@
   margin-bottom: 20px;
 }
 
-.titulo :nth-child(2) {
-  color: rgb(108, 185, 124);
-}
+/* .titulo :nth-child(2) {
+  color:rgb(141, 199, 63);
+} */
 
 .formulario {
   width: 100%;

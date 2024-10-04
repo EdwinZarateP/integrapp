@@ -1,0 +1,9 @@
+.contenedor_login_Google {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.subtitulo_login_Google {
+  color: #fff;
+}

@@ -1,0 +1,84 @@
+.contenedor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.logo {
+  width: 150px;
+  margin-bottom: 20px;
+}
+
+.titulo {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.formulario {
+  width: 80%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contenedorInput {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.etiqueta {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.input {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  flex-grow: 1;
+}
+
+.verContraseñaBtn {
+  padding: 10px;
+  margin-left: 10px;
+  font-size: 0.9rem;
+  background-color: #ccc;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.boton {
+  padding: 10px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pieDePagina {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.enlace {
+  color: #0056b3;
+  text-decoration: none;
+  font-size: 0.9rem;
+}

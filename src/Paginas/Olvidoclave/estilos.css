@@ -22,7 +22,7 @@
   }
   
   .titulo :nth-child(2) {
-    color:rgb(141, 0, 63);
+    color:rgb(141, 199, 63);
   }
   
   .formulario {
@@ -53,18 +53,7 @@
     flex-grow: 1;
   }
   
-  .verContrasenaBtn {
-    position: absolute;
-    right: 10px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: #888;
-    display: flex;
-    align-items: center;
-  }
-  
+ 
   .boton {
     padding: 10px;
     margin-top: 35px;
@@ -76,17 +65,4 @@
     cursor: pointer;
   }
   
-  .pieDePagina {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .enlace {
-    color: #0056b3;
-    text-decoration: none;
-    font-size: 0.9rem;
-  }
   

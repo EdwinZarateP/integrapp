@@ -1,93 +1,26 @@
-.contenedor {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    font-family: Arial, sans-serif;
-  }
-  
-  .logo {
-    width: 320px;
-    margin-bottom: 20px;
-  }
-  
-  .titulo {
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    font-size: 1rem;
-    margin-bottom: 20px;
-  }
-  
-  .titulo :nth-child(2) {
-    color:rgb(141, 199, 63);
-  }
-  
-  .formulario {
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .contenedorInput {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .inputWrapper {
-    display: flex;
-    align-items: center;
-    position: relative;
-  }
-  
-  .input {
+.verContrasenaBtn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+}
 
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    flex-grow: 1;
-  }
-  
-  .verContrasenaBtn {
-    position: absolute;
-    right: 10px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: #888;
-    display: flex;
-    align-items: center;
-  }
-  
-  .boton {
-    margin-top: 35px;
-    padding: 10px;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #000;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .pieDePagina {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .enlace {
-    color: #0056b3;
-    text-decoration: none;
-    font-size: 0.9rem;
-    margin-top: 10px;
-  }
-  
+.pieDePagina {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.enlace {
+  color: #0056b3;
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}

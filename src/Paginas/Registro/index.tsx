@@ -4,9 +4,14 @@ import './estilos.css'; // Importación del archivo CSS
 
 const Registro: React.FC = () => {
   const [passwordVisible, setVisibilidadPassword] = useState(false);
+  const [verifyPasswordVisible, setVerifyPasswordVisible] = useState(false);
 
   const manejarVisibilidadPassword = () => {
     setVisibilidadPassword(!passwordVisible);
+  };
+
+  const manejarVisibilidadVerifyPassword = () => {
+    setVerifyPasswordVisible(!verifyPasswordVisible);
   };
 
   return (
@@ -18,7 +23,6 @@ const Registro: React.FC = () => {
         <h1>App</h1>
       </div>
 
-
       <form className="formulario">
         <div className="contenedorInput">
           <label htmlFor="email" className="etiqueta">Email</label>
@@ -27,7 +31,6 @@ const Registro: React.FC = () => {
             type="email"
             placeholder="conductores@gmail.com"
             className="input"
-            value="conductor@gmail.com"
           />
         </div>
 
@@ -54,13 +57,31 @@ const Registro: React.FC = () => {
           </div>
         </div>
 
+        <div className="contenedorInput">
+          <label htmlFor="verifyPassword" className="etiqueta">Verificar Contraseña</label>
+          <div className="inputWrapper">
+            <input
+              id="verifyPassword"
+              type={verifyPasswordVisible ? "text" : "password"}
+              placeholder="Digite de nuevo su contraseña"
+              className="input"
+            />
+            <button
+              type="button"
+              onClick={manejarVisibilidadVerifyPassword}
+              className="verContrasenaBtn"
+            >
+              {verifyPasswordVisible ? (
+                <span role="img" aria-label="Hide password">👁️</span> // Ícono de ojo abierto
+              ) : (
+                <span role="img" aria-label="Show password">👁️‍🗨️</span> // Ícono de ojo cerrado
+              )}
+            </button>
+          </div>
+        </div>
+
         <button type="submit" className="boton">Ingresar</button>
       </form>
-
-      <div className="pieDePagina">
-        <a href="#" className="enlace">Olvidé la clave</a>
-        <a href="#" className="enlace">Registrarse</a>
-      </div>
     </div>
   );
 };

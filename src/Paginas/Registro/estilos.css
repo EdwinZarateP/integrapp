@@ -17,12 +17,13 @@
   width: 100%;
   max-width: 400px;
   display: flex;
+  justify-content: left;
   font-size: 1rem;
   margin-bottom: 20px;
 }
 
 .titulo :nth-child(2) {
-  color:rgb(108, 185, 124);
+  color: rgb(108, 185, 124);
 }
 
 .formulario {

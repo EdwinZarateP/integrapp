@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';  // Importamos Link
-import logo2 from '../../Imagenes/albatroz.png'; // Importación del logo
+import logo2 from '../../Imagenes/albatros.png'; // Importación del logo
 import './estilos.css'; // Importación del archivo CSS
 
 const Inicio: React.FC = () => {

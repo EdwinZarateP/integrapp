@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import logo from '../../Imagenes/logo2.png'; // Importación del logo
+import logo from '../../Imagenes/logo.png'; // Importación del logo
 import './estilos.css'; // Importación del archivo CSS
 
 const Registro: React.FC = () => {
@@ -86,7 +86,7 @@ const Registro: React.FC = () => {
           </div>
         </div>
 
-        <button type="submit" className="boton">Ingresar</button>
+        <button type="submit" className="boton">Registrar</button>
       </form>
     </div>
   );

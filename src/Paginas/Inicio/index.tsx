@@ -20,6 +20,7 @@ const Inicio: React.FC = () => {
       </div>
 
       <form className="formulario">
+        
         <div className="contenedorInput">
           <label htmlFor="email" className="etiqueta">Email</label>
           <input

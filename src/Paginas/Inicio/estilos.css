@@ -46,6 +46,7 @@
   }
   
   .input {
+
     padding: 10px;
     font-size: 1rem;
     border-radius: 5px;
@@ -66,6 +67,7 @@
   }
   
   .boton {
+    margin-top: 35px;
     padding: 10px;
     font-size: 1rem;
     color: #fff;

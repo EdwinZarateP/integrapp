@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';  // Importamos Link
-// import logo from '../../Imagenes/logo.png'; // Importación del logo
+import { Link, useNavigate } from 'react-router-dom'; // Importamos Link y useNavigate
 import logo from '../../Imagenes/albatros.png'; // Importación del logo
 import './estilos.css'; // Importación del archivo CSS
 
 const Inicio: React.FC = () => {
   const [passwordVisible, setVisibilidadPassword] = useState(false);
+  const navigate = useNavigate(); // Hook para navegar entre rutas
 
   const manejarVisibilidadPassword = () => {
     setVisibilidadPassword(!passwordVisible);
@@ -14,7 +14,8 @@ const Inicio: React.FC = () => {
   // Manejador para el evento de enviar el formulario
   const manejarEnvioFormulario = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Evita el comportamiento por defecto del formulario (recargar la página)
-    alert('Ingreso en construcción'); // Muestra el mensaje emergente
+    // Redirigir a la página /SeleccionEstados
+    navigate('/SeleccionEstados');
   };
 
   return (

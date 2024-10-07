@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import logo from '../../Imagenes/albatros.png'; // Importación del logo
 import './estilos.css'; // Importación del archivo CSS
+import BotonSencillo from '../../Componentes/BotonSencillo';
 
 const Registro: React.FC = () => {
   const [passwordVisible, setVisibilidadPassword] = useState(false);
@@ -86,7 +87,8 @@ const Registro: React.FC = () => {
           </div>
         </div>
 
-        <button type="submit" className="boton">Registrar</button>
+        {/* <button type="submit" className="boton">Registrar</button> */}
+        <BotonSencillo type="submit" texto='Registrar' />
       </form>
     </div>
   );

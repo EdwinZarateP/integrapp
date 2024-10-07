@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from '../../Imagenes/albatros.png'; // Importación del logo
 import './estilos.css'; // Importación del archivo CSS
+import BotonSencillo from '../../Componentes/BotonSencillo';
 
 const Olvidoclave: React.FC = () => {
   
@@ -30,7 +31,8 @@ const Olvidoclave: React.FC = () => {
           />
         </div>
 
-        <button type="submit" className="boton">Restaurar clave</button>
+        {/* <button type="submit" className="boton">Restaurar clave</button> */}
+        <BotonSencillo type="submit" texto='Registrar' />
 
       </form>
 

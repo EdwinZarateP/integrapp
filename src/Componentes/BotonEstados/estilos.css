@@ -1,0 +1,31 @@
+.contenedorBotonEstado{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 400px;
+  width: 100%;
+  height: 80px;
+  font-family: Arial, sans-serif;
+  margin-top: 20px;
+  /* margin: 10px; */
+  border: 1px solid rgb(212, 218, 218);
+}
+
+.contenedorImagenEstado {
+  height: 100%;
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background-color: rgb(212, 218, 218); */
+  font-size: 50px;
+}
+
+.contenedorInformacionEstado {
+  height: 100%;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 20px;
+}

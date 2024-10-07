@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Inicio from '../Inicio/index';
 import Registro from '../Registro/index';
+import ManifestStatus from '../SeleccionEstados/index';
 import Olvidoclave from '../Olvidoclave/index';
 import NoEncontrado from '../NoEncontrado/index';
 import { ProveedorVariables } from '../../Contexto/index';
@@ -16,6 +17,7 @@ const App: React.FC = () => {
         <Route path="/" element={<Inicio />} />
         <Route path="/Registro" element={<Registro />} />
         <Route path="/Olvidoclave" element={<Olvidoclave />} />
+        <Route path="/SeleccionEstados" element={<ManifestStatus />} />
         <Route path="*" element={<NoEncontrado />} />
       </Routes>
     </Router>

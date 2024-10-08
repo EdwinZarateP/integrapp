@@ -18,19 +18,28 @@ const EstadosManifiestos = () => {
             <div><FaBell /></div>
         </div>
 
-        {/* <h3>Estado de manifiestos:</h3> */}
-
         <div className="contenedorEstadosManifiestos">
-        <BotonEstado nombreEstado="En tránsito" cantidad={1} icono={<FaTruck />} />
-        <BotonEstado nombreEstado="Cumplidos" cantidad={1} icono={<IoDocumentsSharp />} />
-        <BotonEstado nombreEstado="Liquidados" cantidad={2} icono={<BiMailSend />} />
-        <BotonEstado nombreEstado="Pagados" cantidad={3} icono={<FcMoneyTransfer />} />
+          {/* Envolver cada BotonEstado en un Link que dirija a /DetalleEstados */}
+          <Link to="/DetalleEstados" className="linkBoton">
+            <BotonEstado nombreEstado="En tránsito" cantidad={1} icono={<FaTruck />} />
+          </Link>
 
-        {/* Envolver el botón dentro de Link */}
-        <Link to="/" className='linkBoton'>
-            <BotonSencillo type="button" texto="Salir" colorClass="rojo"/>            
-        </Link>
-        
+          <Link to="/DetalleEstados" className="linkBoton">
+            <BotonEstado nombreEstado="Cumplidos" cantidad={1} icono={<IoDocumentsSharp />} />
+          </Link>
+
+          <Link to="/DetalleEstados" className="linkBoton">
+            <BotonEstado nombreEstado="Liquidados" cantidad={2} icono={<BiMailSend />} />
+          </Link>
+
+          <Link to="/DetalleEstados" className="linkBoton">
+            <BotonEstado nombreEstado="Pagados" cantidad={3} icono={<FcMoneyTransfer />} />
+          </Link>
+
+          {/* Botón de Salir */}
+          <Link to="/" className='linkBoton'>
+            <BotonSencillo type="button" texto="Salir" colorClass="rojo" />            
+          </Link>
         </div>
     </div>
   );

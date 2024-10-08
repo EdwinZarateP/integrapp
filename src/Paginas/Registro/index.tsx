@@ -86,9 +86,7 @@ const Registro: React.FC = () => {
             </button>
           </div>
         </div>
-
-        {/* <button type="submit" className="boton">Registrar</button> */}
-        <BotonSencillo type="submit" texto='Registrar' />
+          <BotonSencillo type="submit" texto="Registrar" colorClass="negro"/>
       </form>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Importamos Link y useNavigate
 import logo from '../../Imagenes/albatros.png'; // Importación del logo
 import './estilos.css'; // Importación del archivo CSS
+import BotonSencillo from '../../Componentes/BotonSencillo';
 
 const Inicio: React.FC = () => {
   const [passwordVisible, setVisibilidadPassword] = useState(false);
@@ -62,7 +63,11 @@ const Inicio: React.FC = () => {
           </div>
         </div>
 
-        <button type="submit" className="boton">Ingresar</button>
+        {/* <button type="submit" className="boton">Ingresar</button> */}
+        <Link to="/SeleccionEstados" className='linkBoton'>
+          <BotonSencillo type="button" texto="Ingresar" colorClass="negro"/>
+        </Link>
+        
       </form>
 
       <div className="pieDePagina">

@@ -6,13 +6,12 @@ interface PropiedadesBotonSencillo {
   type: 'button' | 'submit' | 'reset'; // Propiedad para el tipo de botón
   onClick?: () => void; // Propiedad opcional para manejar el click del botón
   texto: string; // Propiedad para el texto del botón
+  colorClass?: string; // Propiedad opcional para la clase del color del botón
 }
 
-const BotonSencillo: React.FC<PropiedadesBotonSencillo> = ({ type, onClick, texto }) => {
+const BotonSencillo: React.FC<PropiedadesBotonSencillo> = ({ type, onClick, texto, colorClass }) => {
   return (
-    <button type={type} className="boton" onClick={onClick}>
-      {texto}
-    </button>
+    <button type={type} className={`boton-${colorClass}`} onClick={onClick}>{texto}</button>
   );
 };
 

@@ -32,7 +32,7 @@ const Olvidoclave: React.FC = () => {
         </div>
 
         {/* <button type="submit" className="boton">Restaurar clave</button> */}
-        <BotonSencillo type="submit" texto='Registrar' />
+        <BotonSencillo type="submit" texto="Registrar" colorClass="negro"/>
 
       </form>
 

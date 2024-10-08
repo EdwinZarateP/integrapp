@@ -48,24 +48,6 @@
     justify-content: center;
 }
 
-/* Estilo general para los botones */
-.boton {
-    width: 100%;
-    padding: 12px 0;
-    background-color: #000000; /* Verde claro para el botón */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-/* Efecto hover en los botones */
-.boton:hover {
-    background-color: #76b72d; /* Color más oscuro al hacer hover */
-    transform: scale(1.02); /* Ligero efecto de zoom al hacer hover */
-}
 
 /* Cabecera fija en la parte superior */
 .cabecera {

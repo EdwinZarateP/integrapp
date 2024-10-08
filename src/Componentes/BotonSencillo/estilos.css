@@ -1,12 +1,73 @@
-.boton{
+.boton {
     width: 100%;
     max-width: 400px;
     padding: 10px;
     margin-top: 35px;
     font-size: 1rem;
     color: #fff;
-    background-color: #000;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.boton:hover {
+    opacity: 0.9;
+}
+
+/* Definir diferentes clases de color */
+.boton-verde {
+    background-color: #4CAF50; 
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    margin-top: 35px;
+    font-size: 1rem;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.boton-rojo {
+    background-color: #F44336;
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    margin-top: 35px;
+    font-size: 1rem;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.boton-azul {
+    background-color: #2196F3; 
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    margin-top: 35px;
+    font-size: 1rem;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.boton-negro {
+    background-color: #000000;
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    margin-top: 35px;
+    font-size: 1rem;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }

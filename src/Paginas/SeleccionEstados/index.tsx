@@ -28,8 +28,9 @@ const EstadosManifiestos = () => {
 
         {/* Envolver el botón dentro de Link */}
         <Link to="/" className='linkBoton'>
-            <BotonSencillo type="button" texto="Salir" />
+            <BotonSencillo type="button" texto="Salir" colorClass="rojo"/>            
         </Link>
+        
         </div>
     </div>
   );

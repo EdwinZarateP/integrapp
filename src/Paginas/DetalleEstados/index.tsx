@@ -19,7 +19,7 @@ const DetalleManifiestos = () => {
         <div>
           <TarjetaDetalle
             manifiesto="00045354"
-            fecha="02/10/2024"
+            fecha={new Date("2024-10-02")} 
             origen="Funza"
             destino="Medellin"
             placa="ANA83L"
@@ -29,11 +29,12 @@ const DetalleManifiestos = () => {
             reteIca={10000}
             descuento={50000}
             saldo={230000}
+            fecha_saldo={new Date("2024-10-02")} 
         />
 
           <TarjetaDetalle
             manifiesto="00035353"
-            fecha="02/09/2024"
+            fecha={new Date("2024-10-02")} 
             origen="Funza"
             destino="Barranquilla"
             placa="KOK83L"
@@ -43,11 +44,12 @@ const DetalleManifiestos = () => {
             reteIca={10000}
             descuento={50000}
             saldo={230000}
+            fecha_saldo={new Date("2024-10-02")} 
           />
 
 <TarjetaDetalle
             manifiesto="00035353"
-            fecha="02/09/2024"
+            fecha={new Date("2024-10-02")} 
             origen="Funza"
             destino="Bucaramanga"
             placa="KOK23L"
@@ -57,6 +59,7 @@ const DetalleManifiestos = () => {
             reteIca={10000}
             descuento={50000}
             saldo={130000}
+            fecha_saldo={new Date("2024-10-02")} 
           />
         </div>
        

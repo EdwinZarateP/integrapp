@@ -3,6 +3,7 @@ import Inicio from '../Inicio/index';
 import Registro from '../Registro/index';
 import EstadosManifiestos from '../SeleccionEstados/index';
 import DetalleEstados from '../DetalleEstados/index';
+import VulcanoApiComponent from '../Api/index';
 import Olvidoclave from '../Olvidoclave/index';
 import NoEncontrado from '../NoEncontrado/index';
 import { ProveedorVariables } from '../../Contexto/index';
@@ -20,6 +21,7 @@ const App: React.FC = () => {
         <Route path="/Olvidoclave" element={<Olvidoclave />} />
         <Route path="/SeleccionEstados" element={<EstadosManifiestos />} />
         <Route path="/DetalleEstados" element={<DetalleEstados />} />
+        <Route path="/Api" element={<VulcanoApiComponent />} />
         <Route path="*" element={<NoEncontrado />} />
       </Routes>
     </Router>

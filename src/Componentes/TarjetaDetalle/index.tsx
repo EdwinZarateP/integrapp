@@ -4,7 +4,7 @@ import './estilos.css';
 // Definir las propiedades que el componente va a recibir
 interface PropiedadesTarjetaDetalle {
   manifiesto: string;
-  fecha: string;
+  fecha: Date;
   origen: string;
   destino: string;
   placa: string;
@@ -14,6 +14,7 @@ interface PropiedadesTarjetaDetalle {
   reteIca: number;
   descuento: number;
   saldo: number;
+  fecha_saldo: Date;
 }
 
 const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({
@@ -28,11 +29,12 @@ const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({
   reteIca,
   descuento,
   saldo,
+  fecha_saldo,
 }) => {
   return (
     <div className="tarjeta-detalle">
       <p><strong>Manifiesto:</strong> {manifiesto}</p>
-      <p><strong>Fecha:</strong> {fecha}</p>
+      <p><strong>Fecha:</strong> {fecha.toLocaleDateString()}</p>
       <p>{origen} - {destino}</p>
       <p><strong>Placa:</strong> {placa}</p>
       <p><strong>Flete:</strong> ${flete.toLocaleString()}</p>
@@ -41,6 +43,7 @@ const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({
       <p><strong>Rete ICA:</strong> ${reteIca.toLocaleString()}</p>
       <p><strong>Descuentos:</strong> ${descuento.toLocaleString()}</p>
       <p><strong>Saldo:</strong> ${saldo.toLocaleString()}</p>
+      <p><strong>Fecha Saldo:</strong> {fecha_saldo.toLocaleDateString()}</p>
     </div>
   );
 };

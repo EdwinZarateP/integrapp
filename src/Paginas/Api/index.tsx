@@ -12,17 +12,23 @@ const VulcanoApiComponent: React.FC = () => {
   const login = async () => {
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/loginDbCustomer`, {
-        username: "134APIINTEGRA",
-        idname: "eyJpdiI6InZTN1BBeFF6UEhCSno5VUp0bjRWSFE9PSIsInZhbHVlIjoiMmdjY0g3VlpwZDZNbmdQU2JRTlg4bWRmeXlsQzY4TExLSGJYTVpTcitrOD0iLCJtYWMiOiIyNGM0ZjcyODYyZGY3MDdkZWY4M2EzNzI0YzNjMmIzNjgxZTQ2ODVlYzA2MWY2YWViNTRlYjhjMDE5NDY4ZWEzIiwidGFnIjoiIn0=",
-        agency: "001",
-        proyect: "1",
-        isGroup: 0
+        "username": "134APIINTEGRA",
+        "idname": "eyJpdiI6InZTN1BBeFF6UEhCSno5VUp0bjRWSFE9PSIsInZhbHVlIjoiMmdjY0g3VlpwZDZNbmdQU2JRTlg4bWRmeXlsQzY4TExLSGJYTVpTcitrOD0iLCJtYWMiOiIyNGM0ZjcyODYyZGY3MDdkZWY4M2EzNzI0YzNjMmIzNjgxZTQ2ODVlYzA2MWY2YWViNTRlYjhjMDE5NDY4ZWEzIiwidGFnIjoiIn0=",
+        "agency": "001",
+        "proyect": "1",
+        "isGroup": 0
       });
 
       if (response.data && response.data.data && response.data.data.access_token) {
         const newToken = response.data.data.access_token;
         setToken(newToken); // Guardar el token en el estado
         localStorage.setItem('vulcano_token', newToken); // Guardar el token en localStorage
+
+        // Mostrar mensaje de éxito en la consola
+        console.log("Login exitoso. Token recibido:", newToken);
+
+        // Llamar a fetchReport después del login exitoso
+        fetchReport(newToken);
       }
     } catch (error) {
       setError('Error al hacer login');
@@ -31,69 +37,60 @@ const VulcanoApiComponent: React.FC = () => {
   };
 
   // Función para consultar el reporte
-  const fetchReport = async () => {
-    if (!token) return;
-
+  const fetchReport = async (authToken: string) => {
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/vulcano/customer/00134/index`,
+        `${API_BASE_URL}/vulcano/customer/00134/report`, // URL para obtener el reporte
         {
-          pageSize: 2,
-          page: 1,
-          rptId: 26,
-          filter: [
+          "pageSize": 1000,
+          "rptId": 26,
+          "filter": [
             {
-              campo: "Fecha",
-              operador: "RANGE",
-              valor: ["2024-08-25", "2024-08-30"]
+              "campo": "Fecha",
+              "operador": "YEAR>",
+              "valor": "2023"
             },
             {
-              campo: "Tenedor",
-              operador: "=",
-              valor: "1070607772"
+              "campo": "Tenedor",
+              "operador": "=",
+              "valor": "1070607772"
             }
           ]
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${authToken}` // Pasar el token en los headers
+          }
         }
       );
 
-      if (response.data && response.data.data) {
-        setReportData(response.data.data);
-      } else {
-        setError('No se encontraron datos en la respuesta.');
-      }
+      // Almacenar los datos del reporte en el estado
+      setReportData(response.data);
+
+      // Mostrar un mensaje en la consola si la solicitud fue exitosa
+      console.log('Reporte obtenido con éxito:', response.data);
     } catch (error) {
-      setError('Error al consultar el reporte');
+      setError('Error al obtener el reporte');
       console.error(error);
     }
   };
 
-  // Efecto para hacer login solo si no hay token
+  // Llamar al login cuando el componente se monta
   useEffect(() => {
     if (!token) {
-      login();
+      login(); // Solo llamar al login si no existe el token en localStorage
     } else {
-      fetchReport(); // Si ya hay token, consultar el reporte inmediatamente
+      fetchReport(token); // Si ya hay token, intentar obtener el reporte directamente
     }
   }, [token]);
 
   return (
     <div>
-      <h1>Manifiestos Filtrados</h1>
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
+      {error && <p>{error}</p>}
       {reportData ? (
-        <div>
-          <h2>Reporte</h2>
-          <pre>{JSON.stringify(reportData, null, 2)}</pre>
-        </div>
+        <pre>{JSON.stringify(reportData, null, 2)}</pre>
       ) : (
-        <p>Cargando datos del reporte...</p>
+        <p>Cargando reporte...</p>
       )}
     </div>
   );

@@ -59,7 +59,7 @@ const Registro: React.FC = () => {
       // }, 1000); // Espera 1 segundo para mostrar el mensaje de éxito
 
       // Redirigir a la página de Registro
-      navigate('/Olvidoclave'); // Redirige inmediatamente
+      navigate('/'); // Redirige inmediatamente
 
 
     } catch (error: unknown) {

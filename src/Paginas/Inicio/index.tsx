@@ -1,22 +1,48 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Importamos Link y useNavigate
-import logo from '../../Imagenes/albatros.png'; // Importación del logo
-import './estilos.css'; // Importación del archivo CSS
+import { Link, useNavigate } from 'react-router-dom';
+import logo from '../../Imagenes/albatros.png';
+import './estilos.css';
 import BotonSencillo from '../../Componentes/BotonSencillo';
 
 const Inicio: React.FC = () => {
   const [passwordVisible, setVisibilidadPassword] = useState(false);
-  const navigate = useNavigate(); // Hook para navegar entre rutas
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // Estado para el mensaje de error
+  const navigate = useNavigate();
 
   const manejarVisibilidadPassword = () => {
     setVisibilidadPassword(!passwordVisible);
   };
 
-  // Manejador para el evento de enviar el formulario
-  const manejarEnvioFormulario = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Evita el comportamiento por defecto del formulario (recargar la página)
-    // Redirigir a la página /SeleccionEstados
-    navigate('/SeleccionEstados');
+  const manejarEnvioFormulario = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setErrorMessage(''); // Limpiar el mensaje de error antes de enviar
+
+    try {
+      const response = await fetch('https://integrappi.onrender.com/usuarios/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          username: email,
+          password: password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Credenciales incorrectas');
+      }
+
+      const data = await response.json();
+      console.log(data.access_token); // Aquí puedes almacenar el token según sea necesario
+
+      navigate('/SeleccionEstados');
+    } catch (error) {
+      console.error('Error de autenticación:', error);
+      setErrorMessage('Credenciales incorrectas. Inténtalo de nuevo.'); // Establecer el mensaje de error
+    }
   };
 
   return (
@@ -28,6 +54,8 @@ const Inicio: React.FC = () => {
         <h1>App</h1>
       </div>
 
+      {errorMessage && <div className="mensajeError">{errorMessage}</div>} {/* Mostrar mensaje de error */}
+
       <form className="formulario" onSubmit={manejarEnvioFormulario}>
         
         <div className="contenedorInput">
@@ -37,6 +65,8 @@ const Inicio: React.FC = () => {
             type="email"
             placeholder="conductores@gmail.com"
             className="input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)} // Actualiza el estado del email
           />
         </div>
 
@@ -48,6 +78,8 @@ const Inicio: React.FC = () => {
               type={passwordVisible ? "text" : "password"}
               placeholder="Digite su contraseña"
               className="input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)} // Actualiza el estado de la contraseña
             />
             <button
               type="button"
@@ -55,18 +87,15 @@ const Inicio: React.FC = () => {
               className="verContrasenaBtn"
             >
               {passwordVisible ? (
-                <span role="img" aria-label="Hide password">👁️</span> // Ícono de ojo abierto
+                <span role="img" aria-label="Hide password">👁️</span>
               ) : (
-                <span role="img" aria-label="Show password">👁️‍🗨️</span> // Ícono de ojo cerrado
+                <span role="img" aria-label="Show password">👁️‍🗨️</span>
               )}
             </button>
           </div>
         </div>
 
-        {/* <button type="submit" className="boton">Ingresar</button> */}
-        <Link to="/SeleccionEstados" className='linkBoton'>
-          <BotonSencillo type="button" texto="Ingresar" colorClass="negro"/>
-        </Link>
+        <BotonSencillo type="submit" texto="Ingresar" colorClass="negro"/>
         
       </form>
 

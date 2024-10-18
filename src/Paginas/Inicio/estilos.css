@@ -24,3 +24,10 @@
   font-size: 0.9rem;
   margin-top: 10px;
 }
+
+.mensajeError {
+  color: red; /* Color rojo para el mensaje de error */
+  margin-top: 10px; /* Espaciado superior */
+  font-weight: bold; /* Texto en negrita */
+  text-align: center; /* Centrar el mensaje */
+}

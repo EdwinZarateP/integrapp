@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Mantén useNavigate para redirección
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import logo from '../../Imagenes/albatros.png'; // Importación del logo
 import './estilos.css'; // Importación del archivo CSS
 import BotonSencillo from '../../Componentes/BotonSencillo';
@@ -13,7 +13,7 @@ const Registro: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMensaje, setErrorMensaje] = useState('');
-  const [exitoMensaje, setExitoMensaje] = useState(false); // Cambiar a booleano
+  const [exitoMensaje, setExitoMensaje] = useState('');
 
   const manejarVisibilidadPassword = () => {
     setVisibilidadPassword(!passwordVisible);
@@ -29,7 +29,7 @@ const Registro: React.FC = () => {
     }
 
     setErrorMensaje('');
-    setExitoMensaje(false);
+    setExitoMensaje('');
 
     try {
       const response = await fetch('https://integrappi.onrender.com/usuarios/', {
@@ -51,7 +51,12 @@ const Registro: React.FC = () => {
         throw new Error(errorData.detail || 'Error al registrar el usuario');
       }
 
-      setExitoMensaje(true); // Cambia el estado a true al registrar exitosamente
+      setExitoMensaje('¡Usuario registrado con éxito!');
+
+      // Redirigir a la página de Registro
+      setTimeout(() => {
+        navigate('/'); // Redirige después de un breve retraso
+      }, 1000); // Espera 2 segundos para mostrar el mensaje de éxito
 
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -61,18 +66,6 @@ const Registro: React.FC = () => {
       }
     }
   };
-
-  // Efecto para redirigir automáticamente después de un registro exitoso
-  useEffect(() => {
-    if (exitoMensaje) {
-      // Redirigir a la página principal
-      const timer = setTimeout(() => {
-        navigate('/'); // Cambia a la ruta deseada
-      }, 2000); // Redirige después de 2 segundos
-
-      return () => clearTimeout(timer); // Limpia el timer si el componente se desmonta
-    }
-  }, [exitoMensaje, navigate]); // Dependencias del efecto
 
   return (
     <div className="contenedor">
@@ -84,9 +77,7 @@ const Registro: React.FC = () => {
       </div>
 
       {errorMensaje && <p className="error">{errorMensaje}</p>}
-      {exitoMensaje && (
-        <p className="exito">¡Usuario registrado con éxito! Ingresa </p>
-      )}
+      {exitoMensaje && <p className="exito">{exitoMensaje}</p>}
 
       <form className="formulario" onSubmit={manejarEnvioFormulario}>
         <div className="contenedorInput">

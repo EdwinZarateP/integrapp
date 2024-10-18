@@ -14,7 +14,7 @@ const EstadosManifiestos = () => {
     <div className='contenedorManifiestos'>
         <div className='cabecera'>
             <div><BsPersonCircle /></div>
-            <div><h1>Hola Nestor</h1></div>
+            <div><h1>Hola</h1></div>
             <div><FaBell /></div>
         </div>
 

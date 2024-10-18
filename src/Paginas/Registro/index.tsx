@@ -5,21 +5,59 @@ import BotonSencillo from '../../Componentes/BotonSencillo';
 
 const Registro: React.FC = () => {
   const [passwordVisible, setVisibilidadPassword] = useState(false);
-  const [verifyPasswordVisible, setVerifyPasswordVisible] = useState(false);
+  const [nombre, setNombre] = useState('');
+  const [tenedor, setTenedor] = useState('');
+  const [celular, setCelular] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMensaje, setErrorMensaje] = useState('');
+  const [exitoMensaje, setExitoMensaje] = useState('');
 
   const manejarVisibilidadPassword = () => {
     setVisibilidadPassword(!passwordVisible);
   };
 
-  const manejarVisibilidadVerifyPassword = () => {
-    setVerifyPasswordVisible(!verifyPasswordVisible);
-  };
+  const manejarEnvioFormulario = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-    // Manejador para el evento de enviar el formulario
-    const manejarEnvioFormulario = (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault(); // Evita el comportamiento por defecto del formulario (recargar la página)
-      alert('Registro en construcción'); // Muestra el mensaje emergente
-    };
+    // Validación simple de email antes de enviar los datos
+    if (!email.includes('@')) {
+      setErrorMensaje('Por favor, ingresa un email válido.');
+      return;
+    }
+
+    setErrorMensaje('');
+    setExitoMensaje('');
+
+    try {
+      const response = await fetch('https://integrappi.onrender.com/usuarios/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre: nombre,
+          tenedor: tenedor,
+          telefono: celular,  // La API espera "telefono"
+          email: email,
+          clave: password,    // La API espera "clave"
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Error al registrar el usuario');
+      }
+
+      setExitoMensaje('¡Usuario registrado con éxito!');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setErrorMensaje(`Error: ${error.message}`);
+      } else {
+        setErrorMensaje('Ocurrió un error inesperado');
+      }
+    }
+  };
 
   return (
     <div className="contenedor">
@@ -30,7 +68,49 @@ const Registro: React.FC = () => {
         <h1>App</h1>
       </div>
 
+      {errorMensaje && <p className="error">{errorMensaje}</p>}
+      {exitoMensaje && <p className="exito">{exitoMensaje}</p>}
+
       <form className="formulario" onSubmit={manejarEnvioFormulario}>
+        <div className="contenedorInput">
+          <label htmlFor="nombre" className="etiqueta">Nombre</label>
+          <input
+            id="nombre"
+            type="text"
+            placeholder="Digite su nombre"
+            className="input"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="contenedorInput">
+          <label htmlFor="tenedor" className="etiqueta">Cedula o nit del propietario</label>
+          <input
+            id="tenedor"
+            type="text"
+            placeholder="Cedula o nit con el que registra sus vehiculos"
+            className="input"
+            value={tenedor}
+            onChange={(e) => setTenedor(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="contenedorInput">
+          <label htmlFor="celular" className="etiqueta">Celular</label>
+          <input
+            id="celular"
+            type="tel"
+            placeholder="Digite su número de celular"
+            className="input"
+            value={celular}
+            onChange={(e) => setCelular(e.target.value)}
+            required
+          />
+        </div>
+
         <div className="contenedorInput">
           <label htmlFor="email" className="etiqueta">Email</label>
           <input
@@ -38,17 +118,23 @@ const Registro: React.FC = () => {
             type="email"
             placeholder="conductores@gmail.com"
             className="input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
 
         <div className="contenedorInput">
-          <label htmlFor="password" className="etiqueta">Contraseña</label>
+          <label htmlFor="password" className="etiqueta">Clave</label>
           <div className="inputWrapper">
             <input
               id="password"
-              type={passwordVisible ? "text" : "password"}
-              placeholder="Digite su contraseña"
+              type={passwordVisible ? 'text' : 'password'}
+              placeholder="Digite su clave"
               className="input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
             <button
               type="button"
@@ -56,37 +142,15 @@ const Registro: React.FC = () => {
               className="verContrasenaBtn"
             >
               {passwordVisible ? (
-                <span role="img" aria-label="Hide password">👁️</span> // Ícono de ojo abierto
+                <span role="img" aria-label="Hide password">👁️</span>
               ) : (
-                <span role="img" aria-label="Show password">👁️‍🗨️</span> // Ícono de ojo cerrado
+                <span role="img" aria-label="Show password">👁️‍🗨️</span>
               )}
             </button>
           </div>
         </div>
 
-        <div className="contenedorInput">
-          <label htmlFor="verifyPassword" className="etiqueta">Verificar Contraseña</label>
-          <div className="inputWrapper">
-            <input
-              id="verifyPassword"
-              type={verifyPasswordVisible ? "text" : "password"}
-              placeholder="Digite de nuevo su contraseña"
-              className="input"
-            />
-            <button
-              type="button"
-              onClick={manejarVisibilidadVerifyPassword}
-              className="verContrasenaBtn"
-            >
-              {verifyPasswordVisible ? (
-                <span role="img" aria-label="Hide password">👁️</span> // Ícono de ojo abierto
-              ) : (
-                <span role="img" aria-label="Show password">👁️‍🗨️</span> // Ícono de ojo cerrado
-              )}
-            </button>
-          </div>
-        </div>
-          <BotonSencillo type="submit" texto="Registrar" colorClass="negro"/>
+        <BotonSencillo type="submit" texto="Registrar" colorClass="negro" />
       </form>
     </div>
   );

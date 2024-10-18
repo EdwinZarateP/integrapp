@@ -13,7 +13,6 @@ const Registro: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMensaje, setErrorMensaje] = useState('');
-  const [exitoMensaje, setExitoMensaje] = useState('');
 
   const manejarVisibilidadPassword = () => {
     setVisibilidadPassword(!passwordVisible);
@@ -29,7 +28,6 @@ const Registro: React.FC = () => {
     }
 
     setErrorMensaje('');
-    setExitoMensaje('');
 
     try {
       const response = await fetch('https://integrappi.onrender.com/usuarios/', {
@@ -51,12 +49,13 @@ const Registro: React.FC = () => {
         throw new Error(errorData.detail || 'Error al registrar el usuario');
       }
 
-      setExitoMensaje('¡Usuario registrado con éxito!');
+      // Muestra el mensaje de éxito
+      alert('Usuario registrado con éxito');
 
-      // Redirigir a la página de Registro
+      // Redirigir a la página principal
       setTimeout(() => {
         navigate('/'); // Redirige después de un breve retraso
-      }, 1000); // Espera 2 segundos para mostrar el mensaje de éxito
+      }, 1000); // Espera 1 segundo antes de redirigir
 
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -77,7 +76,6 @@ const Registro: React.FC = () => {
       </div>
 
       {errorMensaje && <p className="error">{errorMensaje}</p>}
-      {exitoMensaje && <p className="exito">{exitoMensaje}</p>}
 
       <form className="formulario" onSubmit={manejarEnvioFormulario}>
         <div className="contenedorInput">
@@ -94,11 +92,11 @@ const Registro: React.FC = () => {
         </div>
 
         <div className="contenedorInput">
-          <label htmlFor="tenedor" className="etiqueta">Cedula o nit del propietario</label>
+          <label htmlFor="tenedor" className="etiqueta">Cédula o NIT del propietario</label>
           <input
             id="tenedor"
             type="text"
-            placeholder="Cedula o nit con el que registra sus vehiculos"
+            placeholder="Cédula o NIT con el que registra sus vehículos"
             className="input"
             value={tenedor}
             onChange={(e) => setTenedor(e.target.value)}

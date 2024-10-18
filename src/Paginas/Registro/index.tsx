@@ -54,9 +54,13 @@ const Registro: React.FC = () => {
       setExitoMensaje('¡Usuario registrado con éxito!');
 
       // Redirigir a la página de inicio
-      setTimeout(() => {
-        navigate('/'); // Redirige después de un breve retraso
-      }, 1000); // Espera 1 segundo para mostrar el mensaje de éxito
+      // setTimeout(() => {
+      //   navigate('/Olvidoclave'); // Redirige después de un breve retraso
+      // }, 1000); // Espera 1 segundo para mostrar el mensaje de éxito
+
+      // Redirigir a la página de Registro
+      navigate('/Olvidoclave'); // Redirige inmediatamente
+
 
     } catch (error: unknown) {
       if (error instanceof Error) {

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import logo from '../../Imagenes/albatros.png'; // Importación del logo
 import './estilos.css'; // Importación del archivo CSS
 import BotonSencillo from '../../Componentes/BotonSencillo';
 
 const Registro: React.FC = () => {
+  const navigate = useNavigate(); // Inicializa useNavigate
   const [passwordVisible, setVisibilidadPassword] = useState(false);
   const [nombre, setNombre] = useState('');
   const [tenedor, setTenedor] = useState('');
@@ -50,6 +52,12 @@ const Registro: React.FC = () => {
       }
 
       setExitoMensaje('¡Usuario registrado con éxito!');
+
+      // Redirigir a la página de inicio
+      setTimeout(() => {
+        navigate('/'); // Redirige después de un breve retraso
+      }, 1000); // Espera 1 segundo para mostrar el mensaje de éxito
+
     } catch (error: unknown) {
       if (error instanceof Error) {
         setErrorMensaje(`Error: ${error.message}`);

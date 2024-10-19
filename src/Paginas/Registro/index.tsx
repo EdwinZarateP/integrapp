@@ -81,10 +81,10 @@ const Registro: React.FC = () => {
         throw new Error(errorData.detail || 'Error al registrar el usuario');
       }
 
-      alert('Usuario registrado con éxito');
+      // alert('Usuario registrado con éxito');
       setTimeout(() => {
         navigate('/');
-      }, 1000);
+      }, 100);
       
     } catch (error: unknown) {
       setErrorMensaje(`Error: ${error instanceof Error ? error.message : 'Ocurrió un error inesperado'}`);

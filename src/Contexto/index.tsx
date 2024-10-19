@@ -11,37 +11,24 @@ import { createContext, useState, ReactNode, Dispatch, SetStateAction } from 're
 //-------------------------------------------------------------------------------------
 
 interface ContextProps {
+  // Abrir o cerrar cosas
+  estaAbiertoAlgo: boolean;
+  setEstaAbiertoAlgo: Dispatch<SetStateAction<boolean>>;
+  abrirAlgo: () => void; 
+  cerrarAlgo: () => void; 
 
-  //Abrir o cerrar cosas
-    estaAbiertoAlgo: boolean;
-    setEstaAbiertoAlgo: Dispatch<SetStateAction<boolean>>;
-    abrirAlgo: () => void; 
-    cerrarAlgo: () => void; 
-   
-  //Informacion que da el login de google
-  usuario: {
-    nombre: string;
-    email: string;
-    userId: string;
-  } | null;
-  setUsuario: Dispatch<SetStateAction<{
-      nombre: string;
-      email: string;
-      userId: string;
-  } | null>>;
-
-  formData: {
-    nombre: string;
-    email: string;
-    password: string;
-  };
-  setFormData: Dispatch<SetStateAction<{
-    nombre: string;
-    email: string;
-    password: string;
-  }>>;
-
-  }
+  // Variables de tipo string
+  nombre: string;
+  setNombre: Dispatch<SetStateAction<string>>;
+  tenedor: string;
+  setTenedor: Dispatch<SetStateAction<string>>;
+  celular: string;
+  setCelular: Dispatch<SetStateAction<string>>;
+  email: string;
+  setEmail: Dispatch<SetStateAction<string>>;
+  password: string;
+  setPassword: Dispatch<SetStateAction<string>>;
+}
 
 // Crea el contexto con un valor inicial undefined
 export const ContextoApp = createContext<ContextProps | undefined>(undefined);
@@ -57,41 +44,45 @@ interface ProveedorVariablesProps {
 
 export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) => {
   
-    // Estado para abrir y cerrar el Algo
-    const [estaAbiertoAlgo, setEstaAbiertoAlgo] = useState(false);
-    const abrirAlgo = () => setEstaAbiertoAlgo(true);
-    const cerrarAlgo= () => setEstaAbiertoAlgo(false);
+  // Estado para abrir y cerrar el Algo
+  const [estaAbiertoAlgo, setEstaAbiertoAlgo] = useState(false);
+  const abrirAlgo = () => setEstaAbiertoAlgo(true);
+  const cerrarAlgo = () => setEstaAbiertoAlgo(false);
 
-      // Estado para obtener la informacion del login
-    const [usuario, setUsuario] = useState<{ nombre: string, email: string, userId: string } | null>(null);
-    const [formData, setFormData] = useState({
-      nombre: '',
-      email: '',
-      password: ''
-    });
-     
-     
-    
-    //-------------------------------------------------------------------------------------
-    // 3. Crea el objeto de contexto con los valores y funciones necesarios que quieres proveer
-    //-------------------------------------------------------------------------------------
+  // Estados para las variables de tipo string
+  const [nombre, setNombre] = useState('');
+  const [tenedor, setTenedor] = useState('');
+  const [celular, setCelular] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  //-------------------------------------------------------------------------------------
+  // 3. Crea el objeto de contexto con los valores y funciones necesarios que quieres proveer
+  //-------------------------------------------------------------------------------------
   
-    const contextValue: ContextProps = {
+  const contextValue: ContextProps = {
+    estaAbiertoAlgo,
+    setEstaAbiertoAlgo,
+    abrirAlgo,
+    cerrarAlgo,
     
-      estaAbiertoAlgo,
-      setEstaAbiertoAlgo,
-      abrirAlgo,
-      cerrarAlgo,
-      usuario,
-      setUsuario,
-      formData,
-      setFormData,
-    };
-  
-    // Renderiza el proveedor de contexto con el valor proporcionado
-    return (
-      <ContextoApp.Provider value={contextValue}>
-        {hijo}
-      </ContextoApp.Provider>
-    );
+    // Variables de tipo string
+    nombre,
+    setNombre,
+    tenedor,
+    setTenedor,
+    celular,
+    setCelular,
+    email,
+    setEmail,
+    password,
+    setPassword
   };
+  
+  // Renderiza el proveedor de contexto con el valor proporcionado
+  return (
+    <ContextoApp.Provider value={contextValue}>
+      {hijo}
+    </ContextoApp.Provider>
+  );
+};

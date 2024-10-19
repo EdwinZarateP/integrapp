@@ -1,28 +1,60 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
-import logo from '../../Imagenes/albatros.png'; // Importación del logo
-import './estilos.css'; // Importación del archivo CSS
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import logo from '../../Imagenes/albatros.png';
+import './estilos.css';
 import BotonSencillo from '../../Componentes/BotonSencillo';
+import { ContextoApp } from '../../Contexto/index';
+
+// Define un tipo para las claves de ContextProps
+type ContextKeys = 'nombre' | 'tenedor' | 'celular' | 'email' | 'password';
 
 const Registro: React.FC = () => {
-  const navigate = useNavigate(); // Inicializa useNavigate
+  const navigate = useNavigate();
   const [passwordVisible, setVisibilidadPassword] = useState(false);
-  const [nombre, setNombre] = useState('');
-  const [tenedor, setTenedor] = useState('');
-  const [celular, setCelular] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [errorMensaje, setErrorMensaje] = useState('');
 
+  // Traigo las variables del proveedor
+  const almacenVariables = useContext(ContextoApp);
+
+  // Maneja la visibilidad de la contraseña
   const manejarVisibilidadPassword = () => {
     setVisibilidadPassword(!passwordVisible);
   };
 
+  // Maneja el cambio en los campos del formulario
+  const manejarCambio = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target as { name: ContextKeys; value: string };
+
+    // Verificar que almacenVariables no sea undefined
+    if (almacenVariables) {
+      switch (name) {
+        case 'nombre':
+          almacenVariables.setNombre(value);
+          break;
+        case 'tenedor':
+          almacenVariables.setTenedor(value);
+          break;
+        case 'celular':
+          almacenVariables.setCelular(value);
+          break;
+        case 'email':
+          almacenVariables.setEmail(value);
+          break;
+        case 'password':
+          almacenVariables.setPassword(value);
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+  // Maneja el envío del formulario
   const manejarEnvioFormulario = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // Validación simple de email antes de enviar los datos
-    if (!email.includes('@')) {
+    // Validación del email
+    if (almacenVariables && !almacenVariables.email.includes('@')) {
       setErrorMensaje('Por favor, ingresa un email válido.');
       return;
     }
@@ -36,11 +68,11 @@ const Registro: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          nombre: nombre,
-          tenedor: tenedor,
-          telefono: celular,  // La API espera "telefono"
-          email: email,
-          clave: password,    // La API espera "clave"
+          nombre: almacenVariables?.nombre,
+          tenedor: almacenVariables?.tenedor,
+          telefono: almacenVariables?.celular,
+          email: almacenVariables?.email,
+          clave: almacenVariables?.password,
         }),
       });
 
@@ -49,27 +81,19 @@ const Registro: React.FC = () => {
         throw new Error(errorData.detail || 'Error al registrar el usuario');
       }
 
-      // Muestra el mensaje de éxito
       alert('Usuario registrado con éxito');
-
-      // Redirigir a la página principal
       setTimeout(() => {
-        navigate('/'); // Redirige después de un breve retraso
-      }, 1000); // Espera 1 segundo antes de redirigir
-
+        navigate('/');
+      }, 1000);
+      
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setErrorMensaje(`Error: ${error.message}`);
-      } else {
-        setErrorMensaje('Ocurrió un error inesperado');
-      }
+      setErrorMensaje(`Error: ${error instanceof Error ? error.message : 'Ocurrió un error inesperado'}`);
     }
   };
 
   return (
     <div className="contenedor">
       <img src={logo} alt="Logo Integra" className="logo" />
-
       <div className="titulo">
         <h1>Integr</h1>
         <h1>App</h1>
@@ -78,68 +102,33 @@ const Registro: React.FC = () => {
       {errorMensaje && <p className="error">{errorMensaje}</p>}
 
       <form className="formulario" onSubmit={manejarEnvioFormulario}>
-        <div className="contenedorInput">
-          <label htmlFor="nombre" className="etiqueta">Nombre</label>
-          <input
-            id="nombre"
-            type="text"
-            placeholder="Digite su nombre"
-            className="input"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="contenedorInput">
-          <label htmlFor="tenedor" className="etiqueta">Cédula o NIT del propietario</label>
-          <input
-            id="tenedor"
-            type="text"
-            placeholder="Cédula o NIT con el que registra sus vehículos"
-            className="input"
-            value={tenedor}
-            onChange={(e) => setTenedor(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="contenedorInput">
-          <label htmlFor="celular" className="etiqueta">Celular</label>
-          <input
-            id="celular"
-            type="tel"
-            placeholder="Digite su número de celular"
-            className="input"
-            value={celular}
-            onChange={(e) => setCelular(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="contenedorInput">
-          <label htmlFor="email" className="etiqueta">Email</label>
-          <input
-            id="email"
-            type="email"
-            placeholder="conductores@gmail.com"
-            className="input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
+        {['nombre', 'tenedor', 'celular', 'email'].map((field) => (
+          <div className="contenedorInput" key={field}>
+            <label htmlFor={field} className="etiqueta">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+            <input
+              id={field}
+              name={field}
+              type={field === 'email' ? 'email' : 'text'}
+              placeholder={`Digite su ${field}`}
+              className="input"
+              value={almacenVariables ? almacenVariables[field as ContextKeys] : ''} // Acceso seguro
+              onChange={manejarCambio}
+              required
+            />
+          </div>
+        ))}
 
         <div className="contenedorInput">
           <label htmlFor="password" className="etiqueta">Clave</label>
           <div className="inputWrapper">
             <input
               id="password"
+              name="password"
               type={passwordVisible ? 'text' : 'password'}
               placeholder="Digite su clave"
               className="input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={almacenVariables ? almacenVariables.password : ''} // Acceso seguro
+              onChange={manejarCambio}
               required
             />
             <button
@@ -147,11 +136,7 @@ const Registro: React.FC = () => {
               onClick={manejarVisibilidadPassword}
               className="verContrasenaBtn"
             >
-              {passwordVisible ? (
-                <span role="img" aria-label="Hide password">👁️</span>
-              ) : (
-                <span role="img" aria-label="Show password">👁️‍🗨️</span>
-              )}
+              {passwordVisible ? '👁️' : '👁️‍🗨️'}
             </button>
           </div>
         </div>

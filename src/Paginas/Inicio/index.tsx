@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../Imagenes/albatros.png';
 import './estilos.css';
 import BotonSencillo from '../../Componentes/BotonSencillo';
+import { ContextoApp } from '../../Contexto/index';
 
 const Inicio: React.FC = () => {
+  const almacenVariables = useContext(ContextoApp); // Mueve el uso de useContext aquí
   const [passwordVisible, setVisibilidadPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(''); // Estado para el mensaje de error
   const navigate = useNavigate();
 
@@ -26,8 +26,8 @@ const Inicio: React.FC = () => {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-          username: email,
-          password: password,
+          username: almacenVariables?.email || '', // Usa almacenVariables.email aquí
+          password: almacenVariables?.password || '', // Usa almacenVariables.password aquí
         }),
       });
 
@@ -65,8 +65,8 @@ const Inicio: React.FC = () => {
             type="email"
             placeholder="conductores@gmail.com"
             className="input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)} // Actualiza el estado del email
+            value={almacenVariables?.email || ''} // Usa almacenVariables.email aquí
+            onChange={(e) => almacenVariables?.setEmail(e.target.value)} // Actualiza el estado del email en Contexto
           />
         </div>
 
@@ -78,8 +78,8 @@ const Inicio: React.FC = () => {
               type={passwordVisible ? "text" : "password"}
               placeholder="Digite su contraseña"
               className="input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)} // Actualiza el estado de la contraseña
+              value={almacenVariables?.password || ''} // Usa almacenVariables.password aquí
+              onChange={(e) => almacenVariables?.setPassword(e.target.value)} // Actualiza el estado de la contraseña en Contexto
             />
             <button
               type="button"

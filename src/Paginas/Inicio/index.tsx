@@ -55,10 +55,9 @@ const Inicio: React.FC = () => {
       const data = await response.json();
       console.log(data);
 
-      // if (data.nombre) {
-      //   almacenVariables?.setNombre(data.nombre);
-      //   alert(`Bienvenido, ${data.nombre}!`);
-      // }
+      if (data.nombre) {
+        almacenVariables?.setNombre(data.nombre);
+      }
 
       if (data.tenedor) {
         almacenVariables?.setTenedor(data.tenedor);

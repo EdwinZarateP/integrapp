@@ -32,19 +32,21 @@ const EstadosManifiestos = () => {
       <div className="contenedorEstadosManifiestos">
         {/* Envolver cada BotonEstado en un Link que dirija a /DetalleEstados */}
         <Link to="/Api" className="linkBoton">
-          <BotonEstado nombreEstado="En tránsito" cantidad={1} icono={<FaTruck />} />
+          <BotonEstado nombreEstado="Dar clic aqui para probar" cantidad={1} icono={<FaTruck />} />
+          {/* <BotonEstado nombreEstado="dar clic aqui para probar En tránsito" cantidad={0} icono={<FaTruck />} /> */}
         </Link>
 
         <Link to="/DetalleEstados" className="linkBoton">
-          <BotonEstado nombreEstado="En tránsito" cantidad={1} icono={<IoDocumentsSharp />} />
+          <BotonEstado nombreEstado="Estoy construyendo cumplidos" cantidad={0} icono={<IoDocumentsSharp />} />
+          {/* <BotonEstado nombreEstado="En tránsito" cantidad={0} icono={<IoDocumentsSharp />} /> */}
         </Link>
 
         <Link to="/DetalleEstados" className="linkBoton">
-          <BotonEstado nombreEstado="Liquidados" cantidad={2} icono={<BiMailSend />} />
+          <BotonEstado nombreEstado="Estoy construyendo Liquidados" cantidad={0} icono={<BiMailSend />} />
         </Link>
 
         <Link to="/DetalleEstados" className="linkBoton">
-          <BotonEstado nombreEstado="Pagados" cantidad={3} icono={<FcMoneyTransfer />} />
+          <BotonEstado nombreEstado="Estoy construyendo Pagados" cantidad={0} icono={<FcMoneyTransfer />} />
         </Link>
 
         {/* Botón de Salir */}

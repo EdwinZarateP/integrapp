@@ -1,7 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { ContextoApp } from '../../Contexto/index';
 
 const Api2 = () => {
+  const almacenVariables = useContext(ContextoApp);
+
   const [response, setResponse] = useState(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,7 +45,7 @@ const Api2 = () => {
             {
               campo: "Tenedor",
               operador: "=",
-              valor: "1070607772"
+              valor: almacenVariables?.tenedor // Aquí se utiliza el valor de almacenVariables.tenedor
             }
           ]
         };
@@ -67,7 +70,7 @@ const Api2 = () => {
     };
 
     fetchData();
-  }, []);
+  }, [almacenVariables?.tenedor]); // Agregar almacenVariables.tenedor como dependencia para el efecto
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;

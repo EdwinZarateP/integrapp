@@ -4,6 +4,7 @@ import logo from '../../Imagenes/albatros.png';
 import './estilos.css';
 import BotonSencillo from '../../Componentes/BotonSencillo';
 import { ContextoApp } from '../../Contexto/index';
+import confetti from 'canvas-confetti'; // Importar confetti
 
 // Define un tipo para las claves de ContextProps
 type ContextKeys = 'nombre' | 'tenedor' | 'celular' | 'email' | 'password';
@@ -49,6 +50,15 @@ const Registro: React.FC = () => {
     }
   };
 
+  // Función para lanzar confetti (explosión)
+  const lanzarConfetti = () => {
+    confetti({
+      particleCount: 200, // Número de piezas de confeti
+      spread: 70,         // Ángulo de dispersión
+      origin: { y: 0.6 }, // Ajuste para la altura de la explosión
+    });
+  };
+
   // Maneja el envío del formulario
   const manejarEnvioFormulario = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -81,11 +91,14 @@ const Registro: React.FC = () => {
         throw new Error(errorData.detail || 'Error al registrar el usuario');
       }
 
-      // alert('Usuario registrado con éxito');
+      // Lanzar confetti (explosión)
+      lanzarConfetti();
+
+      // Esperar 1 segundo para mostrar la explosión y luego navegar
       setTimeout(() => {
         navigate('/');
-      }, 100);
-      
+      }, 1000);
+
     } catch (error: unknown) {
       setErrorMensaje(`Error: ${error instanceof Error ? error.message : 'Ocurrió un error inesperado'}`);
     }

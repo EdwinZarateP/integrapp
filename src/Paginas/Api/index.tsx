@@ -2,10 +2,17 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { ContextoApp } from '../../Contexto/index';
 
+// Define una interfaz para los datos de la respuesta
+interface ApiResponse {
+  // Especifica las propiedades esperadas en la respuesta
+  // Por ejemplo, si la respuesta tiene una propiedad "data" que es un array de objetos
+  data: any[]; // Cambia 'any[]' por el tipo correcto según tu API
+}
+
 const Api2 = () => {
   const almacenVariables = useContext(ContextoApp);
 
-  const [response, setResponse] = useState(null);
+  const [respuesta, setrespuesta] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,13 +30,13 @@ const Api2 = () => {
 
       try {
         // Realiza el login
-        const loginResponse = await axios.post(loginUrl, loginPayload, {
+        const loginrespuesta = await axios.post(loginUrl, loginPayload, {
           headers: {
             "Content-Type": "application/json",
           },
         });
 
-        const token = loginResponse.data.data.access_token;
+        const token = loginrespuesta.data.data.access_token;
 
         // Realiza la segunda consulta usando el token
         const queryUrl = "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/vulcano/customer/00134/index";
@@ -50,14 +57,15 @@ const Api2 = () => {
           ]
         };
 
-        const queryResponse = await axios.post(queryUrl, queryPayload, {
+        const queryrespuesta = await axios.post(queryUrl, queryPayload, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
 
-        setResponse(queryResponse.data);
+        // Establece la respuesta en el estado
+        setrespuesta(queryrespuesta.data.data);
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -78,7 +86,12 @@ const Api2 = () => {
   return (
     <div>
       <h1>API Respuesta</h1>
-      <pre>{JSON.stringify(response, null, 2)}</pre>
+      {/* Si no quieres usar JSON.stringify, puedes iterar sobre la respuesta */}
+      {respuesta && respuesta.data.map((item, index) => (
+        <div key={index}>
+          <pre>{JSON.stringify(item, null, 2)}</pre>
+        </div>
+      ))}
     </div>
   );
 };

@@ -28,6 +28,10 @@ interface ContextProps {
   setEmail: Dispatch<SetStateAction<string>>;
   password: string;
   setPassword: Dispatch<SetStateAction<string>>;
+  
+  // Agrega respuesta
+  respuesta: any; // Define el tipo según tus necesidades
+  setRespuesta: Dispatch<SetStateAction<any>>;
 }
 
 // Crea el contexto con un valor inicial undefined
@@ -55,6 +59,9 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
   const [celular, setCelular] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  
+  // Estado para la respuesta
+  const [respuesta, setRespuesta] = useState(null);
 
   //-------------------------------------------------------------------------------------
   // 3. Crea el objeto de contexto con los valores y funciones necesarios que quieres proveer
@@ -76,7 +83,11 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
     email,
     setEmail,
     password,
-    setPassword
+    setPassword,
+    
+    // Agrega respuesta
+    respuesta,
+    setRespuesta
   };
   
   // Renderiza el proveedor de contexto con el valor proporcionado

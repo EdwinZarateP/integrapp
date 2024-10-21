@@ -32,7 +32,7 @@ const EstadosManifiestos = () => {
       <div className="contenedorEstadosManifiestos">
         {/* Envolver cada BotonEstado en un Link que dirija a /DetalleEstados */}
         <Link to="/Api" className="linkBoton">
-          <BotonEstado nombreEstado="Dar clic aqui para probar" cantidad={1} icono={<FaTruck />} />
+          <BotonEstado nombreEstado="En tránsito" cantidad={1} icono={<FaTruck />} />
           {/* <BotonEstado nombreEstado="dar clic aqui para probar En tránsito" cantidad={0} icono={<FaTruck />} /> */}
         </Link>
 

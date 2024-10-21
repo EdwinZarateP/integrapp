@@ -16,38 +16,8 @@ const DetalleManifiestos = () => {
 
         <div className="contenedorDetalleManifiestos">
 
-        <div>
+        <div>        
           <TarjetaDetalle
-            manifiesto="00045354"
-            fecha={new Date("2024-10-02")} 
-            origen="Funza"
-            destino="Medellin"
-            placa="ANA83L"
-            flete={1000000}
-            anticipo={700000}
-            reteFuente={10000}
-            reteIca={10000}
-            descuento={50000}
-            saldo={230000}
-            fecha_saldo={new Date("2024-10-02")} 
-        />
-
-          <TarjetaDetalle
-            manifiesto="00035353"
-            fecha={new Date("2024-10-02")} 
-            origen="Funza"
-            destino="Barranquilla"
-            placa="KOK83L"
-            flete={1500000}
-            anticipo={1200000}
-            reteFuente={10000}
-            reteIca={10000}
-            descuento={50000}
-            saldo={230000}
-            fecha_saldo={new Date("2024-10-02")} 
-          />
-
-<TarjetaDetalle
             manifiesto="00035353"
             fecha={new Date("2024-10-02")} 
             origen="Funza"

@@ -118,14 +118,14 @@ const Registro: React.FC = () => {
       {errorMensaje && <p className="error">{errorMensaje}</p>}
 
       <form className="formulario" onSubmit={manejarEnvioFormulario}>
-        {['nombre', 'tenedor', 'celular', 'email'].map((field) => (
+        {['nombre tenedor', 'cedula tenedor', 'celular', 'email'].map((field) => (
           <div className="contenedorInput" key={field}>
             <label htmlFor={field} className="etiqueta">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
             <input
               id={field}
               name={field}
               type={field === 'email' ? 'email' : 'text'}
-              placeholder={`Digite su ${field}`}
+              placeholder={`Digite ${field}`}
               className="input"
               value={almacenVariables ? almacenVariables[field as ContextKeys] : ''} // Acceso seguro
               onChange={manejarCambio}

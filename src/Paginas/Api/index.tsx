@@ -4,8 +4,6 @@ import { ContextoApp } from '../../Contexto/index';
 
 // Define una interfaz para los datos de la respuesta
 interface ApiResponse {
-  // Especifica las propiedades esperadas en la respuesta
-  // Por ejemplo, si la respuesta tiene una propiedad "data" que es un array de objetos
   data: any[]; // Cambia 'any[]' por el tipo correcto según tu API
 }
 
@@ -83,13 +81,22 @@ const Api2 = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
+  // Filtrar los elementos únicos basados en Manif_numero
+  const uniqueItems = respuesta?.data.reduce((acc: any[], item) => {
+    // Verifica si el Manif_numero ya existe en el acumulador
+    if (!acc.some(existingItem => existingItem.Manif_numero === item.Manif_numero)) {
+      acc.push(item); // Agrega el nuevo elemento
+    }
+    return acc; // Devuelve el acumulador actualizado
+  }, []) || []; // Maneja el caso en que respuesta.data es undefined
+
   return (
     <div>
       <h1>API Respuesta</h1>
       {/* Si no quieres usar JSON.stringify, puedes iterar sobre la respuesta */}
-      {respuesta && respuesta.data.map((item, index) => (
+      {uniqueItems.map((item, index) => (
         <div key={index}>
-          <pre>{JSON.stringify(item, null, 2)}</pre>
+          <pre>{JSON.stringify(item, null, 2)}</pre> {/* Puedes ajustar esto según tu necesidad */}
         </div>
       ))}
     </div>

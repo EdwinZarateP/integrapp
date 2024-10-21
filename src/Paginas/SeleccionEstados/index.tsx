@@ -21,6 +21,23 @@ const EstadosManifiestos = () => {
     return primeraPalabra.charAt(0).toUpperCase() + primeraPalabra.slice(1); // Capitalizar la primera letra
   };
 
+  const actualizaTransito = () => {
+    almacenVariables?.setEstado("TRANSITO"); // Actualizar el estado en el contexto
+  };
+
+  const actualizaCumplidos = () => {
+    almacenVariables?.setEstado("CUMPLIDO"); // Actualizar el estado en el contexto
+  };
+
+  const actualizaLiquidado = () => {
+    almacenVariables?.setEstado("LIQUIDADO"); // Actualizar el estado en el contexto
+  };
+
+  const actualizaPagado = () => {
+    almacenVariables?.setEstado("ANULADO"); // Actualizar el estado en el contexto
+  };
+
+
   return (
     <div className='contenedorManifiestos'>
       <div className='cabecera'>
@@ -31,20 +48,19 @@ const EstadosManifiestos = () => {
 
       <div className="contenedorEstadosManifiestos">
         {/* Envolver cada BotonEstado en un Link que dirija a /DetalleEstados */}
-        <Link to="/DetalleEstados" className="linkBoton">
+        <Link to="/DetalleEstados" className="linkBoton" onClick={actualizaTransito}>
           <BotonEstado nombreEstado="En tránsito" cantidad={1} icono={<FaTruck />} />
-          {/* <BotonEstado nombreEstado="dar clic aqui para probar En tránsito" cantidad={0} icono={<FaTruck />} /> */}
         </Link>
 
-        <Link to="/DetalleEstados" className="linkBoton">
+        <Link to="/DetalleEstados" className="linkBoton" onClick={actualizaCumplidos}>
           <BotonEstado nombreEstado="Cumplidos" cantidad={0} icono={<IoDocumentsSharp />} />
         </Link>
 
-        <Link to="/DetalleEstados" className="linkBoton">
+        <Link to="/DetalleEstados" className="linkBoton" onClick={actualizaLiquidado}>
           <BotonEstado nombreEstado="Liquidados" cantidad={0} icono={<BiMailSend />} />
         </Link>
 
-        <Link to="/DetalleEstados" className="linkBoton">
+        <Link to="/DetalleEstados" className="linkBoton" onClick={actualizaPagado}>
           <BotonEstado nombreEstado="Pagados" cantidad={0} icono={<FcMoneyTransfer />} />
         </Link>
 

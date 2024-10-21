@@ -32,6 +32,10 @@ interface ContextProps {
   // Agrega respuesta
   respuesta: any; // Define el tipo según tus necesidades
   setRespuesta: Dispatch<SetStateAction<any>>;
+
+  // Agrega estado
+  estado: string;
+  setEstado: Dispatch<SetStateAction<string>>;
 }
 
 // Crea el contexto con un valor inicial undefined
@@ -63,6 +67,9 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
   // Estado para la respuesta
   const [respuesta, setRespuesta] = useState(null);
 
+  // Estado para la respuesta
+  const [estado, setEstado] = useState('');
+
   //-------------------------------------------------------------------------------------
   // 3. Crea el objeto de contexto con los valores y funciones necesarios que quieres proveer
   //-------------------------------------------------------------------------------------
@@ -87,7 +94,11 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
     
     // Agrega respuesta
     respuesta,
-    setRespuesta
+    setRespuesta,
+
+    // Agrega estado
+    estado,
+    setEstado
   };
   
   // Renderiza el proveedor de contexto con el valor proporcionado

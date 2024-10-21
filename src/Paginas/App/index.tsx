@@ -4,11 +4,9 @@ import Registro from '../Registro/index';
 import EstadosManifiestos from '../SeleccionEstados/index';
 import DetalleEstados from '../DetalleEstados/index';
 import Api2 from '../Api/autenticar';
-import Api from '../Api/index';
 import Olvidoclave from '../Olvidoclave/index';
 import NoEncontrado from '../NoEncontrado/index';
 import { ProveedorVariables } from '../../Contexto/index';
-// import './App.css';
 
 const App: React.FC = () => {
   return (
@@ -22,7 +20,6 @@ const App: React.FC = () => {
         <Route path="/Olvidoclave" element={<Olvidoclave />} />
         <Route path="/SeleccionEstados" element={<EstadosManifiestos />} />
         <Route path="/DetalleEstados" element={<DetalleEstados />} />
-        <Route path="/Api" element={<Api />} />
         <Route path="/Api2" element={<Api2 />} />
         <Route path="*" element={<NoEncontrado />} />
       </Routes>

@@ -17,7 +17,7 @@ const BotonEstado: React.FC<PropiedadesBotonManifiestos> = ({ nombreEstado, cant
         </div>
         <div className='contenedorInformacionEstado'>
             <h2>{nombreEstado}</h2> 
-            <h3>Cantidad inventada ({cantidad})</h3> 
+            {/* <h3>Cantidad inventada ({cantidad})</h3>  */}
         </div>
 
 

@@ -7,37 +7,36 @@ import { BsPersonCircle } from "react-icons/bs";
 import TarjetaDetalle from '../../Componentes/TarjetaDetalle/index';
 import { ContextoApp } from '../../Contexto/index';
 
+
 const DetalleManifiestos = () => {
   const almacenVariables = useContext(ContextoApp);
-  
+
   // Función para obtener la primera palabra en mayúscula
-   const obtenerPrimeraPalabra = (nombre: string | undefined): string => {
+  const obtenerPrimeraPalabra = (nombre: string | undefined): string => {
     if (!nombre) return 'Usuario';
-    const primeraPalabra = nombre.split(' ')[0]; // Dividir por espacios y obtener la primera palabra
-    return primeraPalabra.charAt(0).toUpperCase() + primeraPalabra.slice(1); // Capitalizar la primera letra
+    const primeraPalabra = nombre.split(' ')[0];
+    return primeraPalabra.charAt(0).toUpperCase() + primeraPalabra.slice(1);
   };
+
 
   return (
     <div className='contenedorManifiestos'>
-        <div className='cabecera'>
-            <div><BsPersonCircle /></div>
-            <div><h1>Hola {obtenerPrimeraPalabra(almacenVariables?.nombre)}</h1></div>
-            <div><FaBell /></div>
-        </div>
+      <div className='cabecera'>
+        <div><BsPersonCircle /></div>
+        <div><h1>Hola {obtenerPrimeraPalabra(almacenVariables?.nombre)}</h1></div>
+        <div><FaBell /></div>
+      </div>
 
-        <div className="contenedorDetalleManifiestos">
-
+      <div className="contenedorDetalleManifiestos">
         <div>        
-        <TarjetaDetalle estadoFiltrar="LIQUIDADO" />
+        <TarjetaDetalle estadoFiltrar={almacenVariables?.estado || ''} />
 
         </div>
-       
-        {/* Envolver el botón dentro de Link */}
+
         <Link to="/SeleccionEstados" className='linkBoton'>
           <BotonSencillo type="button" texto="Volver" colorClass="rojo"/>            
         </Link>
-        
-        </div>
+      </div>
     </div>
   );
 };

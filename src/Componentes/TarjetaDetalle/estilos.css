@@ -18,3 +18,15 @@
     color: #333; /* Color del texto para los títulos */
   }
   
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* O cualquier altura que desees */
+  }
+  
+  .loading-container p {
+    margin-top: 10px; /* Espacio entre el spinner y el texto */
+  }
+  

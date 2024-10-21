@@ -1,5 +1,9 @@
 import React from 'react';
 import extraccionManifiestos from '../../Funciones/ExtraerInfoApi/index';
+// import BounceLoader  from 'react-spinners/BounceLoader';
+// import BeatLoader from 'react-spinners/BeatLoader';
+import HashLoader from 'react-spinners/HashLoader';
+
 import './estilos.css';
 
 // Define las propiedades que el componente va a recibir
@@ -10,7 +14,17 @@ interface PropiedadesTarjetaDetalle {
 const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar }) => {
   const { manifiestosTodos, loading, error } = extraccionManifiestos();
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="loading-container">
+        {/* <BounceLoader size={80} color={"rgb(141, 199, 63)"} loading={true} /> */}
+        {/* <BeatLoader size={60} color={"rgb(141, 199, 63)"} loading={true} /> */}
+        <HashLoader size={60} color={"rgb(141, 199, 63)"} loading={true} />
+        <p>Cargando datos...</p>
+      </div>
+    );
+  }
+
   if (error) return <p>Error: {error}</p>;
 
   // Filtrar los manifiestos según el estado proporcionado

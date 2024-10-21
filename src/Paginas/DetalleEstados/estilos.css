@@ -34,7 +34,7 @@
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra más definida */
     box-sizing: border-box;
-    margin-bottom: 40px; /* Añadir espacio entre el contenedor y el botón */
+    margin-bottom: 10px; 
 }
 
 /* Estilo para el enlace del botón */
@@ -78,5 +78,5 @@
 
 /* Asegura que el contenido no quede oculto debajo de la cabecera */
 .contenedorManifiestos {
-    padding-top: 100px; /* Deja espacio para la cabecera fija */
+    padding-top: 50px; /* Deja espacio para la cabecera fija */
 }

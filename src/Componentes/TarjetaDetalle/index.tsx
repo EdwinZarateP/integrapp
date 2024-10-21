@@ -1,49 +1,41 @@
 import React from 'react';
-import './estilos.css'; 
+import extraccionManifiestos from '../../Funciones/ExtraerInfoApi/index';
+import './estilos.css';
 
-// Definir las propiedades que el componente va a recibir
+// Define las propiedades que el componente va a recibir
 interface PropiedadesTarjetaDetalle {
-  manifiesto: string;
-  fecha: Date;
-  origen: string;
-  destino: string;
-  placa: string;
-  flete: number;
-  anticipo: number;
-  reteFuente: number;
-  reteIca: number;
-  descuento: number;
-  saldo: number;
-  fecha_saldo: Date;
+  estadoFiltrar: string; // Parámetro para filtrar el estado
 }
 
-const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({
-  manifiesto,
-  fecha,
-  origen,
-  destino,
-  placa,
-  flete,
-  anticipo,
-  reteFuente,
-  reteIca,
-  descuento,
-  saldo,
-  fecha_saldo,
-}) => {
+const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar }) => {
+  const { manifiestosTodos, loading, error } = extraccionManifiestos();
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  // Filtrar los manifiestos según el estado proporcionado
+  const manifiestosFiltrados = manifiestosTodos.filter(item => item.Estado_mft === estadoFiltrar);
+
   return (
-    <div className="tarjeta-detalle">
-      <p><strong>Manifiesto:</strong> {manifiesto}</p>
-      <p><strong>Fecha:</strong> {fecha.toLocaleDateString()}</p>
-      <p>{origen} - {destino}</p>
-      <p><strong>Placa:</strong> {placa}</p>
-      <p><strong>Flete:</strong> ${flete.toLocaleString()}</p>
-      <p><strong>Anticipo:</strong> ${anticipo.toLocaleString()}</p>
-      <p><strong>Rete Fuente:</strong> ${reteFuente.toLocaleString()}</p>
-      <p><strong>Rete ICA:</strong> ${reteIca.toLocaleString()}</p>
-      <p><strong>Descuentos:</strong> ${descuento.toLocaleString()}</p>
-      <p><strong>Saldo:</strong> ${saldo.toLocaleString()}</p>
-      <p><strong>Fecha Saldo:</strong> {fecha_saldo.toLocaleDateString()}</p>
+    <div className="contenedorManifiestos">
+      {manifiestosFiltrados.length > 0 ? (
+        manifiestosFiltrados.map((item, index) => (
+          <div key={index} className="tarjeta-detalle">
+            <h3>Manifiesto: {item.Manif_numero}</h3>
+            <p><strong>Placa:</strong> {item.Placa}</p>
+            <p><strong>Estado_mft:</strong> {item.Estado_mft}</p>
+            <p><strong>Fecha:</strong> {item.Fecha}</p>
+            <p><strong>Origen:</strong> {item.Origen}</p>
+            <p><strong>Destino:</strong> {item.Destino}</p>
+            <p><strong>MontoTotal:</strong> {item.MontoTotal}</p>
+            <p><strong>ReteFuente:</strong> {item.ReteFuente}</p>
+            <p><strong>ReteICA:</strong> {item.ReteICA}</p>
+            <p><strong>ValorAnticipado:</strong> {item.ValorAnticipado}</p>
+          </div>
+        ))
+      ) : (
+        <p>No hay manifiestos con el estado "{estadoFiltrar}".</p>
+      )}
     </div>
   );
 };

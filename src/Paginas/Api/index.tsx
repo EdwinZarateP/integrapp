@@ -1,102 +1,28 @@
-import { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import { ContextoApp } from '../../Contexto/index';
 
-// Define una interfaz para los datos de la respuesta
-interface ApiResponse {
-  data: any[]; // Cambia 'any[]' por el tipo correcto según tu API
-}
+import extraccionManifiestos from '../../Funciones/ExtraerInfoApi/index';
+import './estilos.css';
 
 const Api2 = () => {
-  const almacenVariables = useContext(ContextoApp);
-
-  const [respuesta, setrespuesta] = useState<ApiResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const loginUrl = "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/auth/loginDbCustomer";
-
-      const loginPayload = {
-        username: "134APIINTEGRA",
-        idname: "eyJpdiI6InZTN1BBeFF6UEhCSno5VUp0bjRWSFE9PSIsInZhbHVlIjoiMmdjY0g3VlpwZDZNbmdQU2JRTlg4bWRmeXlsQzY4TExLSGJYTVpTcitrOD0iLCJtYWMiOiIyNGM0ZjcyODYyZGY3MDdkZWY4M2EzNzI0YzNjMmIzNjgxZTQ2ODVlYzA2MWY2YWViNTRlYjhjMDE5NDY4ZWEzIiwidGFnIjoiIn0",
-        agency: "001",
-        proyect: "1",
-        isGroup: 0
-      };
-
-      try {
-        // Realiza el login
-        const loginrespuesta = await axios.post(loginUrl, loginPayload, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        const token = loginrespuesta.data.data.access_token;
-
-        // Realiza la segunda consulta usando el token
-        const queryUrl = "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/vulcano/customer/00134/index";
-        const queryPayload = {
-          pageSize: 1000,
-          rptId: 26,
-          filter: [
-            {
-              campo: "Fecha",
-              operador: "YEAR>",
-              valor: "2023"
-            },
-            {
-              campo: "Tenedor",
-              operador: "=",
-              valor: almacenVariables?.tenedor // Aquí se utiliza el valor de almacenVariables.tenedor
-            }
-          ]
-        };
-
-        const queryrespuesta = await axios.post(queryUrl, queryPayload, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        // Establece la respuesta en el estado
-        setrespuesta(queryrespuesta.data.data);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Unknown error occurred");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [almacenVariables?.tenedor]); // Agregar almacenVariables.tenedor como dependencia para el efecto
+  const { manifiestosTodos, loading, error } = extraccionManifiestos();
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
-  // Filtrar los elementos únicos basados en Manif_numero
-  const uniqueItems = respuesta?.data.reduce((acc: any[], item) => {
-    // Verifica si el Manif_numero ya existe en el acumulador
-    if (!acc.some(existingItem => existingItem.Manif_numero === item.Manif_numero)) {
-      acc.push(item); // Agrega el nuevo elemento
-    }
-    return acc; // Devuelve el acumulador actualizado
-  }, []) || []; // Maneja el caso en que respuesta.data es undefined
-
   return (
-    <div>
-      <h1>API Respuesta</h1>
-      {/* Si no quieres usar JSON.stringify, puedes iterar sobre la respuesta */}
-      {uniqueItems.map((item, index) => (
-        <div key={index}>
-          <pre>{JSON.stringify(item, null, 2)}</pre> {/* Puedes ajustar esto según tu necesidad */}
+    <div className="contenedorManifiestos">
+      <h1 className="api-title">Estado de los Manifiestos</h1>
+      {manifiestosTodos.map((item, index) => (
+        <div key={index} className="tarjeta-detalle">
+          <h2>Manifiesto {item.Manif_numero}</h2>
+          <p><strong>Placa:</strong> {item.Placa}</p>
+          <p><strong>Estado_mft:</strong> {item.Estado_mft}</p>
+          <p><strong>Fecha:</strong> {item.Fecha}</p>
+          <p><strong>Origen:</strong> {item.Origen}</p>
+          <p><strong>Destino:</strong> {item.Destino}</p>
+          <p><strong>MontoTotal:</strong> {item.MontoTotal}</p>
+          <p><strong>ReteFuente:</strong> {item.ReteFuente}</p>
+          <p><strong>ReteICA:</strong> {item.ReteICA}</p>
+          <p><strong>ValorAnticipado:</strong> {item.ValorAnticipado}</p>
         </div>
       ))}
     </div>

@@ -1,36 +1,35 @@
-import { Link } from 'react-router-dom'; // Importar Link de react-router-dom
+import { Link } from 'react-router-dom'; 
+import { useContext } from 'react';
 import BotonSencillo from '../../Componentes/BotonSencillo';
 import './estilos.css';
 import { FaBell } from "react-icons/fa";
 import { BsPersonCircle } from "react-icons/bs";
 import TarjetaDetalle from '../../Componentes/TarjetaDetalle/index';
+import { ContextoApp } from '../../Contexto/index';
 
 const DetalleManifiestos = () => {
+  const almacenVariables = useContext(ContextoApp);
+  
+  // Función para obtener la primera palabra en mayúscula
+   const obtenerPrimeraPalabra = (nombre: string | undefined): string => {
+    if (!nombre) return 'Usuario';
+    const primeraPalabra = nombre.split(' ')[0]; // Dividir por espacios y obtener la primera palabra
+    return primeraPalabra.charAt(0).toUpperCase() + primeraPalabra.slice(1); // Capitalizar la primera letra
+  };
+
   return (
     <div className='contenedorManifiestos'>
         <div className='cabecera'>
             <div><BsPersonCircle /></div>
-            <div><h1>Hola Nestor</h1></div>
+            <div><h1>Hola {obtenerPrimeraPalabra(almacenVariables?.nombre)}</h1></div>
             <div><FaBell /></div>
         </div>
 
         <div className="contenedorDetalleManifiestos">
 
         <div>        
-          <TarjetaDetalle
-            manifiesto="00035353"
-            fecha={new Date("2024-10-02")} 
-            origen="Funza"
-            destino="Bucaramanga"
-            placa="KOK23L"
-            flete={1200000}
-            anticipo={1000000}
-            reteFuente={10000}
-            reteIca={10000}
-            descuento={50000}
-            saldo={130000}
-            fecha_saldo={new Date("2024-10-02")} 
-          />
+        <TarjetaDetalle estadoFiltrar="LIQUIDADO" />
+
         </div>
        
         {/* Envolver el botón dentro de Link */}

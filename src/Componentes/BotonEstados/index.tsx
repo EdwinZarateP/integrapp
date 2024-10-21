@@ -5,11 +5,11 @@ import './estilos.css';
 // Definir los props que el botón genérico va a recibir
 interface PropiedadesBotonManifiestos {
   nombreEstado: string;
-  cantidad: number;
+  // cantidad: number;
   icono: JSX.Element; 
 }
 
-const BotonEstado: React.FC<PropiedadesBotonManifiestos> = ({ nombreEstado, cantidad, icono }) => {
+const BotonEstado: React.FC<PropiedadesBotonManifiestos> = ({ nombreEstado, icono }) => {
   return (
     <div className='contenedorBotonEstado'>
         <div className='contenedorImagenEstado'>
@@ -17,7 +17,6 @@ const BotonEstado: React.FC<PropiedadesBotonManifiestos> = ({ nombreEstado, cant
         </div>
         <div className='contenedorInformacionEstado'>
             <h2>{nombreEstado}</h2> 
-            {/* <h3>Cantidad inventada ({cantidad})</h3>  */}
         </div>
 
 

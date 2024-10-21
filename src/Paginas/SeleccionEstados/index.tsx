@@ -49,19 +49,19 @@ const EstadosManifiestos = () => {
       <div className="contenedorEstadosManifiestos">
         {/* Envolver cada BotonEstado en un Link que dirija a /DetalleEstados */}
         <Link to="/DetalleEstados" className="linkBoton" onClick={actualizaTransito}>
-          <BotonEstado nombreEstado="En tránsito" cantidad={1} icono={<FaTruck />} />
+          <BotonEstado nombreEstado="En tránsito" icono={<FaTruck />} />
         </Link>
 
         <Link to="/DetalleEstados" className="linkBoton" onClick={actualizaCumplidos}>
-          <BotonEstado nombreEstado="Cumplidos" cantidad={0} icono={<IoDocumentsSharp />} />
+          <BotonEstado nombreEstado="Cumplidos"  icono={<IoDocumentsSharp />} />
         </Link>
 
         <Link to="/DetalleEstados" className="linkBoton" onClick={actualizaLiquidado}>
-          <BotonEstado nombreEstado="Liquidados" cantidad={0} icono={<BiMailSend />} />
+          <BotonEstado nombreEstado="Liquidados"  icono={<BiMailSend />} />
         </Link>
 
         <Link to="/DetalleEstados" className="linkBoton" onClick={actualizaPagado}>
-          <BotonEstado nombreEstado="Pagados" cantidad={0} icono={<FcMoneyTransfer />} />
+          <BotonEstado nombreEstado="Pagados"  icono={<FcMoneyTransfer />} />
         </Link>
 
         {/* Botón de Salir */}

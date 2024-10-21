@@ -95,9 +95,12 @@ const Registro: React.FC = () => {
       lanzarConfetti();
 
       // Esperar 1 segundo para mostrar la explosión y luego navegar
-      setTimeout(() => {
-        navigate('/');
-      }, 1000);
+      // Esperar 1 segundo para mostrar la explosión y luego navegar
+    setTimeout(() => {
+      window.scrollTo(0, 0); // Desplazar a la parte superior
+      navigate('/');
+    }, 1000);
+
 
     } catch (error: unknown) {
       setErrorMensaje(`Error: ${error instanceof Error ? error.message : 'Ocurrió un error inesperado'}`);

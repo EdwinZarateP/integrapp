@@ -118,7 +118,7 @@ const Registro: React.FC = () => {
       {errorMensaje && <p className="error">{errorMensaje}</p>}
 
       <form className="formulario" onSubmit={manejarEnvioFormulario}>
-        {['nombre tenedor', 'cedula tenedor', 'celular', 'email'].map((field) => (
+        {['nombre', 'tenedor', 'celular', 'email'].map((field) => (
           <div className="contenedorInput" key={field}>
             <label htmlFor={field} className="etiqueta">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
             <input

@@ -1,7 +1,5 @@
 import React from 'react';
 import extraccionManifiestos from '../../Funciones/ExtraerInfoApi/index';
-// import BounceLoader  from 'react-spinners/BounceLoader';
-// import BeatLoader from 'react-spinners/BeatLoader';
 import HashLoader from 'react-spinners/HashLoader';
 
 import './estilos.css';
@@ -16,9 +14,7 @@ const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar }) 
 
   if (loading) {
     return (
-      <div className="loading-container">
-        {/* <BounceLoader size={80} color={"rgb(141, 199, 63)"} loading={true} /> */}
-        {/* <BeatLoader size={60} color={"rgb(141, 199, 63)"} loading={true} /> */}
+      <div className="loading-container">    
         <HashLoader size={60} color={"rgb(141, 199, 63)"} loading={true} />
         <p>Cargando datos...</p>
       </div>
@@ -36,15 +32,14 @@ const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar }) 
         manifiestosFiltrados.map((item, index) => (
           <div key={index} className="tarjeta-detalle">
             <h3>Manifiesto: {item.Manif_numero}</h3>
+            <p>{item.Origen} - {item.Destino}</p>
             <p><strong>Placa:</strong> {item.Placa}</p>
-            <p><strong>Estado_mft:</strong> {item.Estado_mft}</p>
+            <p><strong>Estado:</strong> {item.Estado_mft}</p>
             <p><strong>Fecha:</strong> {item.Fecha}</p>
-            <p><strong>Origen:</strong> {item.Origen}</p>
-            <p><strong>Destino:</strong> {item.Destino}</p>
-            <p><strong>MontoTotal:</strong> {item.MontoTotal}</p>
-            <p><strong>ReteFuente:</strong> {item.ReteFuente}</p>
-            <p><strong>ReteICA:</strong> {item.ReteICA}</p>
-            <p><strong>ValorAnticipado:</strong> {item.ValorAnticipado}</p>
+            <p><strong>Flete:</strong> {parseFloat(item.MontoTotal).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+            <p><strong>ReteFuente:</strong> {parseFloat(item.ReteFuente).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+            <p><strong>ReteICA:</strong> {parseFloat(item.ReteICA).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+            <p><strong>Anticipo:</strong> {parseFloat(item.ValorAnticipado).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>            
           </div>
         ))
       ) : (

@@ -120,12 +120,14 @@ const Registro: React.FC = () => {
       <form className="formulario" onSubmit={manejarEnvioFormulario}>
         {['nombre', 'tenedor', 'celular', 'email'].map((field) => (
           <div className="contenedorInput" key={field}>
-            <label htmlFor={field} className="etiqueta">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+            <label htmlFor={field} className="etiqueta">
+              {field === 'tenedor' ? 'Cédula o NIT' : field.charAt(0).toUpperCase() + field.slice(1)}
+            </label>
             <input
               id={field}
               name={field}
               type={field === 'email' ? 'email' : 'text'}
-              placeholder={`Digite ${field}`}
+              placeholder={field === 'tenedor' ? 'Digite su Cédula o NIT' : `Digite ${field}`}
               className="input"
               value={almacenVariables ? almacenVariables[field as ContextKeys] : ''} // Acceso seguro
               onChange={manejarCambio}
@@ -133,6 +135,7 @@ const Registro: React.FC = () => {
             />
           </div>
         ))}
+
 
         <div className="contenedorInput">
           <label htmlFor="password" className="etiqueta">Clave</label>

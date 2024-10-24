@@ -23,7 +23,7 @@ const DetalleManifiestos = () => {
     <div className='contenedorManifiestos'>
       <div className='cabecera'>
         <div><BsPersonCircle /></div>
-        <div><h1>Hola {obtenerPrimeraPalabra(almacenVariables?.nombre)}</h1></div>
+        <div><h5>ESTADO {obtenerPrimeraPalabra(almacenVariables?.estado)}</h5></div>
         <div><FaBell /></div>
       </div>
 

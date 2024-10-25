@@ -41,12 +41,13 @@ const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar }) 
             <h3>Manifiesto: {item.Manif_numero}</h3>
             <p>{item.Origen} - {item.Destino}</p>
             <p><strong>Placa:</strong> {item.Placa}</p>
-            <p><strong>Estado:</strong> {item.Estado_mft}</p>
+            {/* <p><strong>Estado:</strong> {item.Estado_mft}</p> */}
             <p><strong>Fecha:</strong> {new Date(item.Fecha).toLocaleDateString('es-CO')}</p>
             <p><strong>Flete:</strong> {parseFloat(item.MontoTotal).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
             <p><strong>ReteFuente:</strong> {parseFloat(item.ReteFuente).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
             <p><strong>ReteICA:</strong> {parseFloat(item.ReteICA).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
             <p><strong>Anticipo:</strong> {parseFloat(item.ValorAnticipado).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>            
+            <p><strong>Fecha Saldo:</strong> {new Date(item.FechaPagoSaldo).toLocaleDateString('es-CO')}</p>
           </div>
         ))
       ) : (

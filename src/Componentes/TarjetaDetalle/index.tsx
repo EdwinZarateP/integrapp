@@ -26,16 +26,23 @@ const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar }) 
   // Filtrar los manifiestos según el estado proporcionado
   const manifiestosFiltrados = manifiestosTodos.filter(item => item.Estado_mft === estadoFiltrar);
 
+  // Ordenar los manifiestos filtrados por el campo Fecha en orden descendente
+  const manifiestosOrdenados = manifiestosFiltrados.sort((a, b) => {
+    const fechaA = new Date(a.Fecha); // Convertir a objeto Date
+    const fechaB = new Date(b.Fecha); // Convertir a objeto Date
+    return fechaB.getTime() - fechaA.getTime(); // Comparar las fechas para orden descendente
+  });
+
   return (
     <div className="contenedorManifiestos">
-      {manifiestosFiltrados.length > 0 ? (
-        manifiestosFiltrados.map((item, index) => (
+      {manifiestosOrdenados.length > 0 ? (
+        manifiestosOrdenados.map((item, index) => (
           <div key={index} className="tarjeta-detalle">
             <h3>Manifiesto: {item.Manif_numero}</h3>
             <p>{item.Origen} - {item.Destino}</p>
             <p><strong>Placa:</strong> {item.Placa}</p>
             <p><strong>Estado:</strong> {item.Estado_mft}</p>
-            <p><strong>Fecha:</strong> {item.Fecha}</p>
+            <p><strong>Fecha:</strong> {new Date(item.Fecha).toLocaleDateString('es-CO')}</p>
             <p><strong>Flete:</strong> {parseFloat(item.MontoTotal).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
             <p><strong>ReteFuente:</strong> {parseFloat(item.ReteFuente).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
             <p><strong>ReteICA:</strong> {parseFloat(item.ReteICA).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>

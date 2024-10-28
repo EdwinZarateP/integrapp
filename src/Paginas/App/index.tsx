@@ -6,6 +6,7 @@ import DetalleEstados from '../DetalleEstados/index';
 import Api2 from '../Api/autenticar';
 import Olvidoclave from '../Olvidoclave/index';
 import NoEncontrado from '../NoEncontrado/index';
+import Pruebas from '../Pruebas/index';
 import { ProveedorVariables } from '../../Contexto/index';
 
 const App: React.FC = () => {
@@ -21,6 +22,7 @@ const App: React.FC = () => {
         <Route path="/SeleccionEstados" element={<EstadosManifiestos />} />
         <Route path="/DetalleEstados" element={<DetalleEstados />} />
         <Route path="/Api2" element={<Api2 />} />
+        <Route path="/Pruebas" element={<Pruebas />} />
         <Route path="*" element={<NoEncontrado />} />
       </Routes>
     </Router>

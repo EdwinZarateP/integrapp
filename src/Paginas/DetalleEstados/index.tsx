@@ -23,13 +23,14 @@ const DetalleManifiestos = () => {
     <div className='contenedorManifiestos'>
       <div className='cabecera'>
         <div><BsPersonCircle /></div>
-        <div><h5>ESTADO {obtenerPrimeraPalabra(almacenVariables?.estado)}</h5></div>
+        <div><h5>{obtenerPrimeraPalabra(almacenVariables?.estado)}S</h5></div>
         <div><FaBell /></div>
       </div>
 
       <div className="contenedorDetalleManifiestos">
         <div>        
-        <TarjetaDetalle estadoFiltrar={almacenVariables?.estado || ''} />
+        <TarjetaDetalle estadoFiltrar={almacenVariables?.estado || ''}
+        tenedor={almacenVariables?.tenedor || ''} />
 
         </div>
 

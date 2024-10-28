@@ -1,5 +1,5 @@
 /* Estilo para el contenedor principal */
-.contenedorManifiestos {
+.contenedorManifiestos1 {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -12,7 +12,7 @@
 }
 
 /* Título principal */
-.contenedorManifiestos h1 {
+.contenedorManifiestos1 h1 {
     font-size: 2rem;
     color: #333;
     text-align: left;
@@ -78,5 +78,9 @@
 
 /* Asegura que el contenido no quede oculto debajo de la cabecera */
 .contenedorManifiestos {
-    padding-top: 100px; /* Deja espacio para la cabecera fija */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0px; /* Deja espacio para la cabecera fija */
+
 }

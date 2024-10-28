@@ -39,7 +39,7 @@ const EstadosManifiestos = () => {
 
 
   return (
-    <div className='contenedorManifiestos'>
+    <div className='contenedorManifiestos1'>
       <div className='cabecera'>
         {/* <div><BsPersonCircle /></div> */}
         <div><h1>Hola {obtenerPrimeraPalabra(almacenVariables?.nombre)}</h1></div>

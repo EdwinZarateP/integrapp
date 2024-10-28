@@ -18,9 +18,9 @@ const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar, te
   useEffect(() => {
     const fetchSaldos = async () => {
       try {
-        console.log("Consultando saldos para tenedor:", tenedor);
+        // console.log("Consultando saldos para tenedor:", tenedor);
         const result = await consultaSaldos(tenedor);
-        console.log("Saldos obtenidos:", result);
+        // console.log("Saldos obtenidos:", result);
         setSaldos(result); // Guardamos los saldos en el estado
       } catch (err) {
         console.error("Error al obtener saldos:", err);

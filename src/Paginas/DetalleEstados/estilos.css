@@ -1,82 +1,104 @@
-/* Estilo para el contenedor principal */
-.contenedorManifiestos {
+/* Contenedor principal */
+.detalle-manifiestos {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     padding: 20px;
     font-family: 'Arial', sans-serif;
     min-height: 100vh;
-    background-color: #f4f4f9; /* Fondo ligero para mayor contraste */
+    background-color: #f4f4f9;
+    box-sizing: border-box;
+    padding-top: 80px; /* Espacio para la cabecera fija */
+}
+
+/* Cabecera fija */
+.detalle-manifiestos__cabecera {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
     box-sizing: border-box;
 }
 
-/* Título principal */
-.contenedorManifiestos h1 {
+.detalle-manifiestos__cabecera h5 {
     font-size: 2rem;
     color: #333;
-    text-align: left;
-    width: 100%;
-    max-width: 400px; /* Limita el ancho del título */
+    margin: 0;
 }
 
-
-
-/* Contenedor para los estados de manifiestos */
-.contenedorEstadosManifiestos {
+/* Contenedor de contenido principal */
+.detalle-manifiestos__contenido {
     width: 100%;
     max-width: 400px;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 10px;
-    background-color: #ffffff; /* Fondo blanco para mayor claridad */
+    background-color: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra más definida */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
+}
+
+/* Selector de placas */
+.detalle-manifiestos__selector-placas {
+    width: 100%;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.detalle-manifiestos__selector-placas label {
+    font-size: 1rem;
+    color: #555;
+    margin-right: 10px;
+}
+
+.detalle-manifiestos__selector-placas select {
+    padding: 5px 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    width: 100%;
+}
+
+/* Contenedor de la tarjeta de detalles */
+.detalle-manifiestos__tarjeta {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+/* Estilo para el mensaje de error */
+.detalle-manifiestos__error {
+    color: #d9534f;
+    font-size: 1rem;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Estilo para el mensaje de carga */
+.detalle-manifiestos__loading {
+    font-size: 1rem;
+    color: #777;
+    text-align: center;
+    margin: 20px 0;
 }
 
 /* Estilo para el enlace del botón */
-.linkBoton {
+.detalle-manifiestos__link {
     width: 100%;
     max-width: 400px;
-    /* margin-top: 20px; */
     text-align: center;
     text-decoration: none;
     display: flex;
     justify-content: center;
-    color: black;
-}
-
-
-/* Cabecera fija en la parte superior */
-.cabecera {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #ffffff;
-    padding: 0px 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-    border-bottom: 1px solid #e0e0e0; /* Añadir borde inferior */
-    padding:20px; /* Añadir margen inferior para separación */
-}
-
-/* Estilo para los elementos dentro de la cabecera */
-.cabecera div {
-    display: flex;
-    align-items: center;
-    font-size: 2rem;
-    color: #333;
-}
-
-/* Asegura que el contenido no quede oculto debajo de la cabecera */
-.contenedorManifiestos {
-    padding-top: 50px; /* Deja espacio para la cabecera fija */
 }

@@ -7,8 +7,8 @@ import { BiMailSend } from "react-icons/bi";
 import { FaTruck } from "react-icons/fa6";
 import { IoDocumentsSharp } from "react-icons/io5";
 import { FcMoneyTransfer } from "react-icons/fc";
-import { FaBell } from "react-icons/fa";
-import { BsPersonCircle } from "react-icons/bs";
+// import { FaBell } from "react-icons/fa";
+// import { BsPersonCircle } from "react-icons/bs";
 import { ContextoApp } from '../../Contexto/index';
 
 const EstadosManifiestos = () => {
@@ -41,9 +41,9 @@ const EstadosManifiestos = () => {
   return (
     <div className='contenedorManifiestos'>
       <div className='cabecera'>
-        <div><BsPersonCircle /></div>
+        {/* <div><BsPersonCircle /></div> */}
         <div><h1>Hola {obtenerPrimeraPalabra(almacenVariables?.nombre)}</h1></div>
-        <div><FaBell /></div>
+        {/* <div><FaBell /></div> */}
       </div>
 
       <div className="contenedorEstadosManifiestos">

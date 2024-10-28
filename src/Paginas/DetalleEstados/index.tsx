@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import BotonSencillo from '../../Componentes/BotonSencillo';
 import './estilos.css';
-import { FaBell } from "react-icons/fa";
-import { BsPersonCircle } from "react-icons/bs";
+// import { FaBell } from "react-icons/fa";
+// import { BsPersonCircle } from "react-icons/bs";
 import TarjetaDetalle from '../../Componentes/TarjetaDetalle/index';
 import { ContextoApp } from '../../Contexto/index';
 
@@ -22,9 +22,9 @@ const DetalleManifiestos = () => {
   return (
     <div className='contenedorManifiestos'>
       <div className='cabecera'>
-        <div><BsPersonCircle /></div>
+        {/* <div><BsPersonCircle /></div> */}
         <div><h5>{obtenerPrimeraPalabra(almacenVariables?.estado)}S</h5></div>
-        <div><FaBell /></div>
+        {/* <div><FaBell /></div> */}
       </div>
 
       <div className="contenedorDetalleManifiestos">

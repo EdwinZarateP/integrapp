@@ -1,34 +1,32 @@
-import consultaSaldos from '../../Funciones/ExtraeSaldos/index'; // Asegúrate de que la ruta sea correcta
+import consultaSaldos from '../../Funciones/ExtraeSaldos/index';
 import React, { useEffect, useState } from 'react';
 import extraccionManifiestos from '../../Funciones/ExtraerInfoApi/index';
 import HashLoader from 'react-spinners/HashLoader';
 
 import './estilos.css';
 
-// Define las propiedades que el componente va a recibir
 interface PropiedadesTarjetaDetalle {
-  estadoFiltrar: string; // Parámetro para filtrar el estado
-  tenedor: string; // Agregamos el parámetro tenedor
+  estadoFiltrar: string;
+  tenedor: string;
+  placaFiltrar: string; // Nueva prop para filtrar por placa
 }
 
-const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar, tenedor }) => {
+const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar, tenedor, placaFiltrar }) => {
   const { manifiestosTodos, loading, error } = extraccionManifiestos();
-  const [saldos, setSaldos] = useState<any[]>([]); // Estado para almacenar los saldos
+  const [saldos, setSaldos] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchSaldos = async () => {
       try {
-        // console.log("Consultando saldos para tenedor:", tenedor);
         const result = await consultaSaldos(tenedor);
-        // console.log("Saldos obtenidos:", result);
-        setSaldos(result); // Guardamos los saldos en el estado
+        setSaldos(result);
       } catch (err) {
         console.error("Error al obtener saldos:", err);
       }
     };
 
     fetchSaldos();
-  }, [tenedor]); // Solo se ejecuta cuando el tenedor cambia
+  }, [tenedor]);
 
   if (loading) {
     return (
@@ -41,24 +39,22 @@ const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar, te
 
   if (error) return <p>Error: {error}</p>;
 
-  // Filtrar los manifiestos según el estado proporcionado
-  const manifiestosFiltrados = manifiestosTodos.filter(item => item.Estado_mft === estadoFiltrar);
+  // Filtrar los manifiestos según el estado y la placa proporcionados
+  const manifiestosFiltrados = manifiestosTodos
+    .filter(item => item.Estado_mft === estadoFiltrar && (placaFiltrar === '' || item.Placa === placaFiltrar));
 
   // Ordenar los manifiestos filtrados por el campo Fecha en orden descendente
   const manifiestosOrdenados = manifiestosFiltrados.sort((a, b) => {
-    const fechaA = new Date(a.Fecha); // Convertir a objeto Date
-    const fechaB = new Date(b.Fecha); // Convertir a objeto Date
-    return fechaB.getTime() - fechaA.getTime(); // Comparar las fechas para orden descendente
+    const fechaA = new Date(a.Fecha);
+    const fechaB = new Date(b.Fecha);
+    return fechaB.getTime() - fechaA.getTime();
   });
 
   return (
     <div className="contenedorManifiestos">
       {manifiestosOrdenados.length > 0 ? (
         manifiestosOrdenados.map((item, index) => {
-          // Busca el saldo correspondiente al manifiesto
-          const saldoItem = saldos.find(saldo => saldo.Manifiesto === item.Manif_numero) || {}; // Si no encuentra, usa un objeto vacío
-          
-          // Establece mostrarFechaPagoSaldo según el estado del manifiesto
+          const saldoItem = saldos.find(saldo => saldo.Manifiesto === item.Manif_numero) || {};
           const mostrarFechaPagoSaldo = item.Estado_mft === 'LIQUIDADO';
 
           return (
@@ -67,15 +63,15 @@ const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar, te
               <p>{item.Origen} - {item.Destino}</p>
               <p><strong>Placa:</strong> {item.Placa}</p>
               <p><strong>Fecha:</strong> {new Date(item.Fecha).toLocaleDateString('es-CO')}</p>
-              <p><strong>Flete:</strong> {parseFloat(item.MontoTotal).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
-              <p><strong>ReteFuente:</strong> {parseFloat(item.ReteFuente).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
-              <p><strong>ReteICA:</strong> {parseFloat(item.ReteICA).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
-              <p><strong>Anticipo:</strong> {parseFloat(item.ValorAnticipado).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>                        
+              <p><strong>Flete:</strong> {parseFloat(item.MontoTotal).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
+              <p><strong>ReteFuente:</strong> {parseFloat(item.ReteFuente).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
+              <p><strong>ReteICA:</strong> {parseFloat(item.ReteICA).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
+              <p><strong>Anticipo:</strong> {parseFloat(item.ValorAnticipado).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
               {mostrarFechaPagoSaldo && (
                 <>
-                  <p><strong>Saldo:</strong> {parseFloat(saldoItem.Saldo || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+                  <p><strong>Saldo:</strong> {parseFloat(saldoItem.Saldo || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
                   <p><strong>Fecha pago saldo:</strong> {saldoItem.Fecha_saldo ? new Date(saldoItem.Fecha_saldo).toLocaleDateString('es-CO') : 'Por definir'}</p>
-                  <p><strong>Deducciones:</strong> {parseFloat(saldoItem.Deducciones || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+                  <p><strong>Deducciones:</strong> {parseFloat(saldoItem.Deducciones || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
                   <p><strong>Causal:</strong> {saldoItem.causal || 'N/A'}</p>
                 </>
               )}
@@ -83,7 +79,7 @@ const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar, te
           );
         })
       ) : (
-        <p>No hay manifiestos con el estado "{estadoFiltrar}".</p>
+        <p>No hay manifiestos con el estado "{estadoFiltrar}" y la placa "{placaFiltrar}".</p>
       )}
     </div>
   );

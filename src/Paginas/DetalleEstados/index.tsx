@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import BotonSencillo from '../../Componentes/BotonSencillo';
 import './estilos.css';
 import TarjetaDetalle from '../../Componentes/TarjetaDetalle/index';
@@ -9,6 +9,7 @@ import extraccionManifiestos from '../../Funciones/ExtraerInfoApi/index';
 const DetalleManifiestos = () => {
   const almacenVariables = useContext(ContextoApp);
   const { manifiestosTodos, loading, error } = extraccionManifiestos();
+  const [placaSeleccionada, setPlacaSeleccionada] = useState(''); // Estado para la placa seleccionada
 
   // Obtiene la primera palabra del nombre en mayúscula
   const obtenerPrimeraPalabra = (nombre = '') => 
@@ -33,7 +34,13 @@ const DetalleManifiestos = () => {
           {!loading && (
             <div className="detalle-manifiestos__selector-placas">
               <label htmlFor="placas">Placa:</label>
-              <select id="placas" name="placas">
+              <select 
+                id="placas" 
+                name="placas" 
+                value={placaSeleccionada} 
+                onChange={(e) => setPlacaSeleccionada(e.target.value)} // Actualiza la placa seleccionada
+              >
+                <option value="">Todas</option>
                 {placasUnicas.map((placa, index) => (
                   <option key={index} value={placa}>
                     {placa}
@@ -43,11 +50,12 @@ const DetalleManifiestos = () => {
             </div>
           )}
 
-          {/* Componente de detalle */}
+          {/* Componente de detalle, pasa la placa seleccionada como prop */}
           <div className="detalle-manifiestos__tarjeta">
             <TarjetaDetalle 
               estadoFiltrar={almacenVariables?.estado || ''}
               tenedor={almacenVariables?.tenedor || ''} 
+              placaFiltrar={placaSeleccionada} // Nueva prop para filtrar por placa
             />
           </div>
 

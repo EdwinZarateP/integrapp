@@ -33,9 +33,9 @@ const EstadosManifiestos = () => {
     almacenVariables?.setEstado("LIQUIDADO"); // Actualizar el estado en el contexto
   };
 
-  const actualizaPagado = () => {
-    almacenVariables?.setEstado("ANULADO"); // Actualizar el estado en el contexto
-  };
+  // const actualizaPagado = () => {
+  //   almacenVariables?.setEstado("ANULADO"); // Actualizar el estado en el contexto
+  // };
 
 
   return (

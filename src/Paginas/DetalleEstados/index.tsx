@@ -55,7 +55,7 @@ const DetalleManifiestos = () => {
             <TarjetaDetalle 
               estadoFiltrar={almacenVariables?.estado || ''}
               tenedor={almacenVariables?.tenedor || ''} 
-              placaFiltrar={placaSeleccionada} // Nueva prop para filtrar por placa
+              placaFiltrar={placaSeleccionada} 
             />
           </div>
 

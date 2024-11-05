@@ -53,7 +53,7 @@ const Registro: React.FC = () => {
   // Función para lanzar confetti (explosión)
   const lanzarConfetti = () => {
     confetti({
-      particleCount: 200, // Número de piezas de confeti
+      particleCount: 400, // Número de piezas de confeti
       spread: 70,         // Ángulo de dispersión
       origin: { y: 0.6 }, // Ajuste para la altura de la explosión
     });
@@ -94,12 +94,11 @@ const Registro: React.FC = () => {
       // Lanzar confetti (explosión)
       lanzarConfetti();
 
-      // Esperar 1 segundo para mostrar la explosión y luego navegar
-      // Esperar 1 segundo para mostrar la explosión y luego navegar
+      // Esperar 1 segundo para mostrar la explosión y luego navegar      
     setTimeout(() => {
       window.scrollTo(0, 0); // Desplazar a la parte superior
       navigate('/');
-    }, 1000);
+    }, 0);
 
 
     } catch (error: unknown) {

@@ -60,9 +60,9 @@ const EstadosManifiestos = () => {
           <BotonEstado nombreEstado="Liquidados"  icono={<BiMailSend />} />
         </Link>
 
-        <Link to="/DetalleEstados" className="linkBoton" onClick={actualizaPagado}>
+        {/* <Link to="/DetalleEstados" className="linkBoton" onClick={actualizaPagado}>
           <BotonEstado nombreEstado="Pagados"  icono={<FcMoneyTransfer />} />
-        </Link>
+        </Link> */}
 
         {/* Botón de Salir */}
         <Link to="/" className='linkBoton'>

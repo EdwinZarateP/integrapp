@@ -6,7 +6,7 @@ import './estilos.css';
 import { BiMailSend } from "react-icons/bi";
 import { FaTruck } from "react-icons/fa6";
 import { IoDocumentsSharp } from "react-icons/io5";
-import { FcMoneyTransfer } from "react-icons/fc";
+// import { FcMoneyTransfer } from "react-icons/fc";
 // import { FaBell } from "react-icons/fa";
 // import { BsPersonCircle } from "react-icons/bs";
 import { ContextoApp } from '../../Contexto/index';

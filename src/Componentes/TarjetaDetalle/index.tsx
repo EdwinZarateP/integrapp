@@ -30,7 +30,7 @@ const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar, te
 
   if (loading) {
     return (
-      <div className="loading-container">    
+      <div className="loading-container">
         <HashLoader size={60} color={"rgb(141, 199, 63)"} loading={true} />
         <p>Cargando datos...</p>
       </div>
@@ -63,15 +63,15 @@ const TarjetaDetalle: React.FC<PropiedadesTarjetaDetalle> = ({ estadoFiltrar, te
               <p>{item.Origen} - {item.Destino}</p>
               <p><strong>Placa:</strong> {item.Placa}</p>
               <p><strong>Fecha:</strong> {new Date(item.Fecha).toLocaleDateString('es-CO')}</p>
-              <p><strong>Flete:</strong> {parseFloat(item.MontoTotal).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
-              <p><strong>ReteFuente:</strong> {parseFloat(item.ReteFuente).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
-              <p><strong>ReteICA:</strong> {parseFloat(item.ReteICA).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
-              <p><strong>Anticipo:</strong> {parseFloat(item.ValorAnticipado).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
+              <p><strong>Flete:</strong> {parseFloat(item.MontoTotal).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}</p>
+              <p><strong>ReteFuente:</strong> {parseFloat(item.ReteFuente).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}</p>
+              <p><strong>ReteICA:</strong> {parseFloat(item.ReteICA).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}</p>
+              <p><strong>Anticipo:</strong> {parseFloat(item.ValorAnticipado).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}</p>
               {mostrarFechaPagoSaldo && (
                 <>
-                  <p><strong>Saldo:</strong> {parseFloat(saldoItem.Saldo || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
+                  <p><strong>Saldo:</strong> {parseFloat(saldoItem.Saldo || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}</p>
                   <p><strong>Fecha pago saldo:</strong> {saldoItem.Fecha_saldo ? new Date(saldoItem.Fecha_saldo).toLocaleDateString('es-CO') : 'Por definir'}</p>
-                  <p><strong>Deducciones:</strong> {parseFloat(saldoItem.Deducciones || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}</p>
+                  <p><strong>Deducciones:</strong> {parseFloat(saldoItem.Deducciones || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}</p>
                   <p><strong>Causal:</strong> {saldoItem.causal || 'N/A'}</p>
                 </>
               )}

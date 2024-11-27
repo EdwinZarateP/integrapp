@@ -1,0 +1,58 @@
+/* Contenedor principal */
+.TarjetaResumen-contenedor {
+  border: 1px solid #dcdcdc; /* Color de borde más sutil */
+  border-radius: 12px; /* Bordes redondeados */
+  padding: 20px; /* Espaciado interno */
+  min-width: 280px; /* Ancho mínimo más amplio */
+  max-width: 300px;
+  text-align: center;
+  font-family: 'Arial', sans-serif; /* Asegurar una fuente limpia */
+  background-color: #f9f9f9; /* Fondo ligeramente gris */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Sombra más definida */
+  margin-bottom: 10px; /* Espaciado entre tarjetas */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves */
+}
+
+/* Hover para efecto dinámico */
+.TarjetaResumen-contenedor:hover {
+  transform: translateY(-1px); /* Efecto de levantamiento */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
+}
+
+/* Título del manifiesto */
+.TarjetaResumen-titulo {
+  font-size: 20px; /* Aumenta el tamaño */
+  font-weight: 700; /* Más énfasis */
+  margin-bottom: 12px; /* Más espacio */
+  color: #4a4a8a; /* Color principal profesional */
+  text-transform: uppercase; /* Letras en mayúsculas */
+}
+
+/* Origen y destino */
+.TarjetaResumen-origenDestino {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 15px;
+  color: #555;
+  letter-spacing: 0.5px; /* Espaciado entre letras */
+}
+
+/* Detalles individuales */
+.TarjetaResumen-detalle {
+  font-size: 15px; /* Un poco más grande */
+  margin: 6px 0;
+  color: #333;
+  line-height: 1.6; /* Más espacio entre líneas */
+}
+
+.TarjetaResumen-detalle strong {
+  color: #4a4a8a; /* Resaltar títulos */
+}
+
+/* Estilo responsivo */
+@media (max-width: 768px) {
+  .TarjetaResumen-contenedor {
+    width: 95%; 
+    min-width: 300px;
+  }
+}

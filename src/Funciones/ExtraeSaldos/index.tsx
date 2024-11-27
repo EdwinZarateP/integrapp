@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 const consultaSaldos = async (tenedor: string): Promise<any[]> => {
     try {
         const response = await axios.get(`https://integrappi.onrender.com/manifiestos/tenedor/${tenedor}`);

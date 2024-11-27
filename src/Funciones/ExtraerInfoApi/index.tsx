@@ -74,7 +74,7 @@ const extraccionManifiestos = () => {
             {
               campo: "Tenedor",
               operador: "=",
-              valor: almacenVariables?.tenedor // Aquí se utiliza el valor de almacenVariables.tenedor
+              valor: almacenVariables?.tenedor 
             }
           ]
         };

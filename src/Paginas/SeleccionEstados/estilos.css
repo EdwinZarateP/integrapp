@@ -1,86 +1,72 @@
-/* Estilo para el contenedor principal */
-.contenedorManifiestos1 {
+/* Contenedor principal */
+.contenedorManifiestos-principal {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Cabecera */
+  .contenedorManifiestos-cabecera {
+    display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    font-family: 'Arial', sans-serif;
-    min-height: 100vh;
-    background-color: #f4f4f9; /* Fondo ligero para mayor contraste */
-    box-sizing: border-box;
-}
-
-/* Título principal */
-.contenedorManifiestos1 h1 {
-    font-size: 2rem;
-    color: #333;
-    text-align: left;
-    width: 100%;
-    max-width: 400px; /* Limita el ancho del título */
-}
-
-
-
-/* Contenedor para los estados de manifiestos */
-.contenedorEstadosManifiestos {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  .contenedorManifiestos-logo {
+    width: 50px;
+    height: auto;
+  }
+  
+  .contenedorManifiestos-titulo{
     width: 100%;
     max-width: 400px;
     display: flex;
+    font-size: 1rem;
+    justify-content: center;
+  }
+
+  .contenedorManifiestos-titulo :nth-child(2) {
+    color:rgb(141, 199, 63);
+  }
+  
+  /* Contenedor de los botones */
+  .contenedorManifiestos-estados {
+    display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px;
-    background-color: #ffffff; /* Fondo blanco para mayor claridad */
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra más definida */
-    box-sizing: border-box;
-    margin-bottom: 40px; /* Añadir espacio entre el contenedor y el botón */
-}
-
-/* Estilo para el enlace del botón */
-.linkBoton {
     width: 100%;
     max-width: 400px;
-    /* margin-top: 20px; */
-    text-align: center;
+    margin-top: 20px;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Botones */
+  .contenedorManifiestos-linkBoton {
+    width: 100%;
+    margin-bottom: 15px;
     text-decoration: none;
     display: flex;
     justify-content: center;
-    color: black;
-}
-
-
-/* Cabecera fija en la parte superior */
-.cabecera {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #ffffff;
-    padding: 0px 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-    border-bottom: 1px solid #e0e0e0; /* Añadir borde inferior */
-    padding:20px; /* Añadir margen inferior para separación */
-}
-
-/* Estilo para los elementos dentro de la cabecera */
-.cabecera div {
-    display: flex;
-    align-items: center;
-    font-size: 2rem;
-    color: #333;
-}
-
-/* Asegura que el contenido no quede oculto debajo de la cabecera */
-.contenedorManifiestos {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 0px; /* Deja espacio para la cabecera fija */
-
-}
+  }
+  
+  .contenedorManifiestos-linkBoton:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Estilo para títulos y botones en dispositivos móviles */
+  @media (max-width: 600px) {
+  
+    .contenedorManifiestos-estados {
+      width: 100%;
+    }
+  }
+  

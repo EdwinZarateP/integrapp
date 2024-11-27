@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../../Imagenes/albatros.png'; // Importación del logo
+import logo from '../../Imagenes/albatros.png';
 import './estilos.css'; // Importación del archivo CSS
 import BotonSencillo from '../../Componentes/BotonSencillo';
 
@@ -33,8 +33,8 @@ const Olvidoclave: React.FC = () => {
 
         {/* <button type="submit" className="boton">Restaurar clave</button> */}
         <BotonSencillo type="submit" texto="Recuperar" colorClass="negro"/>
-
       </form>
+
 
     </div>
   );

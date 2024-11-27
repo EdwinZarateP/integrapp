@@ -36,6 +36,16 @@ interface ContextProps {
   // Agrega estado
   estado: string;
   setEstado: Dispatch<SetStateAction<string>>;
+
+  //Diccionarios de las apis:
+
+  DiccionarioManifiestosTodos: any[]; // Ajusta el tipo según tus necesidades
+  setDiccionarioManifiestosTodos: Dispatch<SetStateAction<any[]>>;
+  DiccionarioManifiestosPagos: any[]; // Ajusta el tipo según tus necesidades
+  setDiccionarioManifiestosPagos: Dispatch<SetStateAction<any[]>>;
+  DiccionarioSaldos: any[];
+  setDiccionarioSaldos: Dispatch<SetStateAction<any[]>>;
+  
 }
 
 // Crea el contexto con un valor inicial undefined
@@ -70,6 +80,11 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
   // Estado para la respuesta
   const [estado, setEstado] = useState('');
 
+  //Diccionarios de las apis
+  const [DiccionarioManifiestosTodos, setDiccionarioManifiestosTodos] = useState<any[]>([]);
+  const [DiccionarioManifiestosPagos, setDiccionarioManifiestosPagos] = useState<any[]>([]);
+  const [DiccionarioSaldos, setDiccionarioSaldos] = useState<any[]>([]);
+
   //-------------------------------------------------------------------------------------
   // 3. Crea el objeto de contexto con los valores y funciones necesarios que quieres proveer
   //-------------------------------------------------------------------------------------
@@ -98,7 +113,15 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
 
     // Agrega estado
     estado,
-    setEstado
+    setEstado,
+
+    //Diccionarios apis
+    DiccionarioManifiestosTodos,
+    setDiccionarioManifiestosTodos,
+    DiccionarioManifiestosPagos,
+    setDiccionarioManifiestosPagos,
+    DiccionarioSaldos,
+    setDiccionarioSaldos
   };
   
   // Renderiza el proveedor de contexto con el valor proporcionado

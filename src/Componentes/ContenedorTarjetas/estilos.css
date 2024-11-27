@@ -1,0 +1,47 @@
+/* Contenedor principal */
+.ContenedorTarjetas-contenedor {
+  margin: 20px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 95%;
+  margin-left: auto; /* Centra horizontalmente */
+  margin-right: auto; /* Centra horizontalmente */
+  font-family: Arial, sans-serif;
+}
+
+/* Título principal */
+.ContenedorTarjetas-titulo {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-align: center;
+  color: #333;
+}
+
+/* Contenedor flexible */
+.ContenedorTarjetas-grid {
+  display: flex; /* Activa Flexbox */
+  flex-wrap: wrap; /* Permite que las tarjetas se ajusten en varias filas */
+  justify-content: center; /* Centra las tarjetas horizontalmente */
+  gap: 20px; /* Espaciado entre tarjetas */
+}
+
+/* Mensaje cuando no hay datos */
+.ContenedorTarjetas-sinDatos {
+  font-size: 16px;
+  color: #777;
+  text-align: center;
+  margin-top: 20px;
+  width: 100%; 
+
+}
+
+/* Tarjetas individuales */
+.TarjetaResumen-contenedor {
+  flex: 1 1 calc(300px - 20px); /* Cada tarjeta tendrá un ancho mínimo de 300px */
+  max-width: 300px; /* Limita el ancho máximo */
+  box-sizing: border-box; /* Incluye padding y border en el tamaño */
+}

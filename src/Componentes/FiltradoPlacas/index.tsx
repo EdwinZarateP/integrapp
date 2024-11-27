@@ -32,9 +32,7 @@ const FiltradoPlacas: React.FC = () => {
         onChange={manejarCambio}
         defaultValue="" // Valor predeterminado
       >
-        <option value="" disabled>
-          -- Seleccionar --
-        </option>
+        <option value="">-- Quitar Filtro --</option> {/* Opción para quitar el filtro */}
         {placasUnicas.map((placa, index) => (
           <option key={index} value={placa}>
             {placa}

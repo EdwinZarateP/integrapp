@@ -15,7 +15,7 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
   const manifiestosFiltrados = manifiestos.filter((manifiesto) => {
     const cumpleEstado = manifiesto.Estado_mft === almacenVariables?.estado;
     const cumplePlaca =
-      !almacenVariables?.placa || manifiesto.Placa === almacenVariables.placa;
+  !almacenVariables?.placa || manifiesto.Placa === almacenVariables.placa;
     return cumpleEstado && cumplePlaca;
   });
 

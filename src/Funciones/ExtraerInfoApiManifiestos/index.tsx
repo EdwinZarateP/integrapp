@@ -2,7 +2,7 @@ import { useContext } from "react";
 import axios from "axios";
 import { ContextoApp } from "../../Contexto/index";
 
-// Define una interfaz para los manifiestos
+// Define una interfaz para los manifiestos después de procesarlos
 interface Manifiesto {
   Manif_numero: string;
   Estado_mft: string;
@@ -12,11 +12,34 @@ interface Manifiesto {
   Origen: string;
   Destino: string;
   FechaPagoSaldo: string;
-  MontoTotal: string;
-  ReteFuente: string;
-  ReteICA: string;
+  MontoTotal: number; // Campo numérico
+  ReteFuente: number; // Campo numérico
+  ReteICA: number; // Campo numérico
   ReteCREE: string;
-  ValorAnticipado: string;
+  ValorAnticipado: number; // Campo numérico
+  AjusteFlete: string;
+  Placa: string;
+  Fecha_cumpl: string;
+  TenId: string;
+  Tenedor: string;
+  deducciones: string;
+}
+
+// Define una interfaz para los manifiestos como llegan desde la API
+interface ManifiestoAPI {
+  Manif_numero: string;
+  Estado_mft: string;
+  Fecha: string;
+  Manif_ministerio: string;
+  Tipo_manifiesto: string;
+  Origen: string;
+  Destino: string;
+  FechaPagoSaldo: string;
+  MontoTotal: string; // Campo string recibido
+  ReteFuente: string; // Campo string recibido
+  ReteICA: string; // Campo string recibido
+  ReteCREE: string;
+  ValorAnticipado: string; // Campo string recibido
   AjusteFlete: string;
   Placa: string;
   Fecha_cumpl: string;
@@ -91,18 +114,30 @@ const ExtraccionManifiestos = () => {
         },
       });
 
-      const data = queryrespuesta.data?.data?.data;
+      const data: ManifiestoAPI[] = queryrespuesta.data?.data?.data;
 
       if (!Array.isArray(data)) {
         throw new Error("La respuesta de la API no contiene un array válido en 'data.data'.");
       }
 
-      const manifiestosUnicos = data.reduce((acc: Manifiesto[], item: Manifiesto) => {
-        if (!acc.some((existingItem) => existingItem.Manif_numero === item.Manif_numero)) {
-          acc.push(item);
-        }
-        return acc;
-      }, []);
+      // Convertir los campos a números donde sea necesario
+      const manifiestosProcesados: Manifiesto[] = data.map((item) => ({
+        ...item,
+        MontoTotal: parseFloat(item.MontoTotal),
+        ReteFuente: parseFloat(item.ReteFuente),
+        ReteICA: parseFloat(item.ReteICA),
+        ValorAnticipado: parseFloat(item.ValorAnticipado),
+      }));
+
+      const manifiestosUnicos = manifiestosProcesados.reduce(
+        (acc: Manifiesto[], item: Manifiesto) => {
+          if (!acc.some((existingItem) => existingItem.Manif_numero === item.Manif_numero)) {
+            acc.push(item);
+          }
+          return acc;
+        },
+        []
+      );
 
       setDiccionarioManifiestosTodos(manifiestosUnicos); // Actualiza el contexto
       console.log("Manifiestos obtenidos de la API:", manifiestosUnicos);

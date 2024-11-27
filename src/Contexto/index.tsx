@@ -28,6 +28,9 @@ interface ContextProps {
   setEmail: Dispatch<SetStateAction<string>>;
   password: string;
   setPassword: Dispatch<SetStateAction<string>>;
+  placa: string;
+  setPlaca: Dispatch<SetStateAction<string>>;
+  
   
   // Agrega respuesta
   respuesta: any; // Define el tipo según tus necesidades
@@ -39,7 +42,7 @@ interface ContextProps {
 
   //Diccionarios de las apis:
 
-  DiccionarioManifiestosTodos: any[]; // Ajusta el tipo según tus necesidades
+  DiccionarioManifiestosTodos: any[];
   setDiccionarioManifiestosTodos: Dispatch<SetStateAction<any[]>>;
   DiccionarioManifiestosPagos: any[]; // Ajusta el tipo según tus necesidades
   setDiccionarioManifiestosPagos: Dispatch<SetStateAction<any[]>>;
@@ -73,6 +76,7 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
   const [celular, setCelular] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [placa, setPlaca] = useState('');
   
   // Estado para la respuesta
   const [respuesta, setRespuesta] = useState(null);
@@ -106,6 +110,8 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
     setEmail,
     password,
     setPassword,
+    placa,
+    setPlaca,
     
     // Agrega respuesta
     respuesta,

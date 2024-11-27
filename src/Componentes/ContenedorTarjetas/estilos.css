@@ -1,5 +1,9 @@
 /* Contenedor principal */
 .ContenedorTarjetas-contenedor {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   margin: 20px;
   padding: 16px;
   border: 1px solid #ccc;

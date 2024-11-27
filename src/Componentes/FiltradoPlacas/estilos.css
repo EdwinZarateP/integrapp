@@ -1,0 +1,26 @@
+.FiltradoPlacas-contenedor {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 1rem 0;
+}
+
+.FiltradoPlacas-label {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.FiltradoPlacas-select {
+  width: 200px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.FiltradoPlacas-select:focus {
+  border-color: #007bff;
+  outline: none;
+}

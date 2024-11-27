@@ -140,7 +140,7 @@ const ExtraccionManifiestos = () => {
       );
 
       setDiccionarioManifiestosTodos(manifiestosUnicos); // Actualiza el contexto
-      console.log("Manifiestos obtenidos de la API:", manifiestosUnicos);
+      // console.log("Manifiestos obtenidos de la API:", manifiestosUnicos);
       return manifiestosUnicos; // Devuelve los manifiestos únicos
     } catch (err) {
       throw new Error("Error al extraer manifiestos: " + (err as Error).message);

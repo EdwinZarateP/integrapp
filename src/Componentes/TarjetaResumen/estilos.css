@@ -8,18 +8,18 @@
   text-align: center;
   font-family: "Arial", sans-serif;
   background-color: #f9f9f9;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Reducir intensidad inicial */
+  margin-bottom: 20px; /* Incrementar el espacio entre tarjetas */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .TarjetaResumen-contenedor:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-4px); /* Elevar ligeramente al pasar el mouse */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Sombra más suave */
 }
 
 .TarjetaResumen-titulo {
-  font-size: 20px;
+  font-size: 22px; /* Incrementar ligeramente para mejor visibilidad */
   font-weight: 700;
   margin-bottom: 12px;
   color: #4a4a8a;
@@ -36,18 +36,21 @@
 
 .TarjetaResumen-detalle {
   font-size: 15px;
-  margin: 6px 0;
+  margin: 8px 0; /* Incrementar ligeramente el espaciado */
   color: #333;
   line-height: 1.6;
 }
 
 .TarjetaResumen-detalle strong {
   color: #4a4a8a;
+  font-weight: bold; /* Resaltar con un grosor adicional */
 }
 
+/* Ajustes para pantallas pequeñas */
 @media (max-width: 768px) {
   .TarjetaResumen-contenedor {
     width: 95%;
-    min-width: 300px;
+    max-width: 100%; /* Permitir más flexibilidad en pantallas pequeñas */
+    margin-bottom: 15px; /* Ajustar el espacio entre tarjetas */
   }
 }

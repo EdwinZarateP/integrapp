@@ -1,36 +1,80 @@
 /* Contenedor principal */
 .ContenedorTarjetas-contenedor {
+  position: relative;
+  padding-top: 150px; /* Espacio para el contenedor fijo */
+  width: 100%;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+/* Contenedor fijo para los filtros */
+.ContenedorTarjetas-filtros {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px 20px;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  margin: 20px;
-  padding: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 95%;
-  margin-left: auto; /* Centra horizontalmente */
-  margin-right: auto; /* Centra horizontalmente */
-  font-family: Arial, sans-serif;
 }
 
 /* Título principal */
 .ContenedorTarjetas-titulo {
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 16px;
+  margin: 0;
+  flex: 1 1 100%; /* Ocupa todo el ancho en pantallas pequeñas */
   text-align: center;
-  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Opciones de filtros */
+.ContenedorTarjetas-filtrosOpciones {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 10px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+/* Estilo para el checkbox */
+.ContenedorTarjetas-filtroSaldo label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+.ContenedorTarjetas-filtroSaldo input {
+  cursor: pointer;
 }
 
 /* Contenedor flexible */
 .ContenedorTarjetas-grid {
-  display: flex; /* Activa Flexbox */
-  flex-wrap: wrap; /* Permite que las tarjetas se ajusten en varias filas */
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center; /* Centra las tarjetas horizontalmente */
   gap: 20px; /* Espaciado entre tarjetas */
+  margin-top: 20px; /* Espaciado adicional debajo de los filtros */
+  padding: 0 10px; /* Ajuste para dispositivos pequeños */
+}
+
+/* Tarjetas individuales */
+.TarjetaResumen-contenedor {
+  flex: 1 1 calc(300px - 20px); /* Cada tarjeta tendrá un ancho mínimo de 300px */
+  max-width: 340px; /* Limita el ancho máximo */
+  box-sizing: border-box; /* Incluye padding y border en el tamaño */
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin-bottom: 20px;
 }
 
 /* Mensaje cuando no hay datos */
@@ -39,13 +83,27 @@
   color: #777;
   text-align: center;
   margin-top: 20px;
-  width: 100%; 
-
+  width: 100%;
 }
 
-/* Tarjetas individuales */
-.TarjetaResumen-contenedor {
-  flex: 1 1 calc(300px - 20px); /* Cada tarjeta tendrá un ancho mínimo de 300px */
-  max-width: 300px; /* Limita el ancho máximo */
-  box-sizing: border-box; /* Incluye padding y border en el tamaño */
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ContenedorTarjetas-filtros {
+    flex-direction: column; /* Filtros en columna en dispositivos pequeños */
+   
+  }
+
+  .ContenedorTarjetas-titulo {
+    font-size: 24px;
+  }
+
+  .ContenedorTarjetas-filtrosOpciones {
+    flex-direction: column; /* Opciones de filtros en columna */
+    width: 100%;
+  }
+
+  .TarjetaResumen-contenedor {
+    flex: 1 1 100%; /* Las tarjetas ocupan todo el ancho */
+    max-width: 100%; /* Elimina la restricción de ancho máximo */
+  }
 }

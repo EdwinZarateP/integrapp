@@ -56,7 +56,7 @@ const ExtraccionPagos = () => {
         "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/vulcano/customer/00134/index";
       const queryPayload = {
         pageSize: 1000,
-        rptId: 27, // ID correspondiente a pagos
+        rptId: 27,
         filter: [
           {
             campo: "Fecha",
@@ -66,8 +66,8 @@ const ExtraccionPagos = () => {
           {
             campo: "Tenedor",
             operador: "=",
-            valor: tenedor, // Utiliza el tenedor desde el contexto
-          },
+            valor: tenedor, 
+          }
         ],
       };
 
@@ -92,7 +92,7 @@ const ExtraccionPagos = () => {
       }, []);
 
       setDiccionarioManifiestosPagos(pagosUnicos); // Actualiza el contexto con los pagos únicos
-      console.log("Pagos obtenidos de la API:", pagosUnicos); // Opcional: imprime en consola para depuración
+      // console.log("Pagos obtenidos de la API:", pagosUnicos); 
 
       return pagosUnicos; // Devuelve los pagos únicos
     } catch (err) {

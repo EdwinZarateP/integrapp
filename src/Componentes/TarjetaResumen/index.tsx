@@ -5,11 +5,13 @@ interface TarjetaResumenProps {
   manifiesto: string;
   origenDestino: string;
   placa: string;
-  fecha: string;
+  fecha: string; // Se espera un string ISO de fecha
   flete: number;
   reteFuente: number;
   reteICA: number;
   anticipo: number;
+  saldo?: number; // Campo adicional
+  fechaSaldo?: string; // Campo adicional
 }
 
 const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
@@ -21,6 +23,8 @@ const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
   reteFuente,
   reteICA,
   anticipo,
+  saldo,
+  fechaSaldo,
 }) => {
   // Formateador para pesos colombianos sin decimales
   const formatCOP = (value: number) =>
@@ -30,15 +34,33 @@ const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
       minimumFractionDigits: 0,
     });
 
+  // Formateador para la fecha
+  const formatFecha = (fecha: string) => {
+    try {
+      const opciones: Intl.DateTimeFormatOptions = {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      };
+      const fechaObjeto = new Date(fecha);
+      if (isNaN(fechaObjeto.getTime())) {
+        throw new Error("Fecha inválida");
+      }
+      return fechaObjeto.toLocaleDateString("es-CO", opciones);
+    } catch {
+      return "Fecha no válida";
+    }
+  };
+
   return (
     <div className="TarjetaResumen-contenedor">
-      <h2 className="TarjetaResumen-titulo">Manifiesto: {manifiesto}</h2>
+      <h2 className="TarjetaResumen-titulo">MANIFIESTO: {manifiesto}</h2>
       <p className="TarjetaResumen-origenDestino">{origenDestino}</p>
       <p className="TarjetaResumen-detalle">
         <strong>Placa:</strong> {placa}
       </p>
       <p className="TarjetaResumen-detalle">
-        <strong>Fecha:</strong> {fecha}
+        <strong>Fecha:</strong> {formatFecha(fecha)}
       </p>
       <p className="TarjetaResumen-detalle">
         <strong>Flete:</strong> {formatCOP(flete)}
@@ -52,6 +74,16 @@ const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
       <p className="TarjetaResumen-detalle">
         <strong>Anticipo:</strong> {formatCOP(anticipo)}
       </p>
+      {saldo !== undefined && (
+        <p className="TarjetaResumen-detalle">
+          <strong>Saldo:</strong> {formatCOP(saldo)}
+        </p>
+      )}
+      {fechaSaldo && (
+        <p className="TarjetaResumen-detalle">
+          <strong>Fecha Saldo:</strong> {formatFecha(fechaSaldo)}
+        </p>
+      )}
     </div>
   );
 };

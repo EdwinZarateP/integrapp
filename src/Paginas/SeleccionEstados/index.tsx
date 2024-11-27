@@ -58,9 +58,9 @@ const EstadosManifiestos = () => {
         <Link
           to="/Estados"
           className="contenedorManifiestos-linkBoton"
-          onClick={() => actualizaEstado("LIQUIDADO")}
+          onClick={() => actualizaEstado("PAGADO")}
         >
-          <BotonEstado nombreEstado="Pagos" icono={<BiMailSend />} />
+          <BotonEstado nombreEstado="Historico pagado" icono={<BiMailSend />} />
         </Link>
 
         <Link to="/" className="contenedorManifiestos">

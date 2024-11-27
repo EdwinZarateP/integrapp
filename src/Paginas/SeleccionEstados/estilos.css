@@ -55,7 +55,8 @@
     margin-bottom: 15px;
     text-decoration: none;
     display: flex;
-    justify-content: center;
+    color: black;
+
   }
   
   .contenedorManifiestos-linkBoton:last-child {

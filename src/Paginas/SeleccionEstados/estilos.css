@@ -11,15 +11,15 @@
   /* Cabecera */
   .contenedorManifiestos-cabecera {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content:center;
+    align-items: end;
     position: sticky;
     top: 0;
     z-index: 10;
   }
   
   .contenedorManifiestos-logo {
-    width: 50px;
+    width: 45px;
     height: auto;
   }
   

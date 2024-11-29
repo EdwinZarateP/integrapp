@@ -5,7 +5,8 @@ import BotonSencillo from "../../Componentes/BotonSencillo";
 import "./estilos.css";
 import { FaTruck } from "react-icons/fa6";
 import { IoDocumentsSharp } from "react-icons/io5";
-import { GiCash } from "react-icons/gi";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
+// import { GiCash } from "react-icons/gi";
 import logo from "../../Imagenes/albatros.png";
 import { ContextoApp } from "../../Contexto/index";
 
@@ -52,7 +53,7 @@ const EstadosManifiestos = () => {
           className="contenedorManifiestos-linkBoton"
           onClick={() => actualizaEstado("LIQUIDADO")}
         >
-          <BotonEstado nombreEstado="Liquidados y saldos" icono={<GiCash />} />
+          <BotonEstado nombreEstado="Liquidados" icono={<FaMoneyBillTransfer />} />
         </Link>
 
         {/* <Link
@@ -60,7 +61,7 @@ const EstadosManifiestos = () => {
           className="contenedorManifiestos-linkBoton"
           onClick={() => actualizaEstado("PAGADO")}
         >
-          <BotonEstado nombreEstado="Historico pagado" icono={<BiMailSend />} />
+          <BotonEstado nombreEstado="Pagados" icono={<GiCash />} />
         </Link> */}
 
         <Link to="/" className="contenedorManifiestos">

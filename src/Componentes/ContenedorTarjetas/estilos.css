@@ -1,7 +1,7 @@
 /* Contenedor principal */
 .ContenedorTarjetas-contenedor {
   position: relative;
-  padding-top: 150px; /* Espacio para el contenedor fijo */
+  padding-top: 150px;
   width: 100%;
   margin: 0 auto;
   margin-bottom: 80px;
@@ -14,63 +14,64 @@
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px 20px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px 30px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-radius: 0 0 10px 10px;
 }
 
 /* Título principal */
 .ContenedorTarjetas-titulo {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
-  margin: 0;
-  flex: 1 1 100%; /* Ocupa todo el ancho en pantallas pequeñas */
+  color: #333;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 /* Opciones de filtros */
 .ContenedorTarjetas-filtrosOpciones {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-  gap: 10px;
-  width: 100%;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
 }
 
-/* Estilo para el checkbox */
-.ContenedorTarjetas-filtroSaldo label {
+/* Checkbox con espaciado */
+.ContenedorTarjetas-checkbox {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 14px;
+  gap: 12px;
+  font-size: 16px;
+  color: #555;
 }
 
-.ContenedorTarjetas-filtroSaldo input {
+/* Input del checkbox */
+.ContenedorTarjetas-checkbox input {
   cursor: pointer;
+  width: 18px;
+  height: 18px;
 }
 
-/* Contenedor flexible */
+/* Contenedor de las tarjetas */
 .ContenedorTarjetas-grid {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* Centra las tarjetas horizontalmente */
-  gap: 20px; /* Espaciado entre tarjetas */
-  margin-top: 20px; /* Espaciado adicional debajo de los filtros */
-  padding: 0 10px; /* Ajuste para dispositivos pequeños */
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
 }
 
 /* Tarjetas individuales */
 .TarjetaResumen-contenedor {
-  flex: 1 1 calc(300px - 20px); /* Cada tarjeta tendrá un ancho mínimo de 300px */
-  max-width: 340px; /* Limita el ancho máximo */
-  box-sizing: border-box; /* Incluye padding y border en el tamaño */
+  flex: 1 1 calc(300px - 20px);
+  max-width: 340px;
   background: white;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -78,52 +79,37 @@
   margin-bottom: 20px;
 }
 
-/* Mensaje cuando no hay datos */
-.ContenedorTarjetas-sinDatos {
-  font-size: 16px;
-  color: #777;
-  text-align: center;
-  margin-top: 20px;
-  width: 100%;
-}
-
+/* Total de saldos */
 .ContenedorTarjetas-total {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: #f1f1f1;
-  padding-top:20px;
-  padding-bottom:20px;
+  background-color: #f9f9f9;
+  padding: 15px 20px;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
-  font-size: 1rem;
   font-weight: bold;
-  z-index: 1000;
-}
-
-.ContenedorTarjetas-total :nth-child(1){
-  font-size: 1.5rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .ContenedorTarjetas-filtros {
-    flex-direction: column; /* Filtros en columna en dispositivos pequeños */
-   
+    flex-direction: column;
+    padding: 15px;
   }
-
-  .ContenedorTarjetas-titulo {
-    font-size: 24px;
+  .ContenedorTarjetas-contenedor {
+    margin-top: 50px;
   }
+  
 
   .ContenedorTarjetas-filtrosOpciones {
-    flex-direction: column; /* Opciones de filtros en columna */
-    width: 100%;
+    flex-direction: column;
+    gap: 15px;
   }
 
   .TarjetaResumen-contenedor {
-    flex: 1 1 100%; /* Las tarjetas ocupan todo el ancho */
-    max-width: 100%; /* Elimina la restricción de ancho máximo */
+    flex: 1 1 100%;
+    max-width: 100%;
   }
 }

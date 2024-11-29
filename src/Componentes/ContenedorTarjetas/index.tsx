@@ -11,8 +11,9 @@ interface ContenedorTarjetasProps {
 const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) => {
   const almacenVariables = useContext(ContextoApp);
 
-  // Estado local para el checkbox que controla si se muestran solo las tarjetas con "Saldo"
+  // Estados locales para los checkboxes
   const [mostrarConSaldo, setMostrarConSaldo] = useState(false);
+  const [mostrarHistorico, setMostrarHistorico] = useState(false); // Nuevo checkbox
 
   // Filtra los manifiestos según las condiciones específicas
   const manifiestosFiltrados = useMemo(() => {
@@ -23,12 +24,16 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
 
         if (almacenVariables?.estado === "LIQUIDADO") {
           const coincideConPagos = almacenVariables.DiccionarioManifiestosPagos.some(
-            (pago) => pago.Manifiesto === manifiesto.Manif_numero
+            (pago) =>
+              pago.Manifiesto === manifiesto.Manif_numero &&
+              (mostrarHistorico
+                ? pago["Pago saldo"] === "Aplicado" // Si "Mostrar histórico" está activo
+                : pago["Pago saldo"] === "No aplicado") // Si no, mostrar solo "No aplicado"
           );
 
           if (!coincideConPagos || !cumplePlaca) return false;
 
-          // Si "mostrarConSaldo" está activado, filtrar solo los que tienen saldo
+          // Filtrar solo los que tienen saldo si "mostrarConSaldo" está activado
           if (mostrarConSaldo) {
             const saldoInfo = almacenVariables?.DiccionarioSaldos.find(
               (saldo) => saldo.Manifiesto === manifiesto.Manif_numero
@@ -36,7 +41,7 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
             return saldoInfo?.Saldo !== undefined; // Solo mostrar los que tienen saldo
           }
 
-          return true; // Mostrar todos si el checkbox está desactivado
+          return true; // Mostrar todos si "mostrarConSaldo" está desactivado
         }
 
         // Si el estado no es "LIQUIDADO", aplica el filtro de estado y placa normalmente
@@ -50,7 +55,7 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
         const fechaB = new Date(b.Fecha);
         return fechaB.getTime() - fechaA.getTime(); // Orden descendente
       });
-  }, [almacenVariables, manifiestos, mostrarConSaldo]);
+  }, [almacenVariables, manifiestos, mostrarConSaldo, mostrarHistorico]);
 
   // Calcula el total de los saldos visibles
   const totalSaldos = useMemo(() => {
@@ -81,16 +86,24 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
         </h1>
         <div className="ContenedorTarjetas-filtrosOpciones">
           {almacenVariables?.estado === "LIQUIDADO" && (
-            <div className="ContenedorTarjetas-filtroSaldo">
-              <label>
+            <>
+              <div className="ContenedorTarjetas-checkbox">
                 <input
                   type="checkbox"
                   checked={mostrarConSaldo}
                   onChange={() => setMostrarConSaldo((prev) => !prev)}
                 />
-                Mostrar manifiestos con fecha pago saldo
-              </label>
-            </div>
+                <label>Mostrar manifiestos con fecha pago saldo</label>
+              </div>
+              <div className="ContenedorTarjetas-checkbox">
+                <input
+                  type="checkbox"
+                  checked={mostrarHistorico}
+                  onChange={() => setMostrarHistorico((prev) => !prev)}
+                />
+                <label>Mostrar histórico</label>
+              </div>
+            </>
           )}
           {/* Combobox para filtrar por placa */}
           <FiltradoPlacas />
@@ -134,9 +147,14 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
 
       {/* Contenedor fijo para el total de saldos */}
       {almacenVariables?.estado === "LIQUIDADO" && mostrarConSaldo && (
-        <div className="ContenedorTarjetas-total">          
-          <p><strong>${totalSaldos.toLocaleString()}</strong></p>        
-          <p>Tienes {cantidadManifiestosConSaldo} Manifiestos con saldo para pago</p> 
+        <div className="ContenedorTarjetas-total">
+          <p>
+            <strong>${totalSaldos.toLocaleString()}</strong>
+          </p>
+          <p>
+            Tienes {cantidadManifiestosConSaldo} Manifiestos con saldo para
+            pago
+          </p>
         </div>
       )}
     </div>

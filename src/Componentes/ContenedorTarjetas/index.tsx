@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useMemo } from "react";
 import TarjetaResumen from "../TarjetaResumen/index";
 import "./estilos.css";
 import { ContextoApp } from "../../Contexto/index";
@@ -15,40 +15,62 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
   const [mostrarConSaldo, setMostrarConSaldo] = useState(false);
 
   // Filtra los manifiestos según las condiciones específicas
-  const manifiestosFiltrados = manifiestos
-    .filter((manifiesto) => {
-      const cumplePlaca =
-        !almacenVariables?.placa || manifiesto.Placa === almacenVariables.placa;
+  const manifiestosFiltrados = useMemo(() => {
+    return manifiestos
+      .filter((manifiesto) => {
+        const cumplePlaca =
+          !almacenVariables?.placa || manifiesto.Placa === almacenVariables.placa;
 
-      if (almacenVariables?.estado === "LIQUIDADO") {
-        const coincideConPagos = almacenVariables.DiccionarioManifiestosPagos.some(
-          (pago) => pago.Manifiesto === manifiesto.Manif_numero
-        );
-
-        if (!coincideConPagos || !cumplePlaca) return false;
-
-        // Si "mostrarConSaldo" está activado, filtrar solo los que tienen saldo
-        if (mostrarConSaldo) {
-          const saldoInfo = almacenVariables?.DiccionarioSaldos.find(
-            (saldo) => saldo.Manifiesto === manifiesto.Manif_numero
+        if (almacenVariables?.estado === "LIQUIDADO") {
+          const coincideConPagos = almacenVariables.DiccionarioManifiestosPagos.some(
+            (pago) => pago.Manifiesto === manifiesto.Manif_numero
           );
-          return saldoInfo?.Saldo !== undefined; // Solo mostrar los que tienen saldo
+
+          if (!coincideConPagos || !cumplePlaca) return false;
+
+          // Si "mostrarConSaldo" está activado, filtrar solo los que tienen saldo
+          if (mostrarConSaldo) {
+            const saldoInfo = almacenVariables?.DiccionarioSaldos.find(
+              (saldo) => saldo.Manifiesto === manifiesto.Manif_numero
+            );
+            return saldoInfo?.Saldo !== undefined; // Solo mostrar los que tienen saldo
+          }
+
+          return true; // Mostrar todos si el checkbox está desactivado
         }
 
-        return true; // Mostrar todos si el checkbox está desactivado
-      }
+        // Si el estado no es "LIQUIDADO", aplica el filtro de estado y placa normalmente
+        return (
+          manifiesto.Estado_mft === almacenVariables?.estado && cumplePlaca
+        );
+      })
+      // Ordenar por fecha en orden descendente
+      .sort((a, b) => {
+        const fechaA = new Date(a.Fecha);
+        const fechaB = new Date(b.Fecha);
+        return fechaB.getTime() - fechaA.getTime(); // Orden descendente
+      });
+  }, [almacenVariables, manifiestos, mostrarConSaldo]);
 
-      // Si el estado no es "LIQUIDADO", aplica el filtro de estado y placa normalmente
-      return (
-        manifiesto.Estado_mft === almacenVariables?.estado && cumplePlaca
+  // Calcula el total de los saldos visibles
+  const totalSaldos = useMemo(() => {
+    return manifiestosFiltrados.reduce((total, manifiesto) => {
+      const saldoInfo = almacenVariables?.DiccionarioSaldos.find(
+        (saldo) => saldo.Manifiesto === manifiesto.Manif_numero
       );
-    })
-    // Ordenar por fecha en orden descendente
-    .sort((a, b) => {
-      const fechaA = new Date(a.Fecha);
-      const fechaB = new Date(b.Fecha);
-      return fechaB.getTime() - fechaA.getTime(); // Orden descendente
-    });
+      return total + (saldoInfo?.Saldo || 0);
+    }, 0);
+  }, [manifiestosFiltrados, almacenVariables]);
+
+  // Calcula el número de manifiestos con saldo
+  const cantidadManifiestosConSaldo = useMemo(() => {
+    return manifiestosFiltrados.filter((manifiesto) => {
+      const saldoInfo = almacenVariables?.DiccionarioSaldos.find(
+        (saldo) => saldo.Manifiesto === manifiesto.Manif_numero
+      );
+      return saldoInfo?.Saldo !== undefined; // Contar solo los que tienen saldo
+    }).length;
+  }, [manifiestosFiltrados, almacenVariables]);
 
   return (
     <div className="ContenedorTarjetas-contenedor">
@@ -109,6 +131,14 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
           </p>
         )}
       </div>
+
+      {/* Contenedor fijo para el total de saldos */}
+      {almacenVariables?.estado === "LIQUIDADO" && mostrarConSaldo && (
+        <div className="ContenedorTarjetas-total">          
+          <p><strong>${totalSaldos.toLocaleString()}</strong></p>        
+          <p>Tienes {cantidadManifiestosConSaldo} Manifiestos con saldo para pago</p> 
+        </div>
+      )}
     </div>
   );
 };

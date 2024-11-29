@@ -4,7 +4,7 @@ import Registro from '../Registro/index';
 import EstadosManifiestos from '../SeleccionEstados/index';
 import Estados from '../EstadosManifiestos/index';
 import SalaEspera from '../SalaEspera/index';
-import DetalleEstados from '../DetalleEstados/index';
+// import DetalleEstados from '../DetalleEstados/index';
 import Api2 from '../Api/autenticar';
 import Olvidoclave from '../Olvidoclave/index';
 import NoEncontrado from '../NoEncontrado/index';
@@ -23,7 +23,7 @@ const App: React.FC = () => {
         <Route path="/SeleccionEstados" element={<EstadosManifiestos />} />
         <Route path="/Estados" element={<Estados />} />
         <Route path="/SalaEspera" element={<SalaEspera />} />
-        <Route path="/DetalleEstados" element={<DetalleEstados />} />
+        {/* <Route path="/DetalleEstados" element={<DetalleEstados />} /> */}
         <Route path="/Api2" element={<Api2 />} />
         <Route path="*" element={<NoEncontrado />} />
       </Routes>

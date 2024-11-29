@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import BotonEstado from "../../Componentes/BotonEstados/index";
 import BotonSencillo from "../../Componentes/BotonSencillo";
 import "./estilos.css";
-import { BiMailSend } from "react-icons/bi";
 import { FaTruck } from "react-icons/fa6";
 import { IoDocumentsSharp } from "react-icons/io5";
+import { GiCash } from "react-icons/gi";
 import logo from "../../Imagenes/albatros.png";
 import { ContextoApp } from "../../Contexto/index";
 
@@ -52,7 +52,7 @@ const EstadosManifiestos = () => {
           className="contenedorManifiestos-linkBoton"
           onClick={() => actualizaEstado("LIQUIDADO")}
         >
-          <BotonEstado nombreEstado="Liquidados" icono={<BiMailSend />} />
+          <BotonEstado nombreEstado="Liquidados y saldos" icono={<GiCash />} />
         </Link>
 
         {/* <Link

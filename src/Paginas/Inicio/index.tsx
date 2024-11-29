@@ -79,7 +79,7 @@ const Inicio: React.FC = () => {
   return (
     <div className="contenedor">
       {loading ? (
-        <div className="loading-container">
+        <div className="inicio-loading-container">
           <HashLoader size={60} color={"rgb(141, 199, 63)"} loading={loading} />
           <p>Estamos verificando tu identidad</p>
         </div>
@@ -145,9 +145,9 @@ const Inicio: React.FC = () => {
           </form>
 
           <div className="pieDePagina">
-            <Link to="/Olvidoclave" className="enlace">
+            {/* <Link to="/Olvidoclave" className="enlace">
               Olvidé la clave
-            </Link>
+            </Link> */}
             <Link to="/Registro" className="enlace">
               Registrarse
             </Link>

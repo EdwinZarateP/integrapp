@@ -13,51 +13,39 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
 
   // Estados locales para los checkboxes
   const [mostrarConSaldo, setMostrarConSaldo] = useState(false);
-  const [mostrarHistorico, setMostrarHistorico] = useState(false); // Nuevo checkbox
+  const [mostrarHistorico, setMostrarHistorico] = useState(false);
 
-  // Filtra los manifiestos según las condiciones específicas
+  // Filtrar manifiestos según las condiciones específicas
   const manifiestosFiltrados = useMemo(() => {
     return manifiestos
       .filter((manifiesto) => {
-        const cumplePlaca =
-          !almacenVariables?.placa || manifiesto.Placa === almacenVariables.placa;
+        const cumplePlaca = !almacenVariables?.placa || manifiesto.Placa === almacenVariables.placa;
 
         if (almacenVariables?.estado === "LIQUIDADO") {
           const coincideConPagos = almacenVariables.DiccionarioManifiestosPagos.some(
             (pago) =>
               pago.Manifiesto === manifiesto.Manif_numero &&
-              (mostrarHistorico
-                ? pago["Pago saldo"] === "Aplicado" // Si "Mostrar histórico" está activo
-                : pago["Pago saldo"] === "No aplicado") // Si no, mostrar solo "No aplicado"
+              (mostrarHistorico ? pago["Pago saldo"] === "Aplicado" : pago["Pago saldo"] === "No aplicado")
           );
 
           if (!coincideConPagos || !cumplePlaca) return false;
 
-          // Filtrar solo los que tienen saldo si "mostrarConSaldo" está activado
           if (mostrarConSaldo) {
             const saldoInfo = almacenVariables?.DiccionarioSaldos.find(
               (saldo) => saldo.Manifiesto === manifiesto.Manif_numero
             );
-            return saldoInfo?.Saldo !== undefined; // Solo mostrar los que tienen saldo
+            return saldoInfo?.Saldo !== undefined;
           }
 
-          return true; // Mostrar todos si "mostrarConSaldo" está desactivado
+          return true;
         }
 
-        // Si el estado no es "LIQUIDADO", aplica el filtro de estado y placa normalmente
-        return (
-          manifiesto.Estado_mft === almacenVariables?.estado && cumplePlaca
-        );
+        return manifiesto.Estado_mft === almacenVariables?.estado && cumplePlaca;
       })
-      // Ordenar por fecha en orden descendente
-      .sort((a, b) => {
-        const fechaA = new Date(a.Fecha);
-        const fechaB = new Date(b.Fecha);
-        return fechaB.getTime() - fechaA.getTime(); // Orden descendente
-      });
+      .sort((a, b) => new Date(b.Fecha).getTime() - new Date(a.Fecha).getTime());
   }, [almacenVariables, manifiestos, mostrarConSaldo, mostrarHistorico]);
 
-  // Calcula el total de los saldos visibles
+  // Calcula el total de saldos visibles
   const totalSaldos = useMemo(() => {
     return manifiestosFiltrados.reduce((total, manifiesto) => {
       const saldoInfo = almacenVariables?.DiccionarioSaldos.find(
@@ -67,13 +55,13 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
     }, 0);
   }, [manifiestosFiltrados, almacenVariables]);
 
-  // Calcula el número de manifiestos con saldo
+  // Número de manifiestos con saldo
   const cantidadManifiestosConSaldo = useMemo(() => {
     return manifiestosFiltrados.filter((manifiesto) => {
       const saldoInfo = almacenVariables?.DiccionarioSaldos.find(
         (saldo) => saldo.Manifiesto === manifiesto.Manif_numero
       );
-      return saldoInfo?.Saldo !== undefined; // Contar solo los que tienen saldo
+      return saldoInfo?.Saldo !== undefined;
     }).length;
   }, [manifiestosFiltrados, almacenVariables]);
 
@@ -105,7 +93,6 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
               </div>
             </>
           )}
-          {/* Combobox para filtrar por placa */}
           <FiltradoPlacas />
         </div>
       </div>
@@ -113,7 +100,6 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
       <div className="ContenedorTarjetas-grid">
         {manifiestosFiltrados.length > 0 ? (
           manifiestosFiltrados.map((manifiesto, index) => {
-            // Buscar saldo y Fecha_saldo en DiccionarioSaldos
             const saldoInfo = almacenVariables?.DiccionarioSaldos.find(
               (saldo) => saldo.Manifiesto === manifiesto.Manif_numero
             );
@@ -125,17 +111,18 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
                 origenDestino={`${manifiesto.Origen} - ${manifiesto.Destino}`}
                 placa={manifiesto.Placa}
                 fecha={manifiesto.Fecha}
+                fecha_cumplido={manifiesto["Fecha cumpl."]}
                 flete={manifiesto.MontoTotal}
                 reteFuente={manifiesto.ReteFuente}
                 reteICA={manifiesto.ReteICA}
                 anticipo={manifiesto.ValorAnticipado}
                 saldo={almacenVariables?.estado === "LIQUIDADO" ? saldoInfo?.Saldo : undefined}
                 fechaSaldo={
-                  almacenVariables?.estado === "LIQUIDADO"
-                    ? saldoInfo?.Fecha_saldo
-                    : undefined
+                  almacenVariables?.estado === "LIQUIDADO" ? saldoInfo?.Fecha_saldo : undefined
                 }
+                estado={almacenVariables?.estado || "Sin Estado"}
               />
+
             );
           })
         ) : (
@@ -145,7 +132,6 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
         )}
       </div>
 
-      {/* Contenedor fijo para el total de saldos */}
       {almacenVariables?.estado === "LIQUIDADO" && mostrarConSaldo && (
         <div className="ContenedorTarjetas-total">
           <p>

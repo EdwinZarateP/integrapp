@@ -3,12 +3,14 @@ import { ContextoApp } from "../../Contexto/index";
 import ExtraccionManifiestos from "../../Funciones/ExtraerInfoApiManifiestos/index";
 import ExtraccionPagos from "../../Funciones/ExtraerInfoApiPagos/index";
 import ExtraeSaldos from "../../Funciones/ExtraeSaldosApi/index";
+import ExtraeNovedades from "../../Funciones/ExtraeNovedades/index";
 
 const ExtraccionTotal = () => {
   const almacenVariables = useContext(ContextoApp);
   const { fetchManifiestos } = ExtraccionManifiestos();
   const { fetchPagos } = ExtraccionPagos();
   const { fetchSaldos } = ExtraeSaldos();
+  const { fetchNovedades } = ExtraeNovedades();
 
   const ejecutarExtraccion = async (): Promise<void> => {
     if (!almacenVariables?.tenedor) {
@@ -22,6 +24,14 @@ const ExtraccionTotal = () => {
       } else {
         console.log("Iniciando extracción de saldos desde la API...");
         await fetchSaldos();
+      }
+
+      // Verifica si ya hay Novedades en el contexto
+      if (almacenVariables.DiccionarioNovedades.length > 0) {
+        console.log("Usando Novedades almacenadas en el contexto:", almacenVariables.DiccionarioNovedades);
+      } else {
+        console.log("Iniciando extracción de Novedades desde la API...");
+        await fetchNovedades();
       }
 
       // Verifica si ya hay pagos en el contexto

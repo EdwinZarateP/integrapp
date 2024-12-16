@@ -15,6 +15,13 @@ const Estados = () => {
     almacenVariables.DiccionarioManifiestosTodos
   );
 
+  
+  // Verifica el contenido del contexto para depuración
+  console.log(
+    "Contenido de DiccionarioNovedades:",
+    almacenVariables.DiccionarioNovedades
+  );
+
   // Filtra los manifiestos con el estado actual del contexto global
   const manifiestosFiltrados = almacenVariables.DiccionarioManifiestosTodos.filter(
     (manifiesto) =>

@@ -1,5 +1,5 @@
-// TarjetaResumen.tsx
 import React from "react";
+import { FaExclamationCircle } from "react-icons/fa";
 import "./estilos.css";
 
 interface TarjetaResumenProps {
@@ -14,7 +14,8 @@ interface TarjetaResumenProps {
   anticipo: number;
   saldo?: number; // Campo adicional
   fechaSaldo?: string; // Campo adicional
-  estado: string; // Campo adicional
+  estado: string; 
+  link?: string; 
 }
 
 const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
@@ -30,6 +31,7 @@ const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
   saldo,
   fechaSaldo,
   estado,
+  link
 }) => {
   // Formateador para pesos colombianos sin decimales
   const formatCOP = (value: number) =>
@@ -59,6 +61,12 @@ const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
 
   return (
     <div className="TarjetaResumen-contenedor">
+      {link && (
+        <div className="icono-novedad">
+          <FaExclamationCircle className="icono" />
+        </div>
+      )}
+
       <h2 className="TarjetaResumen-titulo">MANIFIESTO: {manifiesto}</h2>
       <p className="TarjetaResumen-origenDestino">{origenDestino}</p>
       <p className="TarjetaResumen-detalle">
@@ -72,6 +80,7 @@ const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
           <strong>Fecha Cumplido:</strong> {formatFecha(fecha_cumplido)}
         </p>
       ) : null}
+     
       <p className="TarjetaResumen-detalle">
         <strong>Flete:</strong> {formatCOP(flete)}
       </p>
@@ -93,6 +102,15 @@ const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
         <p className="TarjetaResumen-detalle">
           <strong>Fecha Pago Saldo:</strong> {formatFecha(fechaSaldo)}
         </p>
+      )}
+
+      {link && (
+         <p className="TarjetaResumen-detalle">
+         <strong>Mira tu novedad:</strong>{" "}
+         <a href={link} target="_blank" rel="noopener noreferrer">
+           {link}
+         </a>
+       </p>
       )}
     </div>
   );

@@ -65,6 +65,19 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
     }).length;
   }, [manifiestosFiltrados, almacenVariables]);
 
+  // Crear la lógica para buscar novedadesInfo similar a saldoInfo
+  const obtenerNovedadesInfo = (manifiesto: any) => {
+    console.log("Comparando valores:");
+    almacenVariables?.DiccionarioNovedades?.forEach((novedad) => {
+      console.log("novedad.Manifiesto:", novedad.Manifiesto, "manifiesto.Manif_numero:", manifiesto.Manif_numero);
+    });
+  
+    return almacenVariables?.DiccionarioNovedades.find(
+      (novedad) => String(novedad.Manifiesto).trim() === String(manifiesto.Manif_numero).trim()
+    );
+  };  
+
+  
   return (
     <div className="ContenedorTarjetas-contenedor">
       {/* Contenedor fijo para los filtros */}
@@ -103,7 +116,7 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
             const saldoInfo = almacenVariables?.DiccionarioSaldos.find(
               (saldo) => saldo.Manifiesto === manifiesto.Manif_numero
             );
-
+            const novedadesInfo = obtenerNovedadesInfo(manifiesto);
             return (
               <TarjetaResumen
                 key={index}
@@ -112,6 +125,7 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
                 placa={manifiesto.Placa}
                 fecha={manifiesto.Fecha}
                 fecha_cumplido={manifiesto["Fecha cumpl."]}
+                link={almacenVariables?.estado === "LIQUIDADO" || almacenVariables?.estado === "CUMPLIDO" ? novedadesInfo?.Link : undefined}
                 flete={manifiesto.MontoTotal}
                 reteFuente={manifiesto.ReteFuente}
                 reteICA={manifiesto.ReteICA}

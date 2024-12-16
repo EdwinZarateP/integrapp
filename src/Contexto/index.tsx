@@ -48,6 +48,8 @@ interface ContextProps {
   setDiccionarioManifiestosPagos: Dispatch<SetStateAction<any[]>>;
   DiccionarioSaldos: any[];
   setDiccionarioSaldos: Dispatch<SetStateAction<any[]>>;
+  DiccionarioNovedades: any[];
+  setDiccionarioNovedades: Dispatch<SetStateAction<any[]>>;
   
 }
 
@@ -88,6 +90,7 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
   const [DiccionarioManifiestosTodos, setDiccionarioManifiestosTodos] = useState<any[]>([]);
   const [DiccionarioManifiestosPagos, setDiccionarioManifiestosPagos] = useState<any[]>([]);
   const [DiccionarioSaldos, setDiccionarioSaldos] = useState<any[]>([]);
+  const [DiccionarioNovedades, setDiccionarioNovedades] = useState<any[]>([]);
 
   //-------------------------------------------------------------------------------------
   // 3. Crea el objeto de contexto con los valores y funciones necesarios que quieres proveer
@@ -127,7 +130,10 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
     DiccionarioManifiestosPagos,
     setDiccionarioManifiestosPagos,
     DiccionarioSaldos,
-    setDiccionarioSaldos
+    setDiccionarioSaldos,
+    DiccionarioNovedades,
+    setDiccionarioNovedades
+
   };
   
   // Renderiza el proveedor de contexto con el valor proporcionado

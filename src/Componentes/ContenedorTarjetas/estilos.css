@@ -2,7 +2,7 @@
 .ContenedorTarjetas-contenedor {
   position: relative;
   padding-top: 150px;
-  width: 100%;
+  width: 95%;
   margin: 0 auto;
   margin-bottom: 80px;
   font-family: Arial, sans-serif;
@@ -22,6 +22,7 @@
   flex-direction: column;
   align-items: center;
   border-radius: 0 0 10px 10px;
+
 }
 
 /* Título principal */

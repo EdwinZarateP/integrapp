@@ -20,7 +20,7 @@ const ExtraccionTotal = () => {
     try {
       // Verifica si ya hay saldos en el contexto
       if (almacenVariables.DiccionarioSaldos.length > 0) {
-        console.log("Usando saldos almacenados en el contexto:", almacenVariables.DiccionarioSaldos);
+        // console.log("Usando saldos almacenados en el contexto:", almacenVariables.DiccionarioSaldos);
       } else {
         console.log("Iniciando extracción de saldos desde la API...");
         await fetchSaldos();
@@ -28,7 +28,7 @@ const ExtraccionTotal = () => {
 
       // Verifica si ya hay Novedades en el contexto
       if (almacenVariables.DiccionarioNovedades.length > 0) {
-        console.log("Usando Novedades almacenadas en el contexto:", almacenVariables.DiccionarioNovedades);
+        // console.log("Usando Novedades almacenadas en el contexto:", almacenVariables.DiccionarioNovedades);
       } else {
         console.log("Iniciando extracción de Novedades desde la API...");
         await fetchNovedades();
@@ -36,7 +36,7 @@ const ExtraccionTotal = () => {
 
       // Verifica si ya hay pagos en el contexto
       if (almacenVariables.DiccionarioManifiestosPagos.length > 0) {
-        console.log("Usando pagos almacenados en el contexto:", almacenVariables.DiccionarioManifiestosPagos);
+        // console.log("Usando pagos almacenados en el contexto:", almacenVariables.DiccionarioManifiestosPagos);
       } else {
         console.log("Iniciando extracción de pagos desde la API...");
         await fetchPagos();
@@ -44,7 +44,7 @@ const ExtraccionTotal = () => {
 
       // Verifica si ya hay manifiestos en el contexto
       if (almacenVariables.DiccionarioManifiestosTodos.length > 0) {
-        console.log("Usando manifiestos almacenados en el contexto:", almacenVariables.DiccionarioManifiestosTodos);
+        // console.log("Usando manifiestos almacenados en el contexto:", almacenVariables.DiccionarioManifiestosTodos);
       } else {
         console.log("Iniciando extracción de manifiestos desde la API...");
         await fetchManifiestos();

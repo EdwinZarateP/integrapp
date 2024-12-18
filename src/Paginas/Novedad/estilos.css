@@ -1,0 +1,36 @@
+/* Estilos para el contenedor principal de Novedad */
+.novedad-contenedor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  /* Mensaje en caso de que no haya novedades */
+  .novedad-mensaje {
+    font-size: 16px;
+    color: #555;
+    margin: 10px 0;
+    text-align: center;
+  }
+  
+  /* Estilos generales para el contenedor de la foto */
+  .fotoNovedad-contenedor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  /* Estilos para la imagen de novedad */
+  .fotoNovedad-imagen {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  

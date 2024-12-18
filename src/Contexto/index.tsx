@@ -39,6 +39,10 @@ interface ContextProps {
   // Agrega estado
   estado: string;
   setEstado: Dispatch<SetStateAction<string>>;
+  
+  //link de novedad
+  link: string;
+  setLink: Dispatch<SetStateAction<string>>;
 
   //Diccionarios de las apis:
 
@@ -86,6 +90,9 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
   // Estado para la respuesta
   const [estado, setEstado] = useState('');
 
+  // link de novedad
+  const [link, setLink] = useState('');
+
   //Diccionarios de las apis
   const [DiccionarioManifiestosTodos, setDiccionarioManifiestosTodos] = useState<any[]>([]);
   const [DiccionarioManifiestosPagos, setDiccionarioManifiestosPagos] = useState<any[]>([]);
@@ -123,6 +130,10 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
     // Agrega estado
     estado,
     setEstado,
+
+    //Link
+    link,
+    setLink,
 
     //Diccionarios apis
     DiccionarioManifiestosTodos,

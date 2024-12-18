@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { FaExclamationCircle } from "react-icons/fa";
+import { ContextoApp } from '../../Contexto/index';
+import { useNavigate } from "react-router-dom";
 import "./estilos.css";
+
 
 interface TarjetaResumenProps {
   manifiesto: string;
@@ -33,6 +36,18 @@ const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
   estado,
   link
 }) => {
+  // const [mostrarFoto, setMostrarFoto] = useState(false);
+
+  const navigate = useNavigate();
+  const contexto = useContext(ContextoApp);
+
+  const handleClick = () => {
+    if (contexto?.setLink && link) {
+      contexto.setLink(link);
+      navigate("/Novedad");
+    }
+  };
+
   // Formateador para pesos colombianos sin decimales
   const formatCOP = (value: number) =>
     value.toLocaleString("es-CO", {
@@ -62,7 +77,11 @@ const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
   return (
     <div className="TarjetaResumen-contenedor">
       {link && (
-        <div className="icono-novedad">
+        <div
+          className="icono-novedad"
+          onClick={handleClick}
+          style={{ cursor: "pointer" }}
+        >
           <FaExclamationCircle className="icono" />
         </div>
       )}
@@ -80,7 +99,7 @@ const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
           <strong>Fecha Cumplido:</strong> {formatFecha(fecha_cumplido)}
         </p>
       ) : null}
-     
+
       <p className="TarjetaResumen-detalle">
         <strong>Flete:</strong> {formatCOP(flete)}
       </p>
@@ -104,14 +123,15 @@ const TarjetaResumen: React.FC<TarjetaResumenProps> = ({
         </p>
       )}
 
-      {link && (
-         <p className="TarjetaResumen-detalle">
-         <strong>Mira tu novedad:</strong>{" "}
-         <a href={link} target="_blank" rel="noopener noreferrer">
-           {link}
-         </a>
-       </p>
-      )}
+      {/* {link && (
+        <p className="TarjetaResumen-detalle">
+          <strong>Mira tu novedad:</strong>{" "}
+          <a href={link} target="_blank" rel="noopener noreferrer">
+            {link}
+          </a>
+        </p>
+      )} */}
+
     </div>
   );
 };

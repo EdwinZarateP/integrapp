@@ -14,7 +14,7 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
   // Estados locales para los checkboxes
   const [mostrarConSaldo, setMostrarConSaldo] = useState(false);
   const [mostrarHistorico, setMostrarHistorico] = useState(false);
-
+  
   // Filtrar manifiestos según las condiciones específicas
   const manifiestosFiltrados = useMemo(() => {
     return manifiestos
@@ -67,9 +67,7 @@ const ContenedorTarjetas: React.FC<ContenedorTarjetasProps> = ({ manifiestos }) 
 
   // Crear la lógica para buscar novedadesInfo similar a saldoInfo
   const obtenerNovedadesInfo = (manifiesto: any) => {
-    console.log("Comparando valores:");
-    almacenVariables?.DiccionarioNovedades?.forEach((novedad) => {
-      console.log("novedad.Manifiesto:", novedad.Manifiesto, "manifiesto.Manif_numero:", manifiesto.Manif_numero);
+    almacenVariables?.DiccionarioNovedades?.forEach(() => {      
     });
   
     return almacenVariables?.DiccionarioNovedades.find(

@@ -1,7 +1,6 @@
-/* Contenedor principal */
-/* Contenedor principal */
+/* Estilado principal */
 .TarjetaResumen-contenedor {
-  position: relative; /* Necesario para posicionar el icono correctamente */
+  position: relative;
   border: 1px solid #dcdcdc;
   border-radius: 12px;
   padding: 20px;
@@ -12,15 +11,14 @@
   background-color: #f9f9f9;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .icono-novedad {
   position: absolute;
   top: 8px;
   right: 8px;
-  color: #ff0000; /* Rojo para destacar */
-  z-index: 10;
+  color: #ff0000;
+  cursor: pointer;
 }
 
 .icono {
@@ -28,7 +26,7 @@
 }
 
 .TarjetaResumen-titulo {
-  font-size: 22px; /* Incrementar ligeramente para mejor visibilidad */
+  font-size: 22px; 
   font-weight: 700;
   margin-bottom: 12px;
   color: #4a4a8a;
@@ -45,16 +43,23 @@
 
 .TarjetaResumen-detalle {
   font-size: 15px;
-  margin: 8px 0; /* Incrementar ligeramente el espaciado */
+  margin: 8px 0;
   color: #333;
   line-height: 1.6;
-  overflow: hidden; /* Oculta el texto que se salga del contenedor */
+  overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .TarjetaResumen-detalle strong {
   color: #4a4a8a;
-  font-weight: bold; /* Resaltar con un grosor adicional */
+  font-weight: bold;
+}
+
+
+/* Hover - TarjetaResumen */
+.TarjetaResumen-contenedor:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 /* Ajustes para pantallas pequeñas */
@@ -63,44 +68,5 @@
     width: 95%;
     max-width: 100%;
     margin-bottom: 15px;
-  }
-}
-
-
-.TarjetaResumen-contenedor:hover {
-  transform: translateY(-4px); /* Elevar ligeramente al pasar el mouse */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Sombra más suave */
-}
-
-
-
-.TarjetaResumen-origenDestino {
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 15px;
-  color: #555;
-  letter-spacing: 0.5px;
-}
-
-.TarjetaResumen-detalle {
-  font-size: 15px;
-  margin: 8px 0; /* Incrementar ligeramente el espaciado */
-  color: #333;
-  line-height: 1.6;
-  overflow: hidden; /* Oculta el texto que se salga del contenedor */
-  text-overflow: ellipsis;
-}
-
-.TarjetaResumen-detalle strong {
-  color: #4a4a8a;
-  font-weight: bold; /* Resaltar con un grosor adicional */
-}
-
-/* Ajustes para pantallas pequeñas */
-@media (max-width: 768px) {
-  .TarjetaResumen-contenedor {
-    width: 95%;
-    max-width: 100%; /* Permitir más flexibilidad en pantallas pequeñas */
-    margin-bottom: 15px; /* Ajustar el espacio entre tarjetas */
   }
 }

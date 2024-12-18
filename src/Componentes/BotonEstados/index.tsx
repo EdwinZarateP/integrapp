@@ -8,7 +8,7 @@ interface PropiedadesBotonManifiestos {
   // cantidad: number;
   icono: JSX.Element; 
 }
-
+console.log
 const BotonEstado: React.FC<PropiedadesBotonManifiestos> = ({ nombreEstado, icono }) => {
   return (
     <div className='contenedorBotonEstado'>

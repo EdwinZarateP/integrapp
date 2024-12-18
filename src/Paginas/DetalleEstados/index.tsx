@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useContext, useState } from 'react';
 import BotonSencillo from '../../Componentes/BotonSencillo';
 import './estilos.css';
-import TarjetaDetalle from '../../Componentes/TarjetaDetalle/index';
+// import TarjetaDetalle from '../../Componentes/TarjetaDetalle/index';
 import { ContextoApp } from '../../Contexto/index';
 import extraccionManifiestos from '../../Funciones/ExtraerInfoApi/index';
 
@@ -52,11 +52,11 @@ const DetalleManifiestos = () => {
 
           {/* Componente de detalle, pasa la placa seleccionada como prop */}
           <div className="detalle-manifiestos__tarjeta">
-            <TarjetaDetalle 
+            {/* <TarjetaDetalle 
               estadoFiltrar={almacenVariables?.estado || ''}
               tenedor={almacenVariables?.tenedor || ''} 
               placaFiltrar={placaSeleccionada} 
-            />
+            /> */}
           </div>
 
           {/* Mensaje de carga */}

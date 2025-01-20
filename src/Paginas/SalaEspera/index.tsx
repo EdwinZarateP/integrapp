@@ -12,7 +12,7 @@ const SalaEspera: React.FC = () => {
   const { ejecutarExtraccion } = ExtraccionTotal(); // Extraer la función ejecutarExtraccion
   const [loading, setLoading] = useState(false); // Estado para manejar el HashLoader
 
-  const manejarClic = async () => {
+  const irManifiestos = async () => {
     setLoading(true); // Mostrar el loader al iniciar la extracción
     try {
       console.log("Iniciando extracción total...");
@@ -23,6 +23,10 @@ const SalaEspera: React.FC = () => {
       console.error("Error durante la extracción total:", error);
       setLoading(false); 
     }
+  };
+
+  const irFormularioHojavida = async () => {
+      navigate("/FormularioHojavida");
   };
 
   return (
@@ -37,10 +41,10 @@ const SalaEspera: React.FC = () => {
           <img src={logo} alt="Logo Integra" className="logo" />
           <h1 className="SalaEspera-titulo">Hola {almacenVariables?.nombre}</h1>
         
-          <button className="SalaEspera-boton" onClick={manejarClic}>
+          <button className="SalaEspera-boton" onClick={irManifiestos}>
             Manifiestos
           </button>
-          <button className="SalaEspera-boton" >
+          <button className="SalaEspera-boton" onClick={irFormularioHojavida} >
             Gestiona tus vehículos
           </button>
 

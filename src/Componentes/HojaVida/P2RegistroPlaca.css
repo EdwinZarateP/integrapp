@@ -1,0 +1,99 @@
+
+.P2RegistroPlaca-contenedor {
+max-width: 600px;
+width: 90%; /* Proporcional para márgenes laterales */
+margin: 20px auto;
+padding: 20px;
+background-color: #fff; /* Blanco para contraste */
+border: 1px solid #ccc; /* Gris claro para el borde */
+border-radius: 8px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+box-sizing: border-box; /* Incluye padding y borde en el ancho total */
+}
+
+.P2RegistroPlaca-titulo {
+font-size: 1.8rem; /* Reduce el tamaño en móviles */
+text-align: center;
+margin-bottom: 20px;
+color: #000; /* Negro para el título */
+}
+
+.P2RegistroPlaca-formulario {
+display: flex;
+flex-direction: column;
+gap: 15px;
+width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+.P2RegistroPlaca-campo {
+display: flex;
+flex-direction: column;
+}
+
+.P2RegistroPlaca-label {
+font-size: 1rem;
+margin-bottom: 5px;
+color: #555; /* Gris medio para las etiquetas */
+}
+
+.P2RegistroPlaca-input,
+.P2RegistroPlaca-file {
+width: 100%; /* Asegura que no sobresalgan */
+padding: 10px;
+font-size: 1rem;
+border: 1px solid #999; /* Gris medio para los bordes */
+border-radius: 4px;
+background-color: #f9f9f9; /* Fondo blanco-grisáceo */
+color: #333; /* Texto gris oscuro */
+box-sizing: border-box; /* Incluye padding y borde en el ancho total */
+}
+
+.P2RegistroPlaca-input:focus,
+.P2RegistroPlaca-file:focus {
+outline: none;
+border-color: #666; /* Gris más oscuro al enfocar */
+}
+
+.P2RegistroPlaca-boton {
+width: 100%; /* Botón ocupa todo el ancho disponible */
+background-color: #333; /* Gris oscuro para el botón */
+color: #fff; /* Blanco para el texto */
+border: none;
+padding: 10px;
+font-size: 1rem;
+border-radius: 4px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+box-sizing: border-box; /* Asegura que no se desborde */
+}
+
+.P2RegistroPlaca-boton:hover {
+background-color: #555; /* Gris medio para el hover */
+}
+
+/* Diseño responsivo */
+@media (max-width: 768px) {
+.P2RegistroPlaca-titulo {
+font-size: 1.6rem; /* Ajusta el tamaño del título */
+}
+
+.P2RegistroPlaca-boton {
+font-size: 0.95rem;
+padding: 8px;
+}
+}
+
+@media (max-width: 480px) {
+.P2RegistroPlaca-contenedor {
+padding: 15px;
+margin: 10px auto;
+}
+
+.P2RegistroPlaca-titulo {
+font-size: 1.4rem;
+}
+
+.P2RegistroPlaca-boton {
+font-size: 0.9rem;
+}
+}

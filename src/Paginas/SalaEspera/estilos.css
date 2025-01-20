@@ -25,14 +25,15 @@
 
 .SalaEspera-boton {
   display: inline-block;
-  padding: 1rem 2.5rem; /* Botón más grande */
+  padding: 0.5rem 1rem; /* Botón más grande */
   font-size: 1.2rem;
   font-weight: bold;
   color: #fff;
   background-color: #000000;
   text-decoration: none;
   border-radius: 8px; /* Bordes más redondeados */
-  transition: all 0.3s ease; /* Transición más fluida */
+  transition: all 0.3s ease; 
+  margin: 10px;
 }
 
 .SalaEspera-boton:hover {

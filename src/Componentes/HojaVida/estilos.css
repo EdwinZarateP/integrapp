@@ -1,0 +1,80 @@
+.CreacionVehiculo-contenedor {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.CreacionVehiculo-paso {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 80%;
+}
+
+.CreacionVehiculo-progreso {
+  width: 100%;
+  height: 4px;
+  background-color: #e0e0e0;
+  margin: 10px 0;
+  position: relative;
+}
+
+.CreacionVehiculo-progreso-barra {
+  height: 100%;
+  background-color: #333;
+  transition: width 0.3s ease;
+}
+
+.CreacionVehiculo-controles {
+  display: flex;
+  justify-content: space-around ;
+  align-items: center;
+  width: 100%;
+}
+
+.CreacionVehiculo-boton-atras {
+  background: none;
+  color: #333;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.CreacionVehiculo-boton-atras:hover {
+  color: #333;
+}
+
+.CreacionVehiculo-boton-siguiente {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.CreacionVehiculo-boton-siguiente:hover {
+  background-color: #555;
+}
+
+.CreacionVehiculo-boton-siguiente:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.CreacionVehiculo-logo {
+  position: fixed;
+  width: 63px;
+  height: auto;
+  bottom: 35px;
+  cursor: pointer;
+}

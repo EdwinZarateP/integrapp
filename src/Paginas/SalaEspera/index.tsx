@@ -21,7 +21,7 @@ const SalaEspera: React.FC = () => {
       navigate("/SeleccionEstados"); // Navegar después de completar la extracción
     } catch (error) {
       console.error("Error durante la extracción total:", error);
-      setLoading(false); // Ocultar el loader si hay un error
+      setLoading(false); 
     }
   };
 
@@ -35,13 +35,15 @@ const SalaEspera: React.FC = () => {
       ) : (
         <>
           <img src={logo} alt="Logo Integra" className="logo" />
-          <h1 className="SalaEspera-titulo">Bienvenido {almacenVariables?.nombre}</h1>
-          <p className="SalaEspera-descripcion">
-            Integra piensa en sus aliados
-          </p>
+          <h1 className="SalaEspera-titulo">Hola {almacenVariables?.nombre}</h1>
+        
           <button className="SalaEspera-boton" onClick={manejarClic}>
-            Continuar
+            Manifiestos
           </button>
+          <button className="SalaEspera-boton" >
+            Gestiona tus vehículos
+          </button>
+
         </>
       )}
     </div>

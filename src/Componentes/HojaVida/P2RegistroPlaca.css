@@ -1,99 +1,174 @@
-
+/* Contenedor principal */
 .P2RegistroPlaca-contenedor {
-max-width: 600px;
-width: 90%; /* Proporcional para márgenes laterales */
-margin: 20px auto;
-padding: 20px;
-background-color: #fff; /* Blanco para contraste */
-border: 1px solid #ccc; /* Gris claro para el borde */
-border-radius: 8px;
-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-box-sizing: border-box; /* Incluye padding y borde en el ancho total */
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 90%;
+    height: 95%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    overflow-y: auto;
 }
 
+/* Contenedor del Lottie */
+.P2RegistroPlaca-lottie {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    height: 100%; /* Asegura que ocupe toda la altura del contenedor */
+    margin: auto;
+}
+
+/* Contenedor del formulario */
+.P2RegistroPlaca-formulario-contenedor {
+    flex: 1;
+}
+
+/* Vista previa del archivo */
+.P2RegistroPlaca-archivo-preview {
+    flex: 1;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+.P2RegistroPlaca-imagen {
+    max-width: 100%;
+    height: auto; /* Mantiene la proporción de la imagen */
+    margin-top: 10px;
+    object-fit: contain; 
+    border-radius: 15px;
+}
+
+/* Título */
 .P2RegistroPlaca-titulo {
-font-size: 1.8rem; /* Reduce el tamaño en móviles */
-text-align: center;
-margin-bottom: 20px;
-color: #000; /* Negro para el título */
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #000;
 }
 
+/* Formulario */
 .P2RegistroPlaca-formulario {
-display: flex;
-flex-direction: column;
-gap: 15px;
-width: 100%; /* Ocupa todo el ancho disponible */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
 }
 
 .P2RegistroPlaca-campo {
-display: flex;
-flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .P2RegistroPlaca-label {
-font-size: 1rem;
-margin-bottom: 5px;
-color: #555; /* Gris medio para las etiquetas */
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: #555;
 }
 
 .P2RegistroPlaca-input,
 .P2RegistroPlaca-file {
-width: 100%; /* Asegura que no sobresalgan */
-padding: 10px;
-font-size: 1rem;
-border: 1px solid #999; /* Gris medio para los bordes */
-border-radius: 4px;
-background-color: #f9f9f9; /* Fondo blanco-grisáceo */
-color: #333; /* Texto gris oscuro */
-box-sizing: border-box; /* Incluye padding y borde en el ancho total */
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #999;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    color: #333;
+    box-sizing: border-box;
 }
 
 .P2RegistroPlaca-input:focus,
 .P2RegistroPlaca-file:focus {
-outline: none;
-border-color: #666; /* Gris más oscuro al enfocar */
+    outline: none;
+    border-color: #666;
 }
 
+/* Botón */
 .P2RegistroPlaca-boton {
-width: 100%; /* Botón ocupa todo el ancho disponible */
-background-color: #333; /* Gris oscuro para el botón */
-color: #fff; /* Blanco para el texto */
-border: none;
-padding: 10px;
-font-size: 1rem;
-border-radius: 4px;
-cursor: pointer;
-transition: background-color 0.3s ease;
-box-sizing: border-box; /* Asegura que no se desborde */
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
 }
 
 .P2RegistroPlaca-boton:hover {
-background-color: #555; /* Gris medio para el hover */
+    background-color: #555;
+}
+
+/* Mensaje */
+.P2RegistroPlaca-mensaje {
+    font-size: 1rem;
+    color: #d9534f;
+    text-align: center;
+    margin-top: 10px;
 }
 
 /* Diseño responsivo */
 @media (max-width: 768px) {
-.P2RegistroPlaca-titulo {
-font-size: 1.6rem; /* Ajusta el tamaño del título */
+    .P2RegistroPlaca-titulo {
+        font-size: 1.6rem;
+    }
+
+    .P2RegistroPlaca-boton {
+        font-size: 0.95rem;
+        padding: 8px;
+    }
+
+    .P2RegistroPlaca-contenedor {
+        flex-direction: column;
+    }
 }
 
-.P2RegistroPlaca-boton {
-font-size: 0.95rem;
-padding: 8px;
-}
+@media (max-width: 600px) {
+    .P2RegistroPlaca-contenedor {
+        padding: 15px;
+        margin: 10px auto;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .P2RegistroPlaca-imagen {
+        max-width: 100%;
+        height: auto;
+        object-fit: cover; /* Se asegura de que ocupe bien su contenedor */
+    }
+
+    .P2RegistroPlaca-titulo {
+        font-size: 1.4rem;
+    }
+
+    .P2RegistroPlaca-boton {
+        font-size: 0.9rem;
+    }
 }
 
 @media (max-width: 480px) {
-.P2RegistroPlaca-contenedor {
-padding: 15px;
-margin: 10px auto;
-}
+    .P2RegistroPlaca-contenedor {
+        padding: 10px;
+        margin: 10px auto;
+    }
 
-.P2RegistroPlaca-titulo {
-font-size: 1.4rem;
-}
+    .P2RegistroPlaca-titulo {
+        font-size: 1.2rem;
+    }
 
-.P2RegistroPlaca-boton {
-font-size: 0.9rem;
-}
+    .P2RegistroPlaca-boton {
+        font-size: 0.85rem;
+    }
 }

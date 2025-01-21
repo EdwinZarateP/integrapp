@@ -5,7 +5,7 @@ import './P1InformarDocumentos.css';
 const P1InformarDocumentos: React.FC = () => {
   return (
     <div className='P1InformarDocumentos-contenedor-principal'>
-      <h1 className="P1InformarDocumentos-titulo">Documentos que debe tener antes de iniciar</h1>
+      <h1 className="P1InformarDocumentos-titulo">🧐 Ten listo estos documentos antes de iniciar</h1>
       <div className="P1InformarDocumentos-contenedor">      
 
       <section className="P1InformarDocumentos-seccion">

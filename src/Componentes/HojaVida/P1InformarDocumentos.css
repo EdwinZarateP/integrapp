@@ -14,18 +14,34 @@ body {
 }
 
 .P1InformarDocumentos-titulo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   font-size: 1.5rem;
   text-align: center;
-  margin: 10px 0;
-  color: #000000;
+  margin: 0;
+  padding: 10px 0;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Para asegurarte de que esté por encima del resto del contenido */
 }
+
+.P1InformarDocumentos-contenedor-principal {
+  margin-top: 50px; /* Altura del título fijo */
+  overflow-y: auto;
+  height: 100%;
+}
+
 
 .P1InformarDocumentos-contenedor {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  overflow-y: auto
+  overflow-y: auto;
+  margin-top: 30px;
+  margin-bottom: 20px;
 }
 
 .P1InformarDocumentos-seccion {
@@ -39,7 +55,7 @@ body {
 }
 
 .P1InformarDocumentos-subtitulo {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   margin-bottom: 15px;
   color: #545657;
   border-bottom: 2px solid #ddd;

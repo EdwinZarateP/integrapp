@@ -1,10 +1,11 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../Imagenes/albatros.png";
-import "./estilos.css";
+import Cookies from 'js-cookie';
 import BotonSencillo from "../../Componentes/BotonSencillo";
 import { ContextoApp } from "../../Contexto/index";
 import HashLoader from "react-spinners/HashLoader";
+import "./estilos.css";
 
 const Inicio: React.FC = () => {
   const almacenVariables = useContext(ContextoApp);
@@ -23,7 +24,7 @@ const Inicio: React.FC = () => {
     if (almacenVariables) {
       switch (name) {
         case "email":
-          almacenVariables.setEmail(value);
+          almacenVariables.setEmail(value);          
           break;
         case "password":
           almacenVariables.setPassword(value);
@@ -59,10 +60,12 @@ const Inicio: React.FC = () => {
 
       if (data.nombre) {
         almacenVariables?.setNombre(data.nombre);
+        Cookies.set('nombreIntegrapp', data.nombre, { expires: 7 });
       }
 
       if (data.tenedor) {
-        await almacenVariables?.setTenedor(data.tenedor);      
+        await almacenVariables?.setTenedor(data.tenedor); 
+        Cookies.set('tenedorIntegrapp', data.tenedor, { expires: 7 });     
       } else {
         throw new Error("El servidor no devolvió el tenedor.");
       }

@@ -1,17 +1,26 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ContextoApp } from "../../Contexto/index";
 import ExtraccionTotal from "../../Funciones/ExtraccionTotal"; // Importa la función ExtraccionTotal
 import logo from "../../Imagenes/albatros.png";
 import HashLoader from "react-spinners/HashLoader";
+import Cookies from 'js-cookie';
 import "./estilos.css";
 
 const SalaEspera: React.FC = () => {
-  const almacenVariables = useContext(ContextoApp);
+
+  const nombreIntegrappCookie = Cookies.get('nombreIntegrapp');
   const navigate = useNavigate();
   const { ejecutarExtraccion } = ExtraccionTotal(); // Extraer la función ejecutarExtraccion
   const [loading, setLoading] = useState(false); // Estado para manejar el HashLoader
 
+    // Función para manejar el cierre de sesión
+    const cerrarSesion = () => {
+      // Remover las cookies
+      Cookies.remove('nombreIntegrapp');
+      // Redirigir al inicio y recargar la página
+      navigate("/");
+    };
+    
   const irManifiestos = async () => {
     setLoading(true); // Mostrar el loader al iniciar la extracción
     try {
@@ -39,14 +48,19 @@ const SalaEspera: React.FC = () => {
       ) : (
         <>
           <img src={logo} alt="Logo Integra" className="logo" />
-          <h1 className="SalaEspera-titulo">Hola {almacenVariables?.nombre}</h1>
+          <h1 className="SalaEspera-titulo">Hola {nombreIntegrappCookie}</h1>
         
           <button className="SalaEspera-boton" onClick={irManifiestos}>
             Manifiestos
           </button>
           <button className="SalaEspera-boton" onClick={irFormularioHojavida} >
-            Gestiona tus vehículos
+            Crea tus vehículos
           </button>
+
+          {/* Contenedor para el botón de Cerrar Sesión alineado a la derecha */}
+          <div className="SalaEspera-cerrar-sesion-container">
+            <span onClick={cerrarSesion} className="SalaEspera-cerrar-sesion">Cerrar sesión</span>
+          </div>
 
         </>
       )}

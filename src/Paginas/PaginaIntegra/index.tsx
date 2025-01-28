@@ -61,7 +61,7 @@ const PaginaIntegra: React.FC = () => {
             style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url("https://png.pngtree.com/png-clipart/20230825/original/pngtree-illustration-of-the-transport-logistics-center-and-trucks-picture-image_8494404.png")' }}
           >
 
-            <h1 className="PaginaIntegra-titulo">Recogidas en tu empresa</h1>            
+            <h1 className="PaginaIntegra-titulo">Recolección en tu empresa</h1>            
             <p className="PaginaIntegra-descripcion">
               Recogemos en el lugar que desees
             </p>

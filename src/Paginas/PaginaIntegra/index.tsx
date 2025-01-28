@@ -73,7 +73,7 @@ const PaginaIntegra: React.FC = () => {
           >
             <h1 className="PaginaIntegra-titulo">Almancemiento a tu medida</h1>
             <p className="PaginaIntegra-descripcion">
-              Flexibilidad en el horario de recogida
+              Tenemos CEDI adaptables a tu necesidad
             </p>
             <img src={logo} alt="Logo Integra" className="PaginaIntegra-logo2" />
           </div>

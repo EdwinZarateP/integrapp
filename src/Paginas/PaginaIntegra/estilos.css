@@ -1,0 +1,308 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+.PaginaIntegra-contenedor {
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f4f4f4;
+}
+
+.PaginaIntegra-logo{
+width: 40px;
+}
+
+.PaginaIntegra-encabezado {
+  background-color: #000000;
+  width: 100%;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.PaginaIntegra-navegacion {
+  display: flex;
+  width: 100%;
+  align-items: center;  
+  position: relative;
+}
+
+.PaginaIntegra-menu {
+  list-style: none;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.PaginaIntegra-menu-boton {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.PaginaIntegra-item {
+  border-radius: 15px;
+  padding: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #fff;
+}
+
+.PaginaIntegra-item:hover{
+  cursor: pointer;
+  background-color: #4d4d4d;
+}
+
+.PaginaIntegra-menu.abierto {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: #000;
+  position: absolute;
+  height: 90vh;
+  top: 40px;
+  right: 0;
+  padding: 10px 20px;
+  z-index: 1000;
+  border-radius: 5px;
+}
+
+.PaginaIntegra-principal {
+  position: fixed;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  margin-top: 40px;
+}
+
+.PaginaIntegra-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la pantalla */
+  position: relative;
+  overflow: hidden;
+}
+
+.PaginaIntegra-item-banner {
+  display: flex;
+  justify-content: center; /* Centra el contenido horizontalmente */
+  align-items: center; /* Centra el contenido verticalmente */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: white;
+  text-align: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 20px; /* Añade algo de espacio alrededor del texto */
+}
+
+.PaginaIntegra-item-banner.activo {
+  display: flex; /* Solo el item activo se muestra */
+}
+
+.PaginaIntegra-titulo {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-top: 150px;
+}
+
+.PaginaIntegra-descripcion {
+  font-size: 1.5rem;
+  margin-top: 10px;
+}
+
+
+
+
+.PaginaIntegra-busqueda {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  z-index: 500;
+}
+
+.PaginaIntegra-busqueda-input{
+  background-color: #000000;
+  padding: 12px;
+  border-radius: 35px;
+}
+
+.PaginaIntegra-input {
+  padding: 10px;
+  /* width: 300px; */
+  border: 1px solid #ccc;
+  border-radius: 50px;
+  
+}
+
+.PaginaIntegra-boton {
+  padding: 10px 10px;
+  background-color: rgb(235, 157, 12);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.PaginaIntegra-opciones {
+  background-color: rgb(0, 0, 0,0.7);
+  display: flex;
+  position: fixed;
+  color:white;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  min-height:150px;
+  height: auto;
+  flex-wrap: wrap;
+  z-index: 500;
+  bottom: 100px;
+}
+
+.PaginaIntegra-opcion {
+  cursor: pointer;
+  text-align: center;
+  max-width: 150px;
+  color:white;
+}
+
+.PaginaIntegra-opcion:hover {
+  transform: scale(1.1);
+}
+
+.PaginaIntegra-icono {
+  font-size: 3em;
+  color: rgb(255, 255, 255);
+  margin-bottom: 10px;
+}
+
+.PaginaIntegra-whatsapp {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #25d366;
+  color: white;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  z-index: 1000;
+}
+
+.PaginaIntegra-whatsapp:hover {
+  background-color: #20b957;
+}
+
+.PaginaIntegra-pqr {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: rgb(235, 157, 12);
+  color: rgb(0, 0, 0);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  z-index: 1000;
+}
+
+.PaginaIntegra-pqr:hover {
+  background-color: rgb(206, 134, 0);
+}
+
+.PaginaIntegra-item-banner {
+  display: none; /* Ocultar todos los elementos inicialmente */
+  transition: transform  1s ease-in-out; /* Para una transición suave */
+}
+
+.PaginaIntegra-item-banner.activo {
+  display: block; /* Mostrar solo el activo */
+}
+
+.PaginaIntegra-btn-carrusel {
+  position: absolute;
+  top:40%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.PaginaIntegra-btn-carrusel:first-of-type {
+  left: 10px;
+}
+
+.PaginaIntegra-btn-carrusel:last-of-type {
+  right: 10px;
+}
+
+
+@media screen and (max-width: 768px) {
+  .PaginaIntegra-menu {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: #000;
+    padding: 10px 20px;
+    border-radius: 5px;
+  }
+
+  .PaginaIntegra-menu-boton {
+    display: block;
+    padding: 10px;
+  }
+
+  .PaginaIntegra-logo{
+    display: none;
+    }
+
+  .PaginaIntegra-pqr {
+    width: 40px;
+    height: 40px;
+    bottom: 20px;
+    right: 100px;
+  }
+
+  .PaginaIntegra-whatsapp {
+    width: 40px;
+    height: 40px;
+  }
+
+  .PaginaIntegra-titulo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 100px;
+  }
+
+  .PaginaIntegra-btn-carrusel {
+    top:30%;
+  }
+}

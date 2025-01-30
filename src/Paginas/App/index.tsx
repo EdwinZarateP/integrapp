@@ -20,8 +20,7 @@ const App: React.FC = () => {
     <Router basename="/integrapp">
       <Routes>
         {/* <Route path="/" element={<PaginaIntegra />} />         */}
-        <Route path="/" element={<Inicio />} />
-        
+        <Route path="/" element={<Inicio />} />        
         <Route path="/Registro" element={<Registro />} />
         <Route path="/Olvidoclave" element={<Olvidoclave />} />
         <Route path="/SeleccionEstados" element={<EstadosManifiestos />} />

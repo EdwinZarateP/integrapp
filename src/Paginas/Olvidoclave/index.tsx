@@ -12,22 +12,22 @@ const Olvidoclave: React.FC = () => {
   };
 
   return (
-    <div className="contenedor">
-      <img src={logo} alt="Logo Integra" className="logo" />
+    <div className="Olvidoclave-contenedor">
+      <img src={logo} alt="Logo Integra" className="Olvidoclave-logo" />
 
-      <div className="titulo">
+      <div className="Olvidoclave-titulo">
         <h1>Integr</h1>
         <h1>App</h1>
       </div>
 
-      <form className="formulario" onSubmit={manejarEnvioFormulario}>
-        <div className="contenedorInput">
-          <label htmlFor="email" className="etiqueta">Email</label>
+      <form className="Olvidoclave-formulario" onSubmit={manejarEnvioFormulario}>
+        <div className="Olvidoclave-contenedorInput">
+          <label htmlFor="email" className="Olvidoclave-etiqueta">Email</label>
           <input
             id="email"
             type="email"
             placeholder="conductores@gmail.com"
-            className="input"
+            className="Olvidoclave-input"
           />
         </div>
 

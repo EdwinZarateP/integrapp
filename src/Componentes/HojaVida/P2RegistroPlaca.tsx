@@ -27,7 +27,7 @@ const P2RegistroPlaca: React.FC = () => {
     setIsLoading(true); // Mostrar la animación antes de iniciar la carga
 
     try {
-      const response = await fetch('https://integrappi.onrender.com/vehiculos/subir-tarjeta', {
+      const response = await fetch('https://integrappi-dvmh.onrender.com/vehiculos/subir-tarjeta', {
         method: 'POST',
         body: formData,
       });

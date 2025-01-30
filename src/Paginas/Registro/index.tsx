@@ -72,7 +72,7 @@ const Registro: React.FC = () => {
     setErrorMensaje('');
 
     try {
-      const response = await fetch('https://integrappi.onrender.com/usuarios/', {
+      const response = await fetch('https://integrappi-dvmh.onrender.com/usuarios/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,11 +95,10 @@ const Registro: React.FC = () => {
       lanzarConfetti();
 
       // Esperar 1 segundo para mostrar la explosión y luego navegar      
-    setTimeout(() => {
-      window.scrollTo(0, 0); // Desplazar a la parte superior
-      navigate('/');
-    }, 0);
-
+      setTimeout(() => {
+        window.scrollTo(0, 0); // Desplazar a la parte superior
+        navigate('/');
+      }, 0);
 
     } catch (error: unknown) {
       setErrorMensaje(`Error: ${error instanceof Error ? error.message : 'Ocurrió un error inesperado'}`);
@@ -107,19 +106,19 @@ const Registro: React.FC = () => {
   };
 
   return (
-    <div className="contenedor">
-      <img src={logo} alt="Logo Integra" className="logo" />
-      <div className="titulo">
+    <div className="Registro-Contenedor">
+      <img src={logo} alt="Logo Integra" className="Registro-Logo" />
+      <div className="Registro-Titulo">
         <h1>Integr</h1>
         <h1>App</h1>
       </div>
 
-      {errorMensaje && <p className="error">{errorMensaje}</p>}
+      {errorMensaje && <p className="Registro-Error">{errorMensaje}</p>}
 
-      <form className="formulario" onSubmit={manejarEnvioFormulario}>
+      <form className="Registro-Formulario" onSubmit={manejarEnvioFormulario}>
         {['nombre', 'tenedor', 'celular', 'email'].map((field) => (
-          <div className="contenedorInput" key={field}>
-            <label htmlFor={field} className="etiqueta">
+          <div className="Registro-ContenedorInput" key={field}>
+            <label htmlFor={field} className="Registro-Etiqueta">
               {field === 'tenedor' ? 'Cédula o NIT' : field.charAt(0).toUpperCase() + field.slice(1)}
             </label>
             <input
@@ -127,7 +126,7 @@ const Registro: React.FC = () => {
               name={field}
               type={field === 'email' ? 'email' : 'text'}
               placeholder={field === 'tenedor' ? 'Digite su Cédula o NIT' : `Digite ${field}`}
-              className="input"
+              className="Registro-Input"
               value={almacenVariables ? almacenVariables[field as ContextKeys] : ''} // Acceso seguro
               onChange={manejarCambio}
               required
@@ -135,30 +134,28 @@ const Registro: React.FC = () => {
           </div>
         ))}
 
-
-        <div className="contenedorInput">
-          <label htmlFor="password" className="etiqueta">Clave</label>
-          <div className="inputWrapper">
+        <div className="Registro-ContenedorInput">
+          <label htmlFor="password" className="Registro-Etiqueta">Clave</label>
+          <div className="Registro-InputWrapper">
             <input
               id="password"
               name="password"
               type={passwordVisible ? 'text' : 'password'}
               placeholder="Digite su clave"
-              className="input"
-              value={almacenVariables ? almacenVariables.password : ''} // Acceso seguro
+              className="Registro-Input"
+              value={almacenVariables ? almacenVariables.password : ''} 
               onChange={manejarCambio}
               required
             />
             <button
               type="button"
               onClick={manejarVisibilidadPassword}
-              className="verContrasenaBtn"
+              className="Registro-VerContrasenaBtn"
             >
               {passwordVisible ? '👁️' : '👁️‍🗨️'}
             </button>
           </div>
         </div>
-
         <BotonSencillo type="submit" texto="Registrar" colorClass="negro" />
       </form>
     </div>

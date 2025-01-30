@@ -24,7 +24,7 @@ const ExtraeNovedades = () => {
     try {
       
       // Llama a la API de Novedades usando el tenedor del contexto
-      const url = `https://integrappi.onrender.com/Novedades/tenedor/${tenedor}`;
+      const url = `https://integrappi-dvmh.onrender.com/Novedades/tenedor/${tenedor}`;
       const respuesta = await axios.get(url);
       // console.log("Datos obtenidos de la API de Novedades:", respuesta.data);
 

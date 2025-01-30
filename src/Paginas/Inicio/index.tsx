@@ -41,7 +41,7 @@ const Inicio: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("https://integrappi.onrender.com/usuarios/token", {
+      const response = await fetch("https://integrappi-dvmh.onrender.com/usuarios/token", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -80,7 +80,7 @@ const Inicio: React.FC = () => {
   };
 
   return (
-    <div className="contenedor">
+    <div className="inicio-contenedor">
       {loading ? (
         <div className="inicio-loading-container">
           <HashLoader size={60} color={"rgb(141, 199, 63)"} loading={loading} />
@@ -88,17 +88,17 @@ const Inicio: React.FC = () => {
         </div>
       ) : (
         <>
-          <img src={logo} alt="Logo Integra" className="logo" />
-          <div className="titulo">
+          <img src={logo} alt="Logo Integra" className="inicio-logo" />
+          <div className="inicio-titulo">
             <h1>Integr</h1>
             <h1>App</h1>
           </div>
 
           {errorMessage && <div className="mensajeError">{errorMessage}</div>}
 
-          <form className="formulario" onSubmit={manejarEnvioFormulario}>
-            <div className="contenedorInput">
-              <label htmlFor="email" className="etiqueta">
+          <form className="inicio-formulario" onSubmit={manejarEnvioFormulario}>
+            <div className="inicio-contenedorInput">
+              <label htmlFor="email" className="inicio-etiqueta">
                 Email
               </label>
               <input
@@ -106,30 +106,30 @@ const Inicio: React.FC = () => {
                 name="email"
                 type="email"
                 placeholder="conductores@gmail.com"
-                className="input"
+                className="inicio-input"
                 value={almacenVariables?.email || ""}
                 onChange={manejarCambio}
               />
             </div>
 
-            <div className="contenedorInput">
-              <label htmlFor="password" className="etiqueta">
+            <div className="inicio-contenedorInput">
+              <label htmlFor="password" className="inicio-etiqueta">
                 Contraseña
               </label>
-              <div className="inputWrapper">
+              <div className="inicio-inputWrapper">
                 <input
                   id="password"
                   name="password"
                   type={passwordVisible ? "text" : "password"}
                   placeholder="Digite su contraseña"
-                  className="input"
+                  className="inicio-input"
                   value={almacenVariables?.password || ""}
                   onChange={manejarCambio}
                 />
                 <button
                   type="button"
                   onClick={manejarVisibilidadPassword}
-                  className="verContrasenaBtn"
+                  className="inicio-verContrasenaBtn"
                 >
                   {passwordVisible ? (
                     <span role="img" aria-label="Hide password">
@@ -147,11 +147,8 @@ const Inicio: React.FC = () => {
             <BotonSencillo type="submit" texto="Ingresar" colorClass="negro" />
           </form>
 
-          <div className="pieDePagina">
-            {/* <Link to="/Olvidoclave" className="enlace">
-              Olvidé la clave
-            </Link> */}
-            <Link to="/Registro" className="enlace">
+          <div className="inicio-pieDePagina">
+            <Link to="/Registro" className="inicio-enlace">
               Registrarse
             </Link>
           </div>

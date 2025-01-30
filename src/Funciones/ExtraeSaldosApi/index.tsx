@@ -25,7 +25,7 @@ const ExtraeSaldos = () => {
     try {
       
       // Llama a la API de saldos usando el tenedor del contexto
-      const url = `https://integrappi.onrender.com/manifiestos/tenedor/${tenedor}`;
+      const url = `https://integrappi-dvmh.onrender.com/manifiestos/tenedor/${tenedor}`;
       const respuesta = await axios.get(url);
       // console.log("Datos obtenidos de la API de saldos:", respuesta.data);
 

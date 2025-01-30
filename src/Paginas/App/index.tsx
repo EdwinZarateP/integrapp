@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import Inicio from '../Inicio/index';
+import Inicio from '../Inicio/index';
 import Registro from '../Registro/index';
 import EstadosManifiestos from '../SeleccionEstados/index';
 import Estados from '../EstadosManifiestos/index';
@@ -8,7 +8,7 @@ import Novedad from '../Novedad/index';
 import FormularioHojavida from '../FormularioHojavida/index';
 import Api2 from '../Api/autenticar';
 import Olvidoclave from '../Olvidoclave/index';
-import PaginaIntegra from '../PaginaIntegra/index';
+// import PaginaIntegra from '../PaginaIntegra/index';
 import NoEncontrado from '../NoEncontrado/index';
 import { ProveedorVariables } from '../../Contexto/index';
 
@@ -19,8 +19,9 @@ const App: React.FC = () => {
       hijo={
     <Router basename="/integrapp">
       <Routes>
-        {/* <Route path="/" element={<Inicio />} /> */}
-        <Route path="/" element={<PaginaIntegra />} />        
+        {/* <Route path="/" element={<PaginaIntegra />} />         */}
+        <Route path="/" element={<Inicio />} />
+        
         <Route path="/Registro" element={<Registro />} />
         <Route path="/Olvidoclave" element={<Olvidoclave />} />
         <Route path="/SeleccionEstados" element={<EstadosManifiestos />} />

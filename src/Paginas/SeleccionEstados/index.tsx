@@ -6,15 +6,26 @@ import "./estilos.css";
 import { FaTruck } from "react-icons/fa6";
 import { IoDocumentsSharp } from "react-icons/io5";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
-// import { GiCash } from "react-icons/gi";
+import Cookies from 'js-cookie';
+import { useNavigate } from "react-router-dom";
 import logo from "../../Imagenes/albatros.png";
 import { ContextoApp } from "../../Contexto/index";
 
 const EstadosManifiestos = () => {
+  const navigate = useNavigate();
   const almacenVariables = useContext(ContextoApp);
 
   const actualizaEstado = (estado: string) => {
     almacenVariables?.setEstado(estado);
+  };
+
+
+  // Función para manejar el cierre de sesión
+  const cerrarSesion = () => {
+    // Remover las cookies
+    Cookies.remove("nombreIntegrapp");
+    // Redirigir al inicio y recargar la página
+    navigate("/");
   };
 
   return (
@@ -56,17 +67,13 @@ const EstadosManifiestos = () => {
           <BotonEstado nombreEstado="Liquidados" icono={<FaMoneyBillTransfer />} />
         </Link>
 
-        {/* <Link
-          to="/Estados"
-          className="contenedorManifiestos-linkBoton"
-          onClick={() => actualizaEstado("PAGADO")}
-        >
-          <BotonEstado nombreEstado="Pagados" icono={<GiCash />} />
-        </Link> */}
-
-        <Link to="/" className="contenedorManifiestos">
-          <BotonSencillo type="button" texto="Salir" colorClass="rojo" />
-        </Link>
+        {/* Botón de cierre de sesión */}
+        <BotonSencillo
+          type="button"
+          texto="Salir"
+          colorClass="rojo"
+          onClick={cerrarSesion} // Asignar la función aquí
+        />
       </div>
     </div>
   );

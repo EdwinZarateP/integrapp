@@ -4,6 +4,7 @@ import ExtraccionTotal from "../../Funciones/ExtraccionTotal"; // Importa la fun
 import logo from "../../Imagenes/albatros.png";
 import HashLoader from "react-spinners/HashLoader";
 import Cookies from 'js-cookie';
+import Swal from "sweetalert2";
 import "./estilos.css";
 
 const SalaEspera: React.FC = () => {
@@ -35,7 +36,13 @@ const SalaEspera: React.FC = () => {
   };
 
   const irFormularioHojavida = async () => {
-      navigate("/FormularioHojavida");
+    Swal.fire({
+      icon: "warning",
+      title: "👷‍♀️Estamos en construcción 🏗️",
+      text: "En este botón, próximamente podrás registrar y gestionar tus vehículos",
+      confirmButtonText: "Aceptar",
+    });
+      // navigate("/FormularioHojavida");
   };
 
   return (
@@ -47,7 +54,7 @@ const SalaEspera: React.FC = () => {
         </div>
       ) : (
         <>
-          <img src={logo} alt="Logo Integra" className="logo" />
+          <img src={logo} alt="Logo Integra" className="SalaEspera-logo" />
           <h1 className="SalaEspera-titulo">Hola {nombreIntegrappCookie}</h1>
         
           <button className="SalaEspera-boton" onClick={irManifiestos}>

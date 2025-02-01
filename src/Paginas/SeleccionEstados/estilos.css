@@ -1,74 +1,109 @@
-/* Contenedor principal */
+/* Estilos base - EstadosManifiestos */
 .contenedorManifiestos-principal {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 20px;
-    font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.contenedorManifiestos-cabecera {
+  text-align: center;
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+.contenedorManifiestos-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.contenedorManifiestos-logo:hover {
+  transform: scale(1.05);
+}
+
+.contenedorManifiestos-titulo {
+  display: flex;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #000000;
+  margin: 0 auto 1rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.contenedorManifiestos-titulo h1:nth-child(2) {
+  color: rgb(141, 199, 63);
+  font-weight: 700;
+}
+
+.contenedorManifiestos-estados {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.contenedorManifiestos-linkBoton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+  max-width: 400px;
+  transition: transform 0.2s ease;
+  text-decoration: none;
+}
+
+.contenedorManifiestos-linkBoton:hover {
+  transform: translateY(-3px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .contenedorManifiestos-principal {
+    padding: 1.5rem 1rem;
   }
-  
-  /* Cabecera */
-  .contenedorManifiestos-cabecera {
-    display: flex;
-    justify-content:center;
-    align-items: end;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+
+  .contenedorManifiestos-logo {
+    width: 100px;
+  }
+
+  .contenedorManifiestos-titulo {
+    font-size: 1.2rem;
+    flex-direction: row;
+    max-width: 250px;
+  }
+
+  .contenedorManifiestos-estados {
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+
+  .contenedorManifiestos-linkBoton {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .contenedorManifiestos-titulo {
+    font-size: 1.2rem;
+    gap: 0;
+    text-align: center;
   }
   
   .contenedorManifiestos-logo {
-    width: 45px;
-    height: auto;
-  }
-  
-  .contenedorManifiestos-titulo{
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    font-size: 1rem;
-    justify-content: center;
+    width: 85px;
   }
 
-  .contenedorManifiestos-titulo :nth-child(2) {
-    color:rgb(141, 199, 63);
-  }
-  
-  /* Contenedor de los botones */
   .contenedorManifiestos-estados {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 400px;
-    margin-top: 20px;
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    gap: 0.8rem;
   }
-  
-  /* Botones */
-  .contenedorManifiestos-linkBoton {
-    width: 100%;
-    margin-bottom: 15px;
-    text-decoration: none;
-    display: flex;
-    color: black;
-
-  }
-  
-  .contenedorManifiestos-linkBoton:last-child {
-    margin-bottom: 0;
-  }
-  
-  /* Estilo para títulos y botones en dispositivos móviles */
-  @media (max-width: 600px) {
-  
-    .contenedorManifiestos-estados {
-      width: 100%;
-    }
-  }
-  
+}

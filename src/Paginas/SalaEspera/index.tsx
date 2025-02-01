@@ -9,15 +9,16 @@ import "./estilos.css";
 
 const SalaEspera: React.FC = () => {
 
-  const nombreIntegrappCookie = Cookies.get('nombreIntegrapp');
   const navigate = useNavigate();
-  const { ejecutarExtraccion } = ExtraccionTotal(); // Extraer la función ejecutarExtraccion
-  const [loading, setLoading] = useState(false); // Estado para manejar el HashLoader
+  const nombreIntegrappCookie = Cookies.get('nombreIntegrapp');
+  const { ejecutarExtraccion } = ExtraccionTotal();
+  const [loading, setLoading] = useState(false); 
 
     // Función para manejar el cierre de sesión
     const cerrarSesion = () => {
       // Remover las cookies
       Cookies.remove('nombreIntegrapp');
+      Cookies.remove('tenedorIntegrapp');
       // Redirigir al inicio y recargar la página
       navigate("/");
     };
@@ -27,7 +28,7 @@ const SalaEspera: React.FC = () => {
     try {
       console.log("Iniciando extracción total...");
       await ejecutarExtraccion(); // Ejecutar extracción total
-      console.log("Extracción completada.");
+      // console.log("Extracción completada.");
       navigate("/SeleccionEstados"); // Navegar después de completar la extracción
     } catch (error) {
       console.error("Error durante la extracción total:", error);

@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import axios from "axios";
+import Cookies from 'js-cookie';
 import { ContextoApp } from "../../Contexto/index";
 
 // Define una interfaz para los datos de pagos
@@ -11,6 +12,7 @@ interface Pago {
 }
 
 const ExtraccionPagos = () => {
+  const CodigoTenedorCookie = Cookies.get('tenedorIntegrapp');
   const almacenVariables = useContext(ContextoApp);
 
   if (!almacenVariables) {
@@ -21,7 +23,6 @@ const ExtraccionPagos = () => {
   const {
     setDiccionarioManifiestosPagos,
     DiccionarioManifiestosPagos,
-    tenedor,
   } = almacenVariables;
 
   const fetchPagos = async (): Promise<Pago[]> => {
@@ -66,7 +67,7 @@ const ExtraccionPagos = () => {
           {
             campo: "Tenedor",
             operador: "=",
-            valor: tenedor, 
+            valor: CodigoTenedorCookie, 
           }
         ],
       };

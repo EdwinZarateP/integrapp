@@ -1,8 +1,15 @@
+/* Estilos base */
 .SalaEspera-contenedor {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: white;
+  padding: 20px;
+
   height: calc(100vh - 40px);
   text-align: center;
   font-family: Arial, sans-serif;
@@ -38,6 +45,7 @@
 .SalaEspera-boton:hover {
   background-color: #333333; /* Color de hover más oscuro */
   transform: scale(1.05); /* Efecto de zoom */
+
 }
 
 .SalaEspera-loader {
@@ -45,42 +53,65 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
 }
 
 .SalaEspera-loader p {
-  margin-top: 1rem;
+  margin-top: 20px;
+  color: rgb(141, 199, 63);
   font-size: 1.2rem;
-  color: #666;
 }
 
 .SalaEspera-logo {
   width: 120px;
+  height: auto;
   margin-bottom: 20px;
 }
 
-.SalaEspera-cerrar-sesion {
-  cursor: pointer;
-  color: #f44336; 
-  font-size: 16px;
-  text-decoration: underline;
-  transition: color 0.3s ease;
-  margin-top: 40px; 
-  display: inline-block;
-  padding: 10px 20px; /* Agregado un poco de padding */
-  text-align: right;
+.SalaEspera-titulo {
+  color: #333;
+  font-size: 1.8rem;
+  margin-bottom: 40px;
+  text-align: center;
 }
 
-.SalaEspera-cerrar-sesion:hover {
-  color: #d32f2f; /* Cambiar color al pasar el mouse */
+.SalaEspera-boton {
+  background-color: white;
+  border: 2px solid rgb(141, 199, 63);
+  border-radius: 10px;
+  padding: 15px 30px;
+  margin: 10px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  color: rgb(141, 199, 63);
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.SalaEspera-boton:hover {
+  background-color: rgb(141, 199, 63);
+  color: white;
 }
 
 .SalaEspera-cerrar-sesion-container {
-  display: flex;
-  justify-content: flex-end; /* Mover a la derecha */
-  padding-right: 20px; /* Espacio a la derecha */
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
+.SalaEspera-cerrar-sesion {
+  color: rgb(141, 199, 63);
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
 
+.SalaEspera-cerrar-sesion:hover {
+  color: #333;
 /* Ajustes para pantallas pequeñas */
 @media (max-width: 600px) {
   .SalaEspera-contenedor {
@@ -89,3 +120,19 @@
   }  
 }
 
+/* Responsive Design */
+@media (max-width: 768px) {
+  .SalaEspera-titulo {
+    font-size: 1.5rem;
+  }
+
+  .SalaEspera-boton {
+    width: 100%;
+    max-width: 250px;
+    font-size: 1rem;
+  }
+
+  .SalaEspera-cerrar-sesion {
+    font-size: 0.9rem;
+  }
+}

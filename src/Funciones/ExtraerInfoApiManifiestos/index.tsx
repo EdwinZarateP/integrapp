@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import axios from "axios";
+import Cookies from 'js-cookie';
 import { ContextoApp } from "../../Contexto/index";
 
 // Define una interfaz para los manifiestos después de procesarlos
@@ -49,6 +50,7 @@ interface ManifiestoAPI {
 }
 
 const ExtraccionManifiestos = () => {
+  const CodigoTenedorCookie = Cookies.get('tenedorIntegrapp');
   const almacenVariables = useContext(ContextoApp);
 
   if (!almacenVariables) {
@@ -59,7 +61,6 @@ const ExtraccionManifiestos = () => {
   const {
     setDiccionarioManifiestosTodos,
     DiccionarioManifiestosTodos,
-    tenedor,
   } = almacenVariables;
 
   const fetchManifiestos = async (): Promise<Manifiesto[]> => {
@@ -102,7 +103,7 @@ const ExtraccionManifiestos = () => {
           {
             campo: "Tenedor",
             operador: "=",
-            valor: tenedor, // Usar el valor de 'tenedor' desde el contexto
+            valor: CodigoTenedorCookie, // Usar el valor de 'tenedor' desde el contexto
           },
         ],
       };

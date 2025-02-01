@@ -1,7 +1,6 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BotonEstado from "../../Componentes/BotonEstados/index";
-import BotonSencillo from "../../Componentes/BotonSencillo";
 import "./estilos.css";
 import { FaTruck } from "react-icons/fa6";
 import { IoDocumentsSharp } from "react-icons/io5";
@@ -14,9 +13,11 @@ import { ContextoApp } from "../../Contexto/index";
 const EstadosManifiestos = () => {
   const navigate = useNavigate();
   const almacenVariables = useContext(ContextoApp);
+  const navigate = useNavigate();
 
-  const actualizaEstado = (estado: string) => {
+  const handleNavigation = (estado: string) => {
     almacenVariables?.setEstado(estado);
+    navigate('/Estados');
   };
 
 
@@ -43,28 +44,26 @@ const EstadosManifiestos = () => {
       </header>
 
       <div className="contenedorManifiestos-estados">
-        <Link
-          to="/Estados"
+        <div 
+          onClick={() => handleNavigation("TRANSITO")}
           className="contenedorManifiestos-linkBoton"
-          onClick={() => actualizaEstado("TRANSITO")}
         >
           <BotonEstado nombreEstado="En tránsito" icono={<FaTruck />} />
-        </Link>
+        </div>
 
-        <Link
-          to="/Estados"
+        <div 
+          onClick={() => handleNavigation("CUMPLIDO")}
           className="contenedorManifiestos-linkBoton"
-          onClick={() => actualizaEstado("CUMPLIDO")}
         >
           <BotonEstado nombreEstado="Cumplidos" icono={<IoDocumentsSharp />} />
-        </Link>
+        </div>
 
-        <Link
-          to="/Estados"
+        <div 
+          onClick={() => handleNavigation("LIQUIDADO")}
           className="contenedorManifiestos-linkBoton"
-          onClick={() => actualizaEstado("LIQUIDADO")}
         >
           <BotonEstado nombreEstado="Liquidados" icono={<FaMoneyBillTransfer />} />
+        </div>
         </Link>
 
         {/* Botón de cierre de sesión */}

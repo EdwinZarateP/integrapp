@@ -13,8 +13,11 @@ const ExtraccionTotal = () => {
   const { fetchNovedades } = ExtraeNovedades();
 
   const ejecutarExtraccion = async (): Promise<void> => {
-    if (!almacenVariables?.tenedor) {
-      throw new Error("El contexto no contiene un 'tenedor'.");
+
+    if (!almacenVariables) {
+      throw new Error(
+        "El contexto no está disponible. Asegúrate de envolver el componente en un proveedor de contexto."
+      );
     }
 
     try {

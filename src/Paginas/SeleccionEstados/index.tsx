@@ -5,16 +5,28 @@ import "./estilos.css";
 import { FaTruck } from "react-icons/fa6";
 import { IoDocumentsSharp } from "react-icons/io5";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
+import Cookies from 'js-cookie';
+import { useNavigate } from "react-router-dom";
 import logo from "../../Imagenes/albatros.png";
 import { ContextoApp } from "../../Contexto/index";
 
 const EstadosManifiestos = () => {
+  const navigate = useNavigate();
   const almacenVariables = useContext(ContextoApp);
   const navigate = useNavigate();
 
   const handleNavigation = (estado: string) => {
     almacenVariables?.setEstado(estado);
     navigate('/Estados');
+  };
+
+
+  // Función para manejar el cierre de sesión
+  const cerrarSesion = () => {
+    // Remover las cookies
+    Cookies.remove("nombreIntegrapp");
+    // Redirigir al inicio y recargar la página
+    navigate("/");
   };
 
   return (
@@ -52,6 +64,15 @@ const EstadosManifiestos = () => {
         >
           <BotonEstado nombreEstado="Liquidados" icono={<FaMoneyBillTransfer />} />
         </div>
+        </Link>
+
+        {/* Botón de cierre de sesión */}
+        <BotonSencillo
+          type="button"
+          texto="Salir"
+          colorClass="rojo"
+          onClick={cerrarSesion} // Asignar la función aquí
+        />
       </div>
     </div>
   );

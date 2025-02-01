@@ -4,10 +4,48 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   height: 100vh;
   font-family: Arial, sans-serif;
   background-color: white;
   padding: 20px;
+
+  height: calc(100vh - 40px);
+  text-align: center;
+  font-family: Arial, sans-serif;
+  }
+
+.SalaEspera-titulo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1.5rem; /* Espaciado más amplio */
+}
+
+.SalaEspera-descripcion {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.SalaEspera-boton {
+  display: inline-block;
+  padding: 0.5rem 1rem; /* Botón más grande */
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #000000;
+  text-decoration: none;
+  border-radius: 8px; /* Bordes más redondeados */
+  transition: all 0.3s ease; 
+  margin: 10px;
+  cursor: pointer;
+}
+
+.SalaEspera-boton:hover {
+  background-color: #333333; /* Color de hover más oscuro */
+  transform: scale(1.05); /* Efecto de zoom */
+
 }
 
 .SalaEspera-loader {
@@ -74,6 +112,12 @@
 
 .SalaEspera-cerrar-sesion:hover {
   color: #333;
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 600px) {
+  .SalaEspera-contenedor {
+    justify-content: start;
+    margin: 20px;
+  }  
 }
 
 /* Responsive Design */

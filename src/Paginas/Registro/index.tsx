@@ -1,10 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../Imagenes/albatros.png';
-import './estilos.css';
 import BotonSencillo from '../../Componentes/BotonSencillo';
 import { ContextoApp } from '../../Contexto/index';
 import confetti from 'canvas-confetti'; // Importar confetti
+import './estilos.css';
 
 // Define un tipo para las claves de ContextProps
 type ContextKeys = 'nombre' | 'tenedor' | 'celular' | 'email' | 'password';
@@ -97,7 +97,7 @@ const Registro: React.FC = () => {
       // Esperar 1 segundo para mostrar la explosión y luego navegar      
       setTimeout(() => {
         window.scrollTo(0, 0); // Desplazar a la parte superior
-        navigate('/');
+        navigate('/InicioPropietarios');
       }, 0);
 
     } catch (error: unknown) {

@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import axios from "axios";
+import Cookies from 'js-cookie';
 import { ContextoApp } from "../../Contexto/index";
 
 // Define una interfaz para los datos de Novedades
@@ -12,19 +13,20 @@ interface Saldo {
 }
 
 const ExtraeNovedades = () => {
+  const CodigoTenedorCookie = Cookies.get('tenedorIntegrapp');
   const almacenVariables = useContext(ContextoApp);
 
   if (!almacenVariables) {
     throw new Error("Contexto no definido. Asegúrate de usar el proveedor correctamente.");
   }
 
-  const { setDiccionarioNovedades, tenedor } = almacenVariables;
+  const { setDiccionarioNovedades } = almacenVariables;
 
   const fetchNovedades = async (): Promise<Saldo[]> => {
     try {
       
       // Llama a la API de Novedades usando el tenedor del contexto
-      const url = `https://integrappi-dvmh.onrender.com/Novedades/tenedor/${tenedor}`;
+      const url = `https://integrappi-dvmh.onrender.com/Novedades/tenedor/${CodigoTenedorCookie}`;
       const respuesta = await axios.get(url);
       // console.log("Datos obtenidos de la API de Novedades:", respuesta.data);
 

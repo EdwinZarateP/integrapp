@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import axios from "axios";
+import Cookies from 'js-cookie';
 import { ContextoApp } from "../../Contexto/index";
 
 // Define una interfaz para los datos de saldos
@@ -13,19 +14,20 @@ interface Saldo {
 }
 
 const ExtraeSaldos = () => {
+  const CodigoTenedorCookie = Cookies.get('tenedorIntegrapp');
   const almacenVariables = useContext(ContextoApp);
 
   if (!almacenVariables) {
     throw new Error("Contexto no definido. Asegúrate de usar el proveedor correctamente.");
   }
 
-  const { setDiccionarioSaldos, tenedor } = almacenVariables;
+  const { setDiccionarioSaldos } = almacenVariables;
 
   const fetchSaldos = async (): Promise<Saldo[]> => {
     try {
       
       // Llama a la API de saldos usando el tenedor del contexto
-      const url = `https://integrappi-dvmh.onrender.com/manifiestos/tenedor/${tenedor}`;
+      const url = `https://integrappi-dvmh.onrender.com/manifiestos/tenedor/${CodigoTenedorCookie}`;
       const respuesta = await axios.get(url);
       // console.log("Datos obtenidos de la API de saldos:", respuesta.data);
 

@@ -1,0 +1,129 @@
+.InicioPropietarios-contenedor {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+  min-height: 100vh; /* Para asegurar que ocupe toda la pantalla */
+}
+
+.InicioPropietarios-loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 1000;
+  text-align: center;
+}
+
+.InicioPropietarios-titulo {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.InicioPropietarios-titulo :nth-child(2) {
+  color:rgb(141, 199, 63);
+}
+
+.InicioPropietarios-logo {
+  width: 150px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.InicioPropietarios-formulario {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 400px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.InicioPropietarios-contenedorInput {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.InicioPropietarios-etiqueta {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.InicioPropietarios-inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.InicioPropietarios-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.InicioPropietarios-verContrasenaBtn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+}
+
+.InicioPropietarios-pieDePagina {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.InicioPropietarios-enlace {
+  color: #04088b;
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.InicioPropietarios-enlace:hover {
+  text-decoration: underline;
+}
+
+.InicioPropietarios-mensajeError {
+  color: red;
+  margin-top: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+ /* Ajustes para pantallas pequeñas */
+ @media (max-width: 600px) {
+  .InicioPropietarios-logo {
+    width: 100px;
+  }  
+}
+
+

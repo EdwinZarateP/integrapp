@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import InicioPropietarios from '../InicioPropietarios/index';
 import Inicio from '../Inicio/index';
 import Registro from '../Registro/index';
 import EstadosManifiestos from '../SeleccionEstados/index';
@@ -19,8 +20,9 @@ const App: React.FC = () => {
       hijo={
     <Router basename="/integrapp">
       <Routes>
-        {/* <Route path="/" element={<PaginaIntegra />} />         */}
-        <Route path="/" element={<Inicio />} />        
+        {/* <Route path="/" element={<PaginaIntegra />} />*/}
+        <Route path="/" element={<Inicio />} />  
+        <Route path="/InicioPropietarios" element={<InicioPropietarios />} />               
         <Route path="/Registro" element={<Registro />} />
         <Route path="/Olvidoclave" element={<Olvidoclave />} />
         <Route path="/SeleccionEstados" element={<EstadosManifiestos />} />

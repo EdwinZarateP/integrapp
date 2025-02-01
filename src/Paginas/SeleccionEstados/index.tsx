@@ -1,20 +1,20 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BotonEstado from "../../Componentes/BotonEstados/index";
-import BotonSencillo from "../../Componentes/BotonSencillo";
 import "./estilos.css";
 import { FaTruck } from "react-icons/fa6";
 import { IoDocumentsSharp } from "react-icons/io5";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
-// import { GiCash } from "react-icons/gi";
 import logo from "../../Imagenes/albatros.png";
 import { ContextoApp } from "../../Contexto/index";
 
 const EstadosManifiestos = () => {
   const almacenVariables = useContext(ContextoApp);
+  const navigate = useNavigate();
 
-  const actualizaEstado = (estado: string) => {
+  const handleNavigation = (estado: string) => {
     almacenVariables?.setEstado(estado);
+    navigate('/Estados');
   };
 
   return (
@@ -32,41 +32,26 @@ const EstadosManifiestos = () => {
       </header>
 
       <div className="contenedorManifiestos-estados">
-        <Link
-          to="/Estados"
+        <div 
+          onClick={() => handleNavigation("TRANSITO")}
           className="contenedorManifiestos-linkBoton"
-          onClick={() => actualizaEstado("TRANSITO")}
         >
           <BotonEstado nombreEstado="En tránsito" icono={<FaTruck />} />
-        </Link>
+        </div>
 
-        <Link
-          to="/Estados"
+        <div 
+          onClick={() => handleNavigation("CUMPLIDO")}
           className="contenedorManifiestos-linkBoton"
-          onClick={() => actualizaEstado("CUMPLIDO")}
         >
           <BotonEstado nombreEstado="Cumplidos" icono={<IoDocumentsSharp />} />
-        </Link>
+        </div>
 
-        <Link
-          to="/Estados"
+        <div 
+          onClick={() => handleNavigation("LIQUIDADO")}
           className="contenedorManifiestos-linkBoton"
-          onClick={() => actualizaEstado("LIQUIDADO")}
         >
           <BotonEstado nombreEstado="Liquidados" icono={<FaMoneyBillTransfer />} />
-        </Link>
-
-        {/* <Link
-          to="/Estados"
-          className="contenedorManifiestos-linkBoton"
-          onClick={() => actualizaEstado("PAGADO")}
-        >
-          <BotonEstado nombreEstado="Pagados" icono={<GiCash />} />
-        </Link> */}
-
-        <Link to="/" className="contenedorManifiestos">
-          <BotonSencillo type="button" texto="Salir" colorClass="rojo" />
-        </Link>
+        </div>
       </div>
     </div>
   );

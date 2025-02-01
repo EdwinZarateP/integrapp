@@ -12,6 +12,7 @@ console.log
 const BotonEstado: React.FC<PropiedadesBotonManifiestos> = ({ nombreEstado, icono }) => {
   return (
     <div className='contenedorBotonEstado'>
+
         <div className='contenedorImagenEstado'>
             {icono} 
         </div>

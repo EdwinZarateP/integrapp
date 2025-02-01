@@ -5,7 +5,7 @@ import "./estilos.css";
 import { FaTruck } from "react-icons/fa6";
 import { IoDocumentsSharp } from "react-icons/io5";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import logo from "../../Imagenes/albatros.png";
 import { ContextoApp } from "../../Contexto/index";
 
@@ -19,10 +19,10 @@ const EstadosManifiestos = () => {
   };
 
   // Función para manejar el cierre de sesión
-  const cerrarSesion = () => {
-    Cookies.remove("nombreIntegrapp");
-    navigate("/");
-  };
+  // const cerrarSesion = () => {
+  //   Cookies.remove("nombreIntegrapp");
+  //   navigate("/");
+  // };
 
   return (
     <div className="contenedorManifiestos-principal">

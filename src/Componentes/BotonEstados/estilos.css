@@ -27,7 +27,7 @@
 }
 
 .contenedorImagenEstado svg {
-  font-size: 2.5rem;
+  font-size: 2.3rem;
   color: rgb(141, 199, 63);
   transition: transform 0.3s ease;
 }

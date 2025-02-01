@@ -78,4 +78,8 @@
     .Inicio-opcion {
       width: 100%;
     }  
+
+    .Inicio-cabecera {
+      margin-bottom: 0;
+    }
   }

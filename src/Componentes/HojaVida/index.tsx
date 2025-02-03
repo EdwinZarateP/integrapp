@@ -72,7 +72,7 @@ const CreacionVehiculo: React.FC = () => {
       title: "🚧 En construcción",
       text: "Estamos trabajando en construir este botón",
       icon: "info",
-      confirmButtonText: "Entendido",
+      confirmButtonText: "Ok",
     });
   };
  

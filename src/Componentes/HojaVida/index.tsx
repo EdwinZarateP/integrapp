@@ -80,7 +80,7 @@ const CreacionVehiculo: React.FC = () => {
   return (
     <div className='CreacionVehiculo-contenedor-principal'>
       <div className="CreacionVehiculo-titulo">
-        <h1>Ten listos los documentos antes de iniciar</h1>
+        <h1>Documentos para registrar vehículo</h1>
       </div>
       <div className="CreacionVehiculo-contenedor">
         {secciones.map((seccion, index) => {

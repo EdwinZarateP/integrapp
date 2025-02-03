@@ -37,13 +37,23 @@ const SalaEspera: React.FC = () => {
   };
 
   const irFormularioHojavida = async () => {
+    // Swal.fire({
+    //   icon: "warning",
+    //   title: "👷‍♀️Estamos en construcción 🏗️",
+    //   text: "En este botón, próximamente podrás registrar y gestionar tus vehículos",
+    //   confirmButtonText: "Aceptar",
+    // });
+    navigate("/FormularioHojavida");
+  };
+
+  const irFormularioEditar= async () => {
     Swal.fire({
       icon: "warning",
       title: "👷‍♀️Estamos en construcción 🏗️",
-      text: "En este botón, próximamente podrás registrar y gestionar tus vehículos",
+      text: "En este botón, próximamente podrás gestionar tus vehículos",
       confirmButtonText: "Aceptar",
-    });
-      // navigate("/FormularioHojavida");
+     });
+    // navigate("/FormularioHojavida");
   };
 
   return (
@@ -63,6 +73,10 @@ const SalaEspera: React.FC = () => {
           </button>
           <button className="SalaEspera-boton" onClick={irFormularioHojavida} >
             Crea tus vehículos
+          </button>
+
+          <button className="SalaEspera-boton" onClick={irFormularioEditar} >
+            Gestión de vehículos
           </button>
 
           {/* Contenedor para el botón de Cerrar Sesión alineado a la derecha */}

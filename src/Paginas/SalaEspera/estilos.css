@@ -96,10 +96,8 @@
   color: white;
 }
 
-.SalaEspera-cerrar-sesion-container {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+.SalaEspera-cerrar-sesion-container {  
+  margin-top: 20px;
 }
 
 .SalaEspera-cerrar-sesion {
@@ -135,4 +133,5 @@
   .SalaEspera-cerrar-sesion {
     font-size: 0.9rem;
   }
+}
 }

@@ -20,7 +20,8 @@ const SalaEspera: React.FC = () => {
       Cookies.remove('nombreIntegrapp');
       Cookies.remove('tenedorIntegrapp');
       // Redirigir al inicio y recargar la página
-      navigate("/InicioIntegrApp");
+      // navigate("/InicioIntegrApp");
+      navigate("/");
     };
     
   const irManifiestos = async () => {

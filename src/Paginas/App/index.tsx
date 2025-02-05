@@ -9,7 +9,7 @@ import Novedad from '../Novedad/index';
 import FormularioHojavida from '../FormularioHojavida/index';
 import Api2 from '../Api/autenticar';
 import Olvidoclave from '../Olvidoclave/index';
-import PaginaIntegra from '../PaginaIntegra/index';
+// import PaginaIntegra from '../PaginaIntegra/index';
 import NoEncontrado from '../NoEncontrado/index';
 import { ProveedorVariables } from '../../Contexto/index';
 
@@ -20,8 +20,9 @@ const App: React.FC = () => {
       hijo={
     <Router basename="/integrapp">
       <Routes>
-        <Route path="/" element={<PaginaIntegra />} />
-        <Route path="/InicioIntegrApp" element={<Inicio />} />  
+        {/* <Route path="/" element={<PaginaIntegra />} /> */}
+        <Route path="/" element={<Inicio />} />
+        {/* <Route path="/InicioIntegrApp" element={<Inicio />} /> */}
         <Route path="/InicioPropietarios" element={<InicioPropietarios />} />               
         <Route path="/Registro" element={<Registro />} />
         <Route path="/Olvidoclave" element={<Olvidoclave />} />

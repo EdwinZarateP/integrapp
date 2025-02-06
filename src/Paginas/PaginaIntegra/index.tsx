@@ -77,7 +77,7 @@ const PaginaIntegra: React.FC = () => {
         <div className="PaginaIntegra-busqueda-input">
           <input
             type="text"
-            placeholder="Ingrese guía"
+            placeholder="Rastrea tu guía"
             className="PaginaIntegra-input"
           />
           <button className="PaginaIntegra-boton">🔍</button>
@@ -147,8 +147,14 @@ const PaginaIntegra: React.FC = () => {
         </div>
         <div className="PaginaIntegra-opcion">
           <LiaPeopleCarrySolid className="PaginaIntegra-icono" />
-          <p>Cotiza tu servicio</p>
+          <p>Portal ventas</p>
         </div>
+
+        <div className="PaginaIntegra-opcion">
+          <LiaPeopleCarrySolid className="PaginaIntegra-icono" />
+          <p>intranet</p>
+        </div>
+
         <div className="PaginaIntegra-opcion">
           <FaTools className="PaginaIntegra-icono" />
           <p>Más Herramientas</p>

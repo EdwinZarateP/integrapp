@@ -1,8 +1,6 @@
-import React, { useState } from "react";
-import { MdWarehouse } from "react-icons/md";
-import { FaTruck } from "react-icons/fa";
+import { useState } from "react";
 import logo from "../../Imagenes/albatros.png";
-import { FaBoxes } from "react-icons/fa";
+import DisenoServicio from "../../Componentes/DisenoServicio/index"
 import "./estilos.css";
 
 const PortalClientesComp: React.FC = () => {
@@ -46,19 +44,7 @@ const PortalClientesComp: React.FC = () => {
         
         {seccionActiva === "diseno" && (
           <div className="PortalClientesComp-categoria-diseno">
-            <div className="PortalClientesComp-categoria">
-                <MdWarehouse />
-              <h3>Almacenamiento</h3>
-            </div>
-            <div className="PortalClientesComp-categoria">
-                <FaTruck />
-              <h3>Carga Masiva</h3>
-            </div>
-            <div className="PortalClientesComp-categoria">
-                <FaBoxes />
-              <h3>Paqueteo</h3>
-            </div>
-            <button>Cotiza</button>
+            <DisenoServicio/>
           </div>
         )}
 

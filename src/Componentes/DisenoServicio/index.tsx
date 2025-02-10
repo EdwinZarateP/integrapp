@@ -5,7 +5,7 @@ import { FaBoxes } from "react-icons/fa";
 import "./estilos.css";
 
 const subitems = {
-  almacenamiento: ["Posiciones de estiba", "Vehiculos recibidos", "Estibas por descargue", "Líneas alistadas", "Cajas", "Inhouse (Sí/No)", "Auditoria Alistamiento", "Coordinador", "Auxiliares", "Operarios"],
+  almacenamiento: ["Posiciones de estiba", "Vehiculos recibidos", "Líneas alistadas", "Cajas", "Inhouse (Sí/No)", "Auditoria Alistamiento", "Coordinador", "Auxiliares", "Operarios"],
   carga_Masiva: ["Cajas", "Inhouse (Sí/No)"],
   paqueteo: ["Cajas", "Hora Recogida", "Días al Mes"],
 };

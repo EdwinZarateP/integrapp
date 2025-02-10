@@ -1,0 +1,124 @@
+/* Estilos generales */
+.PortalVentasComp-contenedor {
+  display: flex;
+  height: 100%;
+}
+
+/* Encabezado del menú lateral */
+.PortalVentasComp-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #1f2d3d;
+  color: white;
+  border-radius: 14px;
+}
+
+.PortalVentasComp-encabezado img {
+  width: 100px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.PortalVentasComp-encabezado h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+/* Estilos del menú lateral */
+.PortalVentasComp-menu-lateral {
+  width: 250px;
+  background-color: #2c3e50;
+  color: white;
+  padding: 20px;
+}
+
+.PortalVentasComp-menu-lateral ul {
+  margin-top: 5px;
+  list-style: none;
+  padding: 0;
+}
+
+.PortalVentasComp-menu-lateral li {
+  margin-top: 2px;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.PortalVentasComp-menu-lateral li:hover,
+.PortalVentasComp-activo {
+  background-color: #3d566f;
+  border-radius: 7px;
+}
+
+/* Estilos del contenido principal */
+.PortalVentasComp-contenido {
+  flex: 1;
+  padding: 20px;
+  background-color: #ecf0f1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilos del formulario */
+.PortalVentasComp-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width:600px;
+}
+
+.PortalVentasComp-formulario label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+}
+
+.PortalVentasComp-formulario input,
+.PortalVentasComp-formulario select,
+.PortalVentasComp-formulario textarea {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.PortalVentasComp-formulario button {
+  padding: 10px;
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.PortalVentasComp-formulario button:hover {
+  background-color: #1f2d3d;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .PortalVentasComp-contenedor {
+    flex-direction: column;
+  }
+  .PortalVentasComp-menu-lateral {
+    width: 100%;
+    text-align: center;
+  }
+  .PortalVentasComp-categorias {
+    flex-direction: column;
+    align-items: center;
+  }
+}

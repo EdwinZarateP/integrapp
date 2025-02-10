@@ -10,8 +10,11 @@ import FormularioHojavida from '../FormularioHojavida/index';
 import Api2 from '../Api/autenticar';
 import Olvidoclave from '../Olvidoclave/index';
 import PaginaIntegra from '../PaginaIntegra/index';
+import PortalClientes from '../PortalClientes/index';
+import PortalVentas from '../PortalVentas/index';
 import NoEncontrado from '../NoEncontrado/index';
 import { ProveedorVariables } from '../../Contexto/index';
+import "./estilos.css";
 
 const App: React.FC = () => {
   return (
@@ -31,6 +34,8 @@ const App: React.FC = () => {
         <Route path="/SalaEspera" element={<SalaEspera />} />
         <Route path="/FormularioHojavida" element={<FormularioHojavida />} />        
         <Route path="/Api2" element={<Api2 />} />
+        <Route path="/PortalClientes" element={<PortalClientes />} />
+        <Route path="/PortalVentas" element={<PortalVentas />} />                
         <Route path="*" element={<NoEncontrado />} />
       </Routes>
     </Router>

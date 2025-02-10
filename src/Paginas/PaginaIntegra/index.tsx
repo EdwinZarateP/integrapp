@@ -17,40 +17,28 @@ const PaginaIntegra: React.FC = () => {
     setMenuAbierto(!menuAbierto);
   };
 
-  const cambiarCarruselIzquierda = () => {
-    setIndiceCarrusel(indiceCarrusel === 0 ? 1 : indiceCarrusel - 1); // Lo vuelve cíclico
-  };
-
-  const cambiarCarruselDerecha = () => {
-    setIndiceCarrusel(indiceCarrusel === 1 ? 0 : indiceCarrusel + 1); // Lo vuelve cíclico
+  const cambiarCarrusel = (direccion: "izquierda" | "derecha") => {
+    setIndiceCarrusel((prev) =>
+      direccion === "izquierda" ? (prev === 0 ? 1 : prev - 1) : (prev === 1 ? 0 : prev + 1)
+    );
   };
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        // WhatsApp Web
-        setWhatsappLink(
-          `https://web.whatsapp.com/send?phone=573125443396&text=${encodeURIComponent(
-            "Hola, necesito ayuda"
-          )}`
-        );
-      } else {
-        // WhatsApp normal
-        setWhatsappLink(
-          `https://wa.me/573125443396?text=${encodeURIComponent(
-            "Hola, necesito ayuda"
-          )}`
-        );
-      }
+      const isDesktop = window.innerWidth >= 768;
+      setWhatsappLink(
+        isDesktop
+          ? `https://web.whatsapp.com/send?phone=573125443396&text=${encodeURIComponent(
+              "Hola, necesito ayuda"
+            )}`
+          : `https://wa.me/573125443396?text=${encodeURIComponent(
+              "Hola, necesito ayuda"
+            )}`
+      );
     };
 
-    // Ejecutar la función al montar el componente
     handleResize();
-
-    // Escuchar cambios en el tamaño de la ventana
     window.addEventListener("resize", handleResize);
-
-    // Limpiar el event listener al desmontar el componente
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -85,47 +73,41 @@ const PaginaIntegra: React.FC = () => {
       </div>
 
       <main className="PaginaIntegra-principal">
-        {/* Carrusel */}
         <div className="PaginaIntegra-banner">
-          <div
-            className={`PaginaIntegra-item-banner ${
-              indiceCarrusel === 0 ? "activo" : "inactivo"
-            }`}
-            style={{
-              backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url("https://png.pngtree.com/png-clipart/20230825/original/pngtree-illustration-of-the-transport-logistics-center-and-trucks-picture-image_8494404.png")',
-            }}
-          >
-            <h1 className="PaginaIntegra-titulo">Recolección en tu empresa</h1>
-            <p className="PaginaIntegra-descripcion">
-              Recogemos en el lugar que desees
-            </p>
-            <img src={logo} alt="Logo Integra" className="PaginaIntegra-logo2" />
-          </div>
-          <div
-            className={`PaginaIntegra-item-banner ${
-              indiceCarrusel === 1 ? "activo" : "inactivo"
-            }`}
-            style={{
-              backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://www.gadsoftware.com/wp-content/uploads/2024/01/Software-de-Gestion-de-Almacenes-WMS.jpg")',
-            }}
-          >
-            <h1 className="PaginaIntegra-titulo">Almacenamiento a tu medida</h1>
-            <p className="PaginaIntegra-descripcion">
-              Tenemos CEDI adaptables a tu necesidad
-            </p>
-            <img src={logo} alt="Logo Integra" className="PaginaIntegra-logo2" />
-          </div>
+          {[0, 1].map((index) => (
+            <div
+              key={index}
+              className={`PaginaIntegra-item-banner ${
+                indiceCarrusel === index ? "activo" : "inactivo"
+              }`}
+              style={{
+                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${
+                  index === 0
+                    ? "https://png.pngtree.com/png-clipart/20230825/original/pngtree-illustration-of-the-transport-logistics-center-and-trucks-picture-image_8494404.png"
+                    : "https://www.gadsoftware.com/wp-content/uploads/2024/01/Software-de-Gestion-de-Almacenes-WMS.jpg"
+                })`,
+              }}
+            >
+              <h1 className="PaginaIntegra-titulo">
+                {index === 0 ? "Recolección en tu empresa" : "Almacenamiento a tu medida"}
+              </h1>
+              <p className="PaginaIntegra-descripcion">
+                {index === 0
+                  ? "Recogemos en el lugar que desees"
+                  : "Tenemos CEDI adaptables a tu necesidad"}
+              </p>
+              <img src={logo} alt="Logo Integra" className="PaginaIntegra-logo2" />
+            </div>
+          ))}
           <button
-            className="PaginaIntegra-btn-carrusel"
-            onClick={cambiarCarruselIzquierda}
+            className="PaginaIntegra-btn-carrusel izquierda"
+            onClick={() => cambiarCarrusel("izquierda")}
           >
             ◀
           </button>
           <button
-            className="PaginaIntegra-btn-carrusel"
-            onClick={cambiarCarruselDerecha}
+            className="PaginaIntegra-btn-carrusel derecha"
+            onClick={() => cambiarCarrusel("derecha")}
           >
             ▶
           </button>
@@ -133,35 +115,24 @@ const PaginaIntegra: React.FC = () => {
       </main>
 
       <div className="PaginaIntegra-opciones">
-        <div className="PaginaIntegra-opcion">
-          <IoIosPeople className="PaginaIntegra-icono" />
-          <p>Portal Clientes</p>
-        </div>
-
-        <div
-          className="PaginaIntegra-opcion"
-          onClick={() => navigate("/InicioIntegrApp")}
-        >
-          <FaTruck className="PaginaIntegra-icono" />
-          <p>Portal Transportadores</p>
-        </div>
-        <div className="PaginaIntegra-opcion">
-          <LiaPeopleCarrySolid className="PaginaIntegra-icono" />
-          <p>Portal ventas</p>
-        </div>
-
-        <div className="PaginaIntegra-opcion">
-          <LiaPeopleCarrySolid className="PaginaIntegra-icono" />
-          <p>intranet</p>
-        </div>
-
-        <div className="PaginaIntegra-opcion">
-          <FaTools className="PaginaIntegra-icono" />
-          <p>Más Herramientas</p>
-        </div>
+        {[
+          { icon: <IoIosPeople />, text: "Portal Clientes", onClick: () => navigate("/PortalClientes") },
+          { icon: <FaTruck />, text: "Portal Transportadores", onClick: () => navigate("/InicioIntegrApp") },
+          { icon: <LiaPeopleCarrySolid />, text: "Portal ventas", onClick: () => navigate("/PortalVentas") },          
+          { icon: <LiaPeopleCarrySolid />, text: "Intranet" },
+          { icon: <FaTools />, text: "Más Herramientas" },
+        ].map((opcion, index) => (
+          <div
+            key={index}
+            className="PaginaIntegra-opcion"
+            onClick={opcion.onClick}
+          >
+            {opcion.icon}
+            <p>{opcion.text}</p>
+          </div>
+        ))}
       </div>
 
-      {/* Botón de WhatsApp */}
       <a
         href={whatsappLink}
         className="PaginaIntegra-whatsapp"

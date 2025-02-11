@@ -64,10 +64,26 @@
   align-items: center;
   justify-content: center;
 }
+.PortalVentasComp-categoria-negociacion {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  
+}
 
+.PortalVentasComp-input{
+  margin: 10px;
+  padding: 10px;
+  height: 32px;
+  width: 100%;
+  max-width: 300px;
+}
 /* Estilos del formulario */
 .PortalVentasComp-formulario {
   display: flex;
+  
   flex-direction: column;
   gap: 10px;
   background: white;
@@ -75,7 +91,7 @@
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width:600px;
+  max-width:800px;
 }
 
 .PortalVentasComp-formulario label {

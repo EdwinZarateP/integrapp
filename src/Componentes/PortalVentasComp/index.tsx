@@ -112,7 +112,7 @@ const PortalVentasComp: React.FC = () => {
                   Otros Servicios:
                   <textarea placeholder="Agrega otros servicios adicionales" />
                 </label>
-
+                <button type="button">Recalcular oferta</button>
                 <button type="button">Exportar a PDF</button>
               </form>
             )}

@@ -1,39 +1,142 @@
+/* estilos.css */
+
+/* Fondo semitransparente que envuelve todo */
 .CargaDocumento-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 7px;
 }
 
+/* Modal elegante y centrado */
 .CargaDocumento-modal {
-  background: #fff;
-  padding: 20px;
+  background: #ffffff;
   border-radius: 8px;
-  width: 400px;
-  max-width: 90%;
+  width: 100%;
+  max-width: 500px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeInScale 0.3s ease-out;
   text-align: center;
-  position: relative;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-.close-button {
-  margin-top: 10px;
-  background: #e74c3c;
-  color: white;
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Contenedor para la animación de carga */
+.CargaDocumento-uploading-container {
+  margin-top: 1.5rem;
+}
+
+/* Mensaje durante la subida */
+.CargaDocumento-mensaje-subiendo {
+  font-size: 1.1rem;
+  font-style: italic;
+  margin-bottom: 1rem;
+  color: #555555;
+}
+
+/* Mensaje de éxito al completar la carga */
+.CargaDocumento-mensaje-progreso {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 1.5rem;
+  color: #2F6B3E;
+}
+
+/* Botón de cierre con efecto hover encantador */
+.CargaDocumento-btn-cerrar {
+  margin-top: 2rem;
+  padding: 7px;
+  font-size: 1rem;
+  background-color: #000000;
+  color: #ffffff;
   border: none;
-  padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.upload-success {
-  margin-top: 10px;
-  color: green;
-  font-weight: bold;
+.CargaDocumento-btn-cerrar:hover {
+  background-color: rgb(55, 55, 55);
+}
+
+/* -------- CUSTOM FILE INPUT -------- */
+
+/* Contenedor del input y su texto */
+.CargaDocumento-file-input-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Botón que reemplaza al input original */
+.CargaDocumento-btn-file {
+  background-color: #2F6B3E;
+  color: #ffffff;
+  padding: 7px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.CargaDocumento-btn-file:hover {
+  background-color: rgb(35, 79, 46);
+}
+
+/* El input se oculta para usar el label como botón */
+.CargaDocumento-input-hidden {
+  display: none;
+}
+
+/* Texto donde mostramos el nombre del archivo */
+.CargaDocumento-file-text {
+  font-size: 0.9rem;
+  color: #555555;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* -------- MEDIA QUERIES RESPONSIVAS -------- */
+@media (max-width: 600px) {
+  .CargaDocumento-modal {
+    padding: 1.5rem;
+    max-width: 90%;
+  }
+
+  .CargaDocumento-btn-cerrar {
+    padding: 7px;
+    font-size: 0.9rem;
+  }
+
+  .CargaDocumento-btn-file {
+    padding: 7px;
+    font-size: 0.9rem;
+  }
+
+  .CargaDocumento-file-text {
+    max-width: 150px;
+  }
 }

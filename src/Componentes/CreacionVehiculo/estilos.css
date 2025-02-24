@@ -1,70 +1,68 @@
+/* Contenedor principal */
 .CreacionVehiculo-contenedor-principal {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   width: 100%;
-  /* padding: 20px 10px; */
   height: 100%;
-  position: relative;
-  box-sizing: border-box;
   overflow-y: auto;
-  
+  box-sizing: border-box;
 }
 
+/* Título fijo en la parte superior */
 .CreacionVehiculo-titulo {
-  display: flex;
-  align-items: center;
   position: fixed;
   top: 0;
   left: 0;
-  background: white;
-  z-index: 1;
-  height: 80px;
   width: 100%;
+  height: 80px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
   padding: 15px 10px;
   font-size: 0.9rem;
-  margin-bottom: 0;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 1;
 }
 
+/* Contenedor de secciones */
 .CreacionVehiculo-contenedor {
-  margin-top: 10px;
+  margin-top: 90px;
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
-  width: 100%;
+  justify-content: center;
   gap: 15px;
+  width: 100%;
   max-height: 500px;
   overflow-y: auto;
 }
 
+/* Sección individual */
 .CreacionVehiculo-seccion {
-  display: flex;
-  flex-direction: column;
+  background: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 10px;
-  background: #f9f9f9;
   width: 100%;
   max-width: 400px;
-  height: auto;
   box-sizing: border-box;
 }
 
+/* Título de cada sección */
 .CreacionVehiculo-subtitulo {
   font-size: 18px;
   font-weight: bold;
+  background: #ececec;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 0;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  background: #ececec;
-  border-radius: 5px;
-  margin: 0;
 }
 
+/* Flecha del título */
 .CreacionVehiculo-flecha {
   font-size: 16px;
   margin-left: 10px;
@@ -75,61 +73,59 @@
   transform: rotate(90deg);
 }
 
+/* Lista de documentos */
 .CreacionVehiculo-lista {
   list-style: none;
   padding: 0;
   margin: 10px 0;
-  width: 100%;
 }
 
+/* Item de la lista */
 .CreacionVehiculo-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 10px;
-  border-bottom: 1px solid #ddd;
-  background: white;
+  background: #fff;
+  border: 1px solid #ddd;
   border-radius: 4px;
   margin: 5px 0;
+  cursor: pointer;
 }
 
-.CreacionVehiculo-item:last-child {
-  border-bottom: none;
-}
-
+/* Contenedor de botones en cada item */
 .CreacionVehiculo-item-derecha {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.CreacionVehiculo-progreso {
-  background: #4caf50;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 5px;
-  font-size: 12px;
-  min-width: 45px;
-  text-align: center;
+.CreacionVehiculo-item-derecha button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
+.btn-eliminar {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+/* Imagen o ícono de la sección */
 .CreacionVehiculo-imagen {
-  width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 10px;
-  background: white;
+  background: #fff;
   border-radius: 8px;
   margin: 10px 0;
 }
 
+/* Botón final para crear vehículo */
 .CreacionVehiculo-botonFinal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: white;
+  background-color: #fff;
   border: 2px solid rgb(141, 199, 63);
   border-radius: 12px;
   padding: 15px;
@@ -149,12 +145,58 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* Responsive Design */
+/* Modal de carga */
+.CargaDocumento-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.CargaDocumento-modal {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.mensaje-subiendo {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.mensaje-progreso {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.btn-cerrar {
+  margin-top: 15px;
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Responsive */
 @media (max-width: 600px) {
   .CreacionVehiculo-contenedor-principal {
-    padding: 70px 10px 80px; /* Espacio para header y botón fijos */
+    padding: 70px 10px 80px;
   }
-
   .CreacionVehiculo-contenedor {
     max-height: calc(100vh - 150px);
     overflow-y: auto;
@@ -166,12 +208,10 @@
     max-width: 100%;
     margin: 5px 0;
   }
-
   .CreacionVehiculo-subtitulo {
     font-size: 16px;
     padding: 12px;
   }
-
   .CreacionVehiculo-botonFinal {
     position: fixed;
     bottom: 10px;
@@ -182,7 +222,6 @@
     margin-top: 0;
     z-index: 1000;
   }
-
   .CreacionVehiculo-imagen {
     height: 80px;
   }

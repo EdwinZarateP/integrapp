@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Importamos useNavigate
 import Swal from "sweetalert2";
 import axios from "axios";
 import Lottie from "lottie-react";
@@ -14,6 +15,7 @@ const API_BASE_URL = "https://integrappi-dvmh.onrender.com/vehiculos";
 
 const VerDocumento: React.FC<VerDocumentoProps> = ({ urls }) => {
   const almacenVariables = useContext(ContextoApp);
+  const navigate = useNavigate(); // Hook para redirigir
 
   if (!almacenVariables) {
     throw new Error(
@@ -25,7 +27,6 @@ const VerDocumento: React.FC<VerDocumentoProps> = ({ urls }) => {
   const [cargando, setCargando] = useState(true); // Estado para manejar la animación de carga
 
   useEffect(() => {
-    // Simula la carga del componente
     setTimeout(() => {
       setCargando(false);
     }, 1000); // 1 segundo de espera antes de mostrar las imágenes
@@ -44,25 +45,31 @@ const VerDocumento: React.FC<VerDocumentoProps> = ({ urls }) => {
       cancelButtonColor: "#3085d6",
       confirmButtonText: "Sí, eliminar",
     });
-  
+
     if (confirmacion.isConfirmed) {
       try {
         const placa = "ABC"; // ⚠️ Ajusta esto si tienes la placa en contexto
         const tipoDocumento = obtenerTipoDocumentoDesdeUrl(url);
-  
+
         if (!tipoDocumento) {
           throw new Error("No se pudo determinar el tipo de documento.");
         }
-  
+
         const deleteEndpoint = `${API_BASE_URL}/eliminar-documento?placa=${placa}&tipo=${tipoDocumento}`;
         console.log("🔹 Enviando solicitud DELETE a:", deleteEndpoint);
-  
+
         const response = await axios.delete(deleteEndpoint);
-  
+
         if (response.status === 200) {
           Swal.fire("Eliminado", "La imagen ha sido eliminada", "success");
-          setVerDocumento(false); 
+          setVerDocumento(false);
+
+          // 🔹 Recargar primero y luego redirigir después de 1 segundo
           window.location.reload();
+          setTimeout(() => {
+            navigate("/FormularioHojavida");
+          }, 1000); // Espera 1 segundo después de la recarga antes de redirigir
+          
         } else {
           throw new Error("No se pudo eliminar la imagen.");
         }
@@ -72,7 +79,7 @@ const VerDocumento: React.FC<VerDocumentoProps> = ({ urls }) => {
       }
     }
   };
-  
+
   // Función para obtener el tipo de documento desde la URL de la imagen
   const obtenerTipoDocumentoDesdeUrl = (url: string): string | null => {
     const mappingTipos: Record<string, string> = {
@@ -93,18 +100,17 @@ const VerDocumento: React.FC<VerDocumentoProps> = ({ urls }) => {
       "propietario": "documento_identidad_propietario",
       "rut_propietario": "rut_propietario"
     };
-  
+
     const nombreArchivo = url.split("/").pop()?.split("_")[0]; // Extrae la parte antes del "_"
     if (!nombreArchivo) return null;
-  
+
     return mappingTipos[nombreArchivo] || null;
   };
-  
 
   return (
     <div className="VerDocumento-overlay">
       <div className="VerDocumento-contenedor">
-        <button className="VerDocumento-boton-cerrar" onClick={()=>setVerDocumento(false)}>✖</button>
+        <button className="VerDocumento-boton-cerrar" onClick={() => setVerDocumento(false)}>✖</button>
 
         {/* Mostrar animación de carga si aún está cargando */}
         {cargando ? (

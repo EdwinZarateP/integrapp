@@ -22,6 +22,7 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 15px 10px;
   font-size: 0.9rem;
   z-index: 1;
@@ -48,6 +49,7 @@
   width: 100%;
   max-width: 400px;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 /* Título de cada sección */
@@ -200,7 +202,7 @@
     overflow-y: auto;
   }
   .CreacionVehiculo-titulo {
-    font-size: 0.8rem;
+    font-size: 0.6rem;
   }
   .CreacionVehiculo-seccion {
     max-width: 100%;

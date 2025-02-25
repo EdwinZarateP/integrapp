@@ -131,23 +131,24 @@ const CreacionVehiculo: React.FC = () => {
 
   // Mapping para convertir el nombre del documento al campo esperado por el backend
   const tiposMapping: Record<string, string> = {
-    "tarjeta de propiedad": "tarjeta_propiedad",
+    "tarjeta de propiedad": "tarjetaPropiedad",
     "soat": "soat",
-    "revisión tecnomecánica": "revision_tecnomecanica",
-    "tarjeta de remolque": "tarjeta_remolque",
+    "revisión tecnomecánica": "revisionTecnomecanica",
+    "tarjeta de remolque": "tarjetaRemolque",
     "fotos": "fotos",
-    "póliza de responsabilidad civil": "poliza_responsabilidad",
-    "documento de identidad del conductor": "documento_identidad_conductor",
-    "documento de identidad del propietario": "documento_identidad_propietario",
-    "documento de identidad del tenedor": "documento_identidad_tenedor",
+    "póliza de responsabilidad civil": "polizaResponsabilidad",
+    "documento de identidad del conductor": "documentoIdentidadConductor",
+    "documento de identidad del propietario": "documentoIdentidadPropietario",
+    "documento de identidad del tenedor": "documentoIdentidadTenedor",
     "licencia de conducción vigente": "licencia",
-    "planilla de eps": "planilla_eps",
-    "planilla de arl": "planilla_arl",
-    "certificación bancaria": "certificacion_bancaria",
-    "documento que lo acredite como tenedor": "documento_acreditacion_tenedor",
-    "rut tenedor": "rut_tenedor",
-    "rut propietario": "rut_propietario"
+    "planilla de eps": "planillaEps",
+    "planilla de arl": "planillaArl",
+    "certificación bancaria": "certificacionBancaria",
+    "documento que lo acredite como tenedor": "documentoAcreditacionTenedor",
+    "rut tenedor": "rutTenedor",
+    "rut propietario": "rutPropietario"
   };
+  
 
   useEffect(() => {
     const cargarVehiculo = async () => {
@@ -207,14 +208,17 @@ const CreacionVehiculo: React.FC = () => {
   // Al hacer clic en un documento cargado se abre el modal VerDocumento
   const handleVerDocumento = (sectionIndex: number, itemIndex: number) => {
     const documento = secciones[sectionIndex].items[itemIndex];
-    setVerDocumento(true)
     if (documento.url) {
-      const urls = Array.isArray(documento.url) ? documento.url : [documento.url];
+      const urls = (Array.isArray(documento.url) ? documento.url : [documento.url])
+        .map(url => `${url}?timestamp=${new Date().getTime()}`); // rompe el caché
+  
       setDocumentosVer(urls);
+      setVerDocumento(true);
     } else {
       Swal.fire("Sin documento", "No se encontró la URL del documento.", "info");
     }
   };
+  
 
   const enviarVehiculo = () => {
     Swal.fire({
@@ -236,10 +240,10 @@ const CreacionVehiculo: React.FC = () => {
             seccion.items.reduce((acc, item) => acc + item.progreso, 0) / (seccion.items.length * 100) * 100
           );
           return (
-            <section key={index} className="CreacionVehiculo-seccion">
+            <section key={index} className="CreacionVehiculo-seccion"  onClick={() => toggleSeccion(index)}>
               <h2
                 className="CreacionVehiculo-subtitulo"
-                onClick={() => toggleSeccion(index)}
+               
               >
                 {seccion.subtitulo} ({_promedioProgreso}%)
                 <span className={`CreacionVehiculo-flecha ${visibleSeccion === index ? "abierta" : ""}`}>

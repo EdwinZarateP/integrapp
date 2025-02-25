@@ -21,22 +21,16 @@ const CargaDocumento: React.FC<CargaDocumentoProps> = ({
 }) => {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-
-  // Estado para mostrar los nombres de los archivos seleccionados
   const [selectedFileNames, setSelectedFileNames] = useState<string>("Ningún archivo seleccionado");
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-
-      // Mostramos los nombres de archivos en el span
       if (files.length > 0) {
         setSelectedFileNames(files.map(file => file.name).join(", "));
       } else {
         setSelectedFileNames("Ningún archivo seleccionado");
       }
-
-      // Filtramos archivos válidos
       const validFiles = files.filter(file =>
         ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'].includes(file.type)
       );
@@ -54,25 +48,25 @@ const CargaDocumento: React.FC<CargaDocumentoProps> = ({
     files.forEach(file => formData.append(key, file));
     formData.append('placa', placa);
     
-    // Mapeo para obtener el tipo que espera el backend
     const tiposMapping: Record<string, string> = {
-      "tarjeta de propiedad": "tarjeta_propiedad",
+      "tarjeta de propiedad": "tarjetaPropiedad",
       "soat": "soat",
-      "revisión tecnomecánica": "revision_tecnomecanica",
-      "tarjeta de remolque": "tarjeta_remolque",
+      "revisión tecnomecánica": "revisionTecnomecanica",
+      "tarjeta de remolque": "tarjetaRemolque",
       "fotos": "fotos",
-      "póliza de responsabilidad civil": "poliza_responsabilidad",
-      "documento de identidad del conductor": "documento_identidad_conductor",
-      "documento de identidad del propietario": "documento_identidad_propietario",
-      "documento de identidad del tenedor": "documento_identidad_tenedor",
+      "póliza de responsabilidad civil": "polizaResponsabilidad",
+      "documento de identidad del conductor": "documentoIdentidadConductor",
+      "documento de identidad del propietario": "documentoIdentidadPropietario",
+      "documento de identidad del tenedor": "documentoIdentidadTenedor",
       "licencia de conducción vigente": "licencia",
-      "planilla de eps": "planilla_eps",
-      "planilla de arl": "planilla_arl",
-      "certificación bancaria": "certificacion_bancaria",
-      "documento que lo acredite como tenedor": "documento_acreditacion_tenedor",
-      "rut tenedor": "rut_tenedor",
-      "rut propietario": "rut_propietario"
+      "planilla de eps": "planillaEps",
+      "planilla de arl": "planillaArl",
+      "certificación bancaria": "certificacionBancaria",
+      "documento que lo acredite como tenedor": "documentoAcreditacionTenedor",
+      "rut tenedor": "rutTenedor",
+      "rut propietario": "rutPropietario"
     };
+
     const lower = documentName.toLowerCase();
     const tipo = tiposMapping[lower] || lower.replace(/\s+/g, "_");
     formData.append('tipo', tipo);
@@ -104,19 +98,13 @@ const CargaDocumento: React.FC<CargaDocumentoProps> = ({
     <div className="CargaDocumento-overlay">
       <div className="CargaDocumento-modal">
         <h2>Cargar {documentName}</h2>
-
-        {/* Contenedor para nuestro input oculto y el label estilizado */}
         <div className="CargaDocumento-file-input-wrapper">
-          <label
-            className="CargaDocumento-btn-file"
-            htmlFor="file-upload"
-          >
+          <label className="CargaDocumento-btn-file" htmlFor="file-upload">
             {documentName === "Fotos" ? "Elegir archivos" : "Elegir archivo"}
           </label>
           <span className="CargaDocumento-file-text">
             {selectedFileNames}
           </span>
-
           <input
             id="file-upload"
             type="file"
@@ -127,21 +115,15 @@ const CargaDocumento: React.FC<CargaDocumentoProps> = ({
             className="CargaDocumento-input-hidden"
           />
         </div>
-
-        {/* Animación y mensajes de estado */}
         {uploading && (
           <div className="CargaDocumento-uploading-container">
             <p className="CargaDocumento-mensaje-subiendo">Subiendo...</p>
-            <Lottie 
-              animationData={animationData} 
-              style={{ height: 200, width: '100%', margin: 'auto' }} 
-            />
+            <Lottie animationData={animationData} style={{ height: 200, width: '100%', margin: 'auto' }} />
           </div>
         )}
         {progress === 100 && !uploading && (
           <div className="CargaDocumento-mensaje-progreso">¡Carga completa!</div>
         )}
-
         <button className="CargaDocumento-btn-cerrar" onClick={onClose}>
           Cerrar
         </button>

@@ -69,8 +69,6 @@
   position: relative;
   width: 80%;
   /* max-width: 450px; */
-  height: 100%;
-  background-color: aliceblue;
 }
 
 /* Imágenes ocupan todo el alto respetando su padre */

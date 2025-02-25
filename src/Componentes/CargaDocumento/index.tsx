@@ -70,7 +70,8 @@ const CargaDocumento: React.FC<CargaDocumentoProps> = ({
       "planilla de arl": "planilla_arl",
       "certificación bancaria": "certificacion_bancaria",
       "documento que lo acredite como tenedor": "documento_acreditacion_tenedor",
-      "rut": "rut"
+      "rut tenedor": "rut_tenedor",
+      "rut propietario": "rut_propietario"
     };
     const lower = documentName.toLowerCase();
     const tipo = tiposMapping[lower] || lower.replace(/\s+/g, "_");

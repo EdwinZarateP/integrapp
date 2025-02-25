@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { FaTruck } from "react-icons/fa";
 import { FcBusinessman } from "react-icons/fc";
@@ -8,9 +8,25 @@ import axios from 'axios';
 import CargaDocumento from '../CargaDocumento';
 import './estilos.css';
 
+// Función para obtener la información del vehículo por placa
+export async function obtenerVehiculoPorPlaca(placa: string): Promise<any> {
+  try {
+    const respuesta = await fetch(`https://integrappi-dvmh.onrender.com/vehiculos/obtener-vehiculo/${placa}`, {
+      cache: "no-store",
+    });
+    if (!respuesta.ok) {
+      throw new Error("Error al obtener la información del vehículo.");
+    }
+    return await respuesta.json();
+  } catch (error) {
+    console.error("Error en la llamada a la API:", error);
+    return null;
+  }
+}
+
 const API_BASE_URL = "https://integrappi-dvmh.onrender.com/vehiculos";
 
-// Para documentos generales se usa el endpoint /subir-documento; para Fotos, el endpoint /subir-fotos.
+// Endpoints para cada documento
 const endpoints: Record<string, string> = {
   "Tarjeta de Propiedad": `${API_BASE_URL}/subir-documento`,
   "SOAT": `${API_BASE_URL}/subir-documento`,
@@ -26,7 +42,8 @@ const endpoints: Record<string, string> = {
   "Planilla de ARL": `${API_BASE_URL}/subir-documento`,
   "Certificación Bancaria": `${API_BASE_URL}/subir-documento`,
   "Documento que lo acredite como Tenedor": `${API_BASE_URL}/subir-documento`,
-  "RUT": `${API_BASE_URL}/subir-documento`
+  "RUT Tenedor": `${API_BASE_URL}/subir-documento`,
+  "RUT Propietario": `${API_BASE_URL}/subir-documento`
 };
 
 interface SeccionDocumentos {
@@ -45,7 +62,7 @@ const CreacionVehiculo: React.FC = () => {
     "4. Documentos del Propietario": <FcBusinessman size={50} />,
   };
 
-  // Definimos las secciones y documentos (ajusta los progresos iniciales según convenga)
+  // Estado inicial de las secciones y documentos
   const [secciones, setSecciones] = useState<SeccionDocumentos[]>([
     {
       subtitulo: "1. Documentos del Vehículo",
@@ -73,14 +90,14 @@ const CreacionVehiculo: React.FC = () => {
         { nombre: "Documento de Identidad del Tenedor", progreso: 0 },
         { nombre: "Certificación Bancaria", progreso: 0 },
         { nombre: "Documento que lo acredite como Tenedor", progreso: 0 },
-        { nombre: "RUT", progreso: 0 }
+        { nombre: "RUT Tenedor", progreso: 0 }
       ]
     },
     {
       subtitulo: "4. Documentos del Propietario",
       items: [
         { nombre: "Documento de Identidad del Propietario", progreso: 0 },
-        { nombre: "RUT", progreso: 0 }
+        { nombre: "RUT Propietario", progreso: 0 }
       ]
     }
   ]);
@@ -95,6 +112,64 @@ const CreacionVehiculo: React.FC = () => {
 
   // Placa ficticia para la demo.
   const placa = "ABC";
+
+  // Mapping para convertir el nombre del documento al campo esperado por el backend
+  const tiposMapping: Record<string, string> = {
+    "tarjeta de propiedad": "tarjeta_propiedad",
+    "soat": "soat",
+    "revisión tecnomecánica": "revision_tecnomecanica",
+    "tarjeta de remolque": "tarjeta_remolque",
+    "fotos": "fotos",
+    "póliza de responsabilidad civil": "poliza_responsabilidad",
+    "documento de identidad del conductor": "documento_identidad_conductor",
+    "documento de identidad del propietario": "documento_identidad_propietario",
+    "documento de identidad del tenedor": "documento_identidad_tenedor",
+    "licencia de conducción vigente": "licencia",
+    "planilla de eps": "planilla_eps",
+    "planilla de arl": "planilla_arl",
+    "certificación bancaria": "certificacion_bancaria",
+    "documento que lo acredite como tenedor": "documento_acreditacion_tenedor",
+    "rut tenedor": "rut_tenedor",
+    "rut propietario": "rut_propietario"
+  };
+
+  // useEffect para cargar la información del vehículo al montar el componente
+  useEffect(() => {
+    const cargarVehiculo = async () => {
+      const data = await obtenerVehiculoPorPlaca(placa);
+      if (data && data.data) {
+        const vehiculo = data.data;
+        setSecciones(prevSecciones =>
+          prevSecciones.map(seccion => {
+            const nuevosItems = seccion.items.map(item => {
+              let field = "";
+              const nombreLower = item.nombre.toLowerCase();
+              if (nombreLower === "rut tenedor") {
+                field = "rut_tenedor";
+              } else if (nombreLower === "rut propietario") {
+                field = "rut_propietario";
+              } else {
+                field = tiposMapping[nombreLower] || "";
+              }
+              if (field) {
+                if (field === "fotos") {
+                  if (Array.isArray(vehiculo[field]) && vehiculo[field].length > 0) {
+                    return { ...item, progreso: 100 };
+                  }
+                } else if (vehiculo[field]) {
+                  return { ...item, progreso: 100 };
+                }
+              }
+              return item;
+            });
+            return { ...seccion, items: nuevosItems };
+          })
+        );
+      }
+    };
+
+    cargarVehiculo();
+  }, [placa]);
 
   const toggleSeccion = (index: number) => {
     setVisibleSeccion(visibleSeccion === index ? null : index);
@@ -114,26 +189,7 @@ const CreacionVehiculo: React.FC = () => {
     setSelectedDocumento({ sectionIndex, itemIndex, documentName, endpoint });
   };
 
-  // Mapeo para obtener el tipo esperado por el backend
-  const tiposMapping: Record<string, string> = {
-    "tarjeta de propiedad": "tarjeta_propiedad",
-    "soat": "soat",
-    "revisión tecnomecánica": "revision_tecnomecanica",
-    "tarjeta de remolque": "tarjeta_remolque",
-    "fotos": "fotos",
-    "póliza de responsabilidad civil": "poliza_responsabilidad",
-    "documento de identidad del conductor": "documento_identidad_conductor",
-    "documento de identidad del propietario": "documento_identidad_propietario",
-    "documento de identidad del tenedor": "documento_identidad_tenedor",
-    "licencia de conducción vigente": "licencia",
-    "planilla de eps": "planilla_eps",
-    "planilla de arl": "planilla_arl",
-    "certificación bancaria": "certificacion_bancaria",
-    "documento que lo acredite como tenedor": "documento_acreditacion_tenedor",
-    "rut": "rut"
-  };
-
-  // Llama al endpoint de eliminación
+  // Función para llamar al endpoint de eliminación
   const handleDeleteDocumento = async (
     sectionIndex: number,
     itemIndex: number,
@@ -141,7 +197,14 @@ const CreacionVehiculo: React.FC = () => {
   ) => {
     try {
       const lower = documentName.toLowerCase();
-      const tipo = tiposMapping[lower] || lower.replace(/\s+/g, "_");
+      let tipo = "";
+      if (lower === "rut tenedor") {
+        tipo = "rut_tenedor";
+      } else if (lower === "rut propietario") {
+        tipo = "rut_propietario";
+      } else {
+        tipo = tiposMapping[lower] || lower.replace(/\s+/g, "_");
+      }
       const deleteEndpoint = `${API_BASE_URL}/eliminar-documento?placa=${placa}&tipo=${tipo}`;
       const response = await axios.delete(deleteEndpoint);
       if (response.status === 200) {

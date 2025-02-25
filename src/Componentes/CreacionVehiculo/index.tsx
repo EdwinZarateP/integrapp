@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Swal from 'sweetalert2';
 import { FaTruck } from "react-icons/fa";
 import { FcBusinessman } from "react-icons/fc";
 import { FaUserTie } from "react-icons/fa6";
 import { FaUser } from "react-icons/fa";
-import axios from 'axios';
+// import axios from 'axios';
 import CargaDocumento from '../CargaDocumento';
+import VerDocumento from '../VerDocumento';
+import { ContextoApp } from "../../Contexto/index";
 import './estilos.css';
 
 // Función para obtener la información del vehículo por placa
@@ -46,15 +48,27 @@ const endpoints: Record<string, string> = {
   "RUT Propietario": `${API_BASE_URL}/subir-documento`
 };
 
+interface DocumentoItem {
+  nombre: string;
+  progreso: number; // 0 si no está cargado, 100 si está cargado
+  url?: string | string[];
+}
+
 interface SeccionDocumentos {
   subtitulo: string;
-  items: {
-    nombre: string;
-    progreso: number; // 0 si no está cargado, 100 si está cargado
-  }[];
+  items: DocumentoItem[];
 }
 
 const CreacionVehiculo: React.FC = () => {
+  // Se importa y se utiliza el contexto global
+  const almacenVariables = useContext(ContextoApp);
+  if (!almacenVariables) {
+    throw new Error(
+      "El contexto no está disponible. Asegúrate de envolver el componente en un proveedor de contexto."
+    );
+  }
+  const { verDocumento, setVerDocumento } = almacenVariables;
+
   const imagenesSecciones: Record<string, JSX.Element> = {
     "1. Documentos del Vehículo": <FaTruck size={50} />,
     "2. Documentos del Conductor": <FaUser size={50} />,
@@ -109,6 +123,8 @@ const CreacionVehiculo: React.FC = () => {
     documentName: string;
     endpoint: string;
   } | null>(null);
+  // Estado para abrir el modal VerDocumento (almacena las URLs a visualizar)
+  const [documentosVer, setDocumentosVer] = useState<string[] | null>(null);
 
   // Placa ficticia para la demo.
   const placa = "ABC";
@@ -133,7 +149,6 @@ const CreacionVehiculo: React.FC = () => {
     "rut propietario": "rut_propietario"
   };
 
-  // useEffect para cargar la información del vehículo al montar el componente
   useEffect(() => {
     const cargarVehiculo = async () => {
       const data = await obtenerVehiculoPorPlaca(placa);
@@ -154,10 +169,10 @@ const CreacionVehiculo: React.FC = () => {
               if (field) {
                 if (field === "fotos") {
                   if (Array.isArray(vehiculo[field]) && vehiculo[field].length > 0) {
-                    return { ...item, progreso: 100 };
+                    return { ...item, progreso: 100, url: vehiculo[field] };
                   }
                 } else if (vehiculo[field]) {
-                  return { ...item, progreso: 100 };
+                  return { ...item, progreso: 100, url: vehiculo[field] };
                 }
               }
               return item;
@@ -167,7 +182,6 @@ const CreacionVehiculo: React.FC = () => {
         );
       }
     };
-
     cargarVehiculo();
   }, [placa]);
 
@@ -189,35 +203,16 @@ const CreacionVehiculo: React.FC = () => {
     setSelectedDocumento({ sectionIndex, itemIndex, documentName, endpoint });
   };
 
-  // Función para llamar al endpoint de eliminación
-  const handleDeleteDocumento = async (
-    sectionIndex: number,
-    itemIndex: number,
-    documentName: string
-  ) => {
-    try {
-      const lower = documentName.toLowerCase();
-      let tipo = "";
-      if (lower === "rut tenedor") {
-        tipo = "rut_tenedor";
-      } else if (lower === "rut propietario") {
-        tipo = "rut_propietario";
-      } else {
-        tipo = tiposMapping[lower] || lower.replace(/\s+/g, "_");
-      }
-      const deleteEndpoint = `${API_BASE_URL}/eliminar-documento?placa=${placa}&tipo=${tipo}`;
-      const response = await axios.delete(deleteEndpoint);
-      if (response.status === 200) {
-        Swal.fire("Eliminado", `${documentName} eliminado correctamente`, "success");
-        setSecciones((prev) => {
-          const newSecciones = [...prev];
-          newSecciones[sectionIndex].items[itemIndex].progreso = 0;
-          return newSecciones;
-        });
-      }
-    } catch (error: any) {
-      console.error("Error al eliminar:", error);
-      Swal.fire("Error", "No se pudo eliminar el documento", "error");
+
+  // Al hacer clic en un documento cargado se abre el modal VerDocumento
+  const handleVerDocumento = (sectionIndex: number, itemIndex: number) => {
+    const documento = secciones[sectionIndex].items[itemIndex];
+    setVerDocumento(true)
+    if (documento.url) {
+      const urls = Array.isArray(documento.url) ? documento.url : [documento.url];
+      setDocumentosVer(urls);
+    } else {
+      Swal.fire("Sin documento", "No se encontró la URL del documento.", "info");
     }
   };
 
@@ -237,7 +232,6 @@ const CreacionVehiculo: React.FC = () => {
       </div>
       <div className="CreacionVehiculo-contenedor">
         {secciones.map((seccion, index) => {
-          // Calculamos el avance total (promedio) de la sección
           const _promedioProgreso = Math.round(
             seccion.items.reduce((acc, item) => acc + item.progreso, 0) / (seccion.items.length * 100) * 100
           );
@@ -263,8 +257,8 @@ const CreacionVehiculo: React.FC = () => {
                             Cargar
                           </button>
                         ) : (
-                          <button className="btn-eliminar" onClick={() => handleDeleteDocumento(index, itemIndex, item.nombre)}>
-                            Eliminar
+                          <button className="CreacionVehiculo-btn-ver" onClick={() => handleVerDocumento(index, itemIndex)}>
+                            Ver
                           </button>
                         )}
                       </div>
@@ -294,10 +288,16 @@ const CreacionVehiculo: React.FC = () => {
             setSecciones((prevSecciones) => {
               const newSecciones = [...prevSecciones];
               newSecciones[selectedDocumento.sectionIndex].items[selectedDocumento.itemIndex].progreso = 100;
+              newSecciones[selectedDocumento.sectionIndex].items[selectedDocumento.itemIndex].url = result;
               return newSecciones;
             });
             setSelectedDocumento(null);
           }}
+        />
+      )}
+      {documentosVer && verDocumento && (
+        <VerDocumento
+          urls={documentosVer}          
         />
       )}
     </div>

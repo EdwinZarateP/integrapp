@@ -3,10 +3,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   overflow-y: auto;
   box-sizing: border-box;
+  padding-top: 90px;
 }
 
 /* Título fijo en la parte superior */
@@ -27,13 +29,13 @@
 
 /* Contenedor de secciones */
 .CreacionVehiculo-contenedor {
-  margin-top: 90px;
+
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 15px;
   width: 100%;
-  max-height: 500px;
+  /* height: 100%; */
   overflow-y: auto;
 }
 
@@ -107,10 +109,6 @@
   cursor: pointer;
 }
 
-.btn-eliminar {
-  background-color: #e74c3c;
-  color: #fff;
-}
 
 /* Imagen o ícono de la sección */
 .CreacionVehiculo-imagen {
@@ -182,9 +180,9 @@
   color: #4caf50;
 }
 
-.btn-cerrar {
+.CreacionVehiculo-btn-ver {
   margin-top: 15px;
-  background-color: #e74c3c;
+  background-color: #1ab33b;
   color: #fff;
   border: none;
   padding: 8px 16px;
@@ -220,7 +218,7 @@
     width: 95%;
     max-width: none;
     margin-top: 0;
-    z-index: 1000;
+    /* z-index: 1000; */
   }
   .CreacionVehiculo-imagen {
     height: 80px;

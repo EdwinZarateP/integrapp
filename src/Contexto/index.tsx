@@ -31,7 +31,10 @@ interface ContextProps {
   placa: string;
   setPlaca: Dispatch<SetStateAction<string>>;
   
-  
+  // Variables de tipo boolenas
+  verDocumento: boolean;
+  setVerDocumento: Dispatch<SetStateAction<boolean>>;
+
   // Agrega respuesta
   respuesta: any; // Define el tipo según tus necesidades
   setRespuesta: Dispatch<SetStateAction<any>>;
@@ -83,7 +86,9 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [placa, setPlaca] = useState('');
-  
+
+    // Variables de tipo boolenas
+  const [verDocumento, setVerDocumento] = useState<boolean>(false); 
   // Estado para la respuesta
   const [respuesta, setRespuesta] = useState(null);
 
@@ -110,40 +115,30 @@ export const ProveedorVariables: React.FC<ProveedorVariablesProps> = ({ hijo }) 
     cerrarAlgo,
     
     // Variables de tipo string
-    nombre,
-    setNombre,
-    tenedor,
-    setTenedor,
-    celular,
-    setCelular,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    placa,
-    setPlaca,
+    nombre,  setNombre,
+    tenedor, setTenedor,
+    celular, setCelular,
+    email, setEmail,
+    password, setPassword,
+    placa, setPlaca,
     
+    // variables boolenas
+    verDocumento, setVerDocumento,
+
     // Agrega respuesta
-    respuesta,
-    setRespuesta,
+    respuesta,setRespuesta,
 
     // Agrega estado
-    estado,
-    setEstado,
+    estado, setEstado,
 
     //Link
-    link,
-    setLink,
+    link, setLink,
 
     //Diccionarios apis
-    DiccionarioManifiestosTodos,
-    setDiccionarioManifiestosTodos,
-    DiccionarioManifiestosPagos,
-    setDiccionarioManifiestosPagos,
-    DiccionarioSaldos,
-    setDiccionarioSaldos,
-    DiccionarioNovedades,
-    setDiccionarioNovedades
+    DiccionarioManifiestosTodos, setDiccionarioManifiestosTodos,
+    DiccionarioManifiestosPagos,setDiccionarioManifiestosPagos,
+    DiccionarioSaldos,setDiccionarioSaldos,
+    DiccionarioNovedades,setDiccionarioNovedades
 
   };
   

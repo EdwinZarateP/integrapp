@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Lottie from 'lottie-react';
 import animationData from "../../Imagenes/AnimationPuntos.json";
+import { tiposMapping } from '../../Funciones/documentConstants'; 
 import './estilos.css';
 
 interface CargaDocumentoProps {
@@ -47,26 +48,8 @@ const CargaDocumento: React.FC<CargaDocumentoProps> = ({
     const key = documentName === "Fotos" ? 'archivos' : 'archivo';
     files.forEach(file => formData.append(key, file));
     formData.append('placa', placa);
-    
-    const tiposMapping: Record<string, string> = {
-      "tarjeta de propiedad": "tarjetaPropiedad",
-      "soat": "soat",
-      "revisión tecnomecánica": "revisionTecnomecanica",
-      "tarjeta de remolque": "tarjetaRemolque",
-      "fotos": "fotos",
-      "póliza de responsabilidad civil": "polizaResponsabilidad",
-      "documento de identidad del conductor": "documentoIdentidadConductor",
-      "documento de identidad del propietario": "documentoIdentidadPropietario",
-      "documento de identidad del tenedor": "documentoIdentidadTenedor",
-      "licencia de conducción vigente": "licencia",
-      "planilla de eps": "planillaEps",
-      "planilla de arl": "planillaArl",
-      "certificación bancaria": "certificacionBancaria",
-      "documento que lo acredite como tenedor": "documentoAcreditacionTenedor",
-      "rut tenedor": "rutTenedor",
-      "rut propietario": "rutPropietario"
-    };
 
+    // Usamos el mapping importado
     const lower = documentName.toLowerCase();
     const tipo = tiposMapping[lower] || lower.replace(/\s+/g, "_");
     formData.append('tipo', tipo);
@@ -100,7 +83,7 @@ const CargaDocumento: React.FC<CargaDocumentoProps> = ({
         <h2>Cargar {documentName}</h2>
         <div className="CargaDocumento-file-input-wrapper">
           <label className="CargaDocumento-btn-file" htmlFor="file-upload">
-            {documentName === "Fotos" ? "Elegir archivos" : "Elegir archivo"}
+            {documentName === "Fotos" ? "Elegir Imagenes" : "Elegir Imagen"}
           </label>
           <span className="CargaDocumento-file-text">
             {selectedFileNames}

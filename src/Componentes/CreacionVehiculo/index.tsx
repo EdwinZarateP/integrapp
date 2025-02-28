@@ -7,45 +7,10 @@ import { FaUser } from "react-icons/fa";
 import CargaDocumento from '../CargaDocumento';
 import VerDocumento from '../VerDocumento';
 import { ContextoApp } from "../../Contexto/index";
+import { obtenerVehiculoPorPlaca } from '../../Funciones/ObtenerInfoPlaca';
+import { endpoints, tiposMapping } from '../../Funciones/documentConstants';
+import Cookies from 'js-cookie';
 import './estilos.css';
-
-// Función para obtener la información del vehículo por placa
-export async function obtenerVehiculoPorPlaca(placa: string): Promise<any> {
-  try {
-    const respuesta = await fetch(`https://integrappi-dvmh.onrender.com/vehiculos/obtener-vehiculo/${placa}`, {
-      cache: "no-store",
-    });
-    if (!respuesta.ok) {
-      throw new Error("Error al obtener la información del vehículo.");
-    }
-    return await respuesta.json();
-  } catch (error) {
-    console.error("Error en la llamada a la API:", error);
-    return null;
-  }
-}
-
-const API_BASE_URL = "https://integrappi-dvmh.onrender.com/vehiculos";
-
-// Endpoints para cada documento
-const endpoints: Record<string, string> = {
-  "Tarjeta de Propiedad": `${API_BASE_URL}/subir-documento`,
-  "SOAT": `${API_BASE_URL}/subir-documento`,
-  "Revisión Tecnomecánica": `${API_BASE_URL}/subir-documento`,
-  "Tarjeta de Remolque": `${API_BASE_URL}/subir-documento`,
-  "Fotos": `${API_BASE_URL}/subir-fotos`,
-  "Póliza de Responsabilidad Civil": `${API_BASE_URL}/subir-documento`,
-  "Documento de Identidad del Conductor": `${API_BASE_URL}/subir-documento`,
-  "Documento de Identidad del Propietario": `${API_BASE_URL}/subir-documento`,
-  "Documento de Identidad del Tenedor": `${API_BASE_URL}/subir-documento`,
-  "Licencia de Conducción Vigente": `${API_BASE_URL}/subir-documento`,
-  "Planilla de EPS": `${API_BASE_URL}/subir-documento`,
-  "Planilla de ARL": `${API_BASE_URL}/subir-documento`,
-  "Certificación Bancaria": `${API_BASE_URL}/subir-documento`,
-  "Documento que lo acredite como Tenedor": `${API_BASE_URL}/subir-documento`,
-  "RUT Tenedor": `${API_BASE_URL}/subir-documento`,
-  "RUT Propietario": `${API_BASE_URL}/subir-documento`
-};
 
 interface DocumentoItem {
   nombre: string;
@@ -58,12 +23,50 @@ interface SeccionDocumentos {
   items: DocumentoItem[];
 }
 
-// Información del documento abierto en el visor
 interface VerDocumentoInfo {
   sectionIndex: number;
   itemIndex: number;
   urls: string[];
 }
+
+const initialSecciones: SeccionDocumentos[] = [
+  {
+    subtitulo: "1. Documentos del Vehículo",
+    items: [
+      { nombre: "Tarjeta de Propiedad", progreso: 0 },
+      { nombre: "SOAT", progreso: 0 },
+      { nombre: "Revisión Tecnomecánica", progreso: 0 },
+      { nombre: "Tarjeta de Remolque", progreso: 0 },
+      { nombre: "Fotos", progreso: 0 },
+      { nombre: "Póliza de Responsabilidad Civil", progreso: 0 },
+      { nombre: "Documento de Identidad del Conductor", progreso: 0 }
+    ]
+  },
+  {
+    subtitulo: "2. Documentos del Conductor",
+    items: [
+      { nombre: "Licencia de Conducción Vigente", progreso: 0 },
+      { nombre: "Planilla de EPS", progreso: 0 },
+      { nombre: "Planilla de ARL", progreso: 0 }
+    ]
+  },
+  {
+    subtitulo: "3. Documentos del Tenedor",
+    items: [
+      { nombre: "Documento de Identidad del Tenedor", progreso: 0 },
+      { nombre: "Certificación Bancaria", progreso: 0 },
+      { nombre: "Documento que lo acredite como Tenedor", progreso: 0 },
+      { nombre: "RUT Tenedor", progreso: 0 }
+    ]
+  },
+  {
+    subtitulo: "4. Documentos del Propietario",
+    items: [
+      { nombre: "Documento de Identidad del Propietario", progreso: 0 },
+      { nombre: "RUT Propietario", progreso: 0 }
+    ]
+  }
+];
 
 const CreacionVehiculo: React.FC = () => {
   const almacenVariables = useContext(ContextoApp);
@@ -72,52 +75,16 @@ const CreacionVehiculo: React.FC = () => {
   }
   const { verDocumento, setVerDocumento } = almacenVariables;
 
-  const imagenesSecciones: Record<string, JSX.Element> = {
-    "1. Documentos del Vehículo": <FaTruck size={50} />,
-    "2. Documentos del Conductor": <FaUser size={50} />,
-    "3. Documentos del Tenedor": <FaUserTie size={50} />,
-    "4. Documentos del Propietario": <FcBusinessman size={50} />,
-  };
+  // Obtenemos el idUsuario desde las cookies
+  const idUsuario = Cookies.get('tenedorIntegrapp');
 
-  const [secciones, setSecciones] = useState<SeccionDocumentos[]>([
-    {
-      subtitulo: "1. Documentos del Vehículo",
-      items: [
-        { nombre: "Tarjeta de Propiedad", progreso: 0 },
-        { nombre: "SOAT", progreso: 0 },
-        { nombre: "Revisión Tecnomecánica", progreso: 0 },
-        { nombre: "Tarjeta de Remolque", progreso: 0 },
-        { nombre: "Fotos", progreso: 0 },
-        { nombre: "Póliza de Responsabilidad Civil", progreso: 0 },
-        { nombre: "Documento de Identidad del Conductor", progreso: 0 }
-      ]
-    },
-    {
-      subtitulo: "2. Documentos del Conductor",
-      items: [
-        { nombre: "Licencia de Conducción Vigente", progreso: 0 },
-        { nombre: "Planilla de EPS", progreso: 0 },
-        { nombre: "Planilla de ARL", progreso: 0 }
-      ]
-    },
-    {
-      subtitulo: "3. Documentos del Tenedor",
-      items: [
-        { nombre: "Documento de Identidad del Tenedor", progreso: 0 },
-        { nombre: "Certificación Bancaria", progreso: 0 },
-        { nombre: "Documento que lo acredite como Tenedor", progreso: 0 },
-        { nombre: "RUT Tenedor", progreso: 0 }
-      ]
-    },
-    {
-      subtitulo: "4. Documentos del Propietario",
-      items: [
-        { nombre: "Documento de Identidad del Propietario", progreso: 0 },
-        { nombre: "RUT Propietario", progreso: 0 }
-      ]
-    }
-  ]);
+  // Estados para la creación y selección de vehículos
+  const [newPlate, setNewPlate] = useState<string>("");
+  const [vehicles, setVehicles] = useState<string[]>([]);
+  const [selectedPlate, setSelectedPlate] = useState<string | null>(null);
 
+  // Estados para el manejo de documentos
+  const [secciones, setSecciones] = useState<SeccionDocumentos[]>(initialSecciones);
   const [visibleSeccion, setVisibleSeccion] = useState<number | null>(null);
   const [selectedDocumento, setSelectedDocumento] = useState<{
     sectionIndex: number;
@@ -125,65 +92,115 @@ const CreacionVehiculo: React.FC = () => {
     documentName: string;
     endpoint: string;
   } | null>(null);
-  // Estado para abrir el modal VerDocumento junto con la información del item (índices y URLs)
   const [verDocumentoInfo, setVerDocumentoInfo] = useState<VerDocumentoInfo | null>(null);
 
-  const placa = "ABC";
-
-  const tiposMapping: Record<string, string> = {
-    "tarjeta de propiedad": "tarjetaPropiedad",
-    "soat": "soat",
-    "revisión tecnomecánica": "revisionTecnomecica", // Nota: ajustar si es revisionTecnomecanica
-    "tarjeta de remolque": "tarjetaRemolque",
-    "fotos": "fotos",
-    "póliza de responsabilidad civil": "polizaResponsabilidad",
-    "documento de identidad del conductor": "documentoIdentidadConductor",
-    "documento de identidad del propietario": "documentoIdentidadPropietario",
-    "documento de identidad del tenedor": "documentoIdentidadTenedor",
-    "licencia de conducción vigente": "licencia",
-    "planilla de eps": "planillaEps",
-    "planilla de arl": "planillaArl",
-    "certificación bancaria": "certificacionBancaria",
-    "documento que lo acredite como tenedor": "documentoAcreditacionTenedor",
-    "rut tenedor": "rutTenedor",
-    "rut propietario": "rutPropietario"
+  // Función para crear un vehículo (POST a /vehiculos/crear)
+  const handleCreateVehicle = async () => {
+    if (!newPlate.trim()) {
+      Swal.fire("Error", "Ingrese una placa válida", "error");
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append("id_usuario", idUsuario || "");
+      const plateUpper = newPlate.trim().toUpperCase();
+      formData.append("placa", plateUpper);
+      const response = await fetch("https://integrappi-dvmh.onrender.com/vehiculos/crear", {
+        method: "POST",
+        body: formData,
+      });
+      if (response.ok) {
+        Swal.fire("Éxito", "Vehículo creado exitosamente", "success");
+        setVehicles(prev => {
+          if (!prev.includes(plateUpper)) return [...prev, plateUpper];
+          return prev;
+        });
+        setSelectedPlate(plateUpper);
+        setNewPlate("");
+      } else {
+        const data = await response.json();
+        Swal.fire("Error", data.detail || "Error al crear vehículo", "error");
+      }
+    } catch (error: any) {
+      console.error(error);
+      Swal.fire("Error", "Error en la conexión", "error");
+    }
   };
 
+  // Función para obtener los vehículos creados para el usuario
+  const fetchVehicles = async () => {
+    if (!idUsuario) return;
+    try {
+      const response = await fetch(`https://integrappi-dvmh.onrender.com/vehiculos/obtener-vehiculos?id_usuario=${idUsuario}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.vehicles && Array.isArray(data.vehicles)) {
+          const plates = data.vehicles.map((veh: any) => veh.placa);
+          setVehicles(plates);
+          if (plates.length > 0 && !selectedPlate) {
+            setSelectedPlate(plates[0]);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error al obtener vehículos:", error);
+    }
+  };
+
+  // Al cargar el componente, verificamos si ya existen vehículos para el usuario
+  useEffect(() => {
+    fetchVehicles();
+  }, [idUsuario]);
+
+  // Cada vez que se cambia la placa seleccionada, se carga la información del vehículo
   useEffect(() => {
     const cargarVehiculo = async () => {
-      const data = await obtenerVehiculoPorPlaca(placa);
-      if (data && data.data) {
-        const vehiculo = data.data;
-        setSecciones(prevSecciones =>
-          prevSecciones.map(seccion => {
-            const nuevosItems = seccion.items.map(item => {
-              let field = "";
-              const nombreLower = item.nombre.toLowerCase();
-              if (nombreLower === "rut tenedor") {
-                field = "rutTenedor";
-              } else if (nombreLower === "rut propietario") {
-                field = "rutPropietario";
-              } else {
-                field = tiposMapping[nombreLower] || "";
-              }
-              if (field) {
-                if (field === "fotos") {
-                  if (Array.isArray(vehiculo[field]) && vehiculo[field].length > 0) {
-                    return { ...item, progreso: 100, url: vehiculo[field] };
+      if (!selectedPlate) {
+        setSecciones(initialSecciones); // Resetear secciones si no hay placa seleccionada
+        return;
+      }
+      try {
+        const data = await obtenerVehiculoPorPlaca(selectedPlate);
+        if (data && data.data) {
+          const vehiculo = data.data;
+          setSecciones(prevSecciones =>
+            prevSecciones.map(seccion => ({
+              ...seccion,
+              items: seccion.items.map(item => {
+                const field = tiposMapping[item.nombre.toLowerCase()] || "";
+                if (field) {
+                  if (field === "fotos") {
+                    if (Array.isArray(vehiculo[field]) && vehiculo[field].length > 0) {
+                      return {
+                        ...item,
+                        progreso: 100,
+                        url: vehiculo[field],
+                      };
+                    } else {
+                      return { ...item, progreso: 0, url: undefined };
+                    }
+                  } else if (vehiculo[field]) {
+                    return {
+                      ...item,
+                      progreso: 100,
+                      url: vehiculo[field],
+                    };
                   }
-                } else if (vehiculo[field]) {
-                  return { ...item, progreso: 100, url: vehiculo[field] };
                 }
-              }
-              return item;
-            });
-            return { ...seccion, items: nuevosItems };
-          })
-        );
+                return { ...item, progreso: 0, url: undefined };
+              }),
+            }))
+          );
+        } else {
+          setSecciones(initialSecciones);
+        }
+      } catch (error) {
+        console.error("Error al cargar el vehículo:", error);
+        setSecciones(initialSecciones);
       }
     };
     cargarVehiculo();
-  }, [placa]);
+  }, [selectedPlate]);
 
   const toggleSeccion = (index: number) => {
     setVisibleSeccion(visibleSeccion === index ? null : index);
@@ -204,7 +221,6 @@ const CreacionVehiculo: React.FC = () => {
     setSelectedDocumento({ sectionIndex, itemIndex, documentName, endpoint });
   };
 
-  // Al hacer clic en "Ver", guardamos también el índice de la sección e item para luego actualizar el estado
   const handleVerDocumento = (
     sectionIndex: number,
     itemIndex: number,
@@ -234,57 +250,104 @@ const CreacionVehiculo: React.FC = () => {
   return (
     <div className="CreacionVehiculo-contenedor-principal">
       <div className="CreacionVehiculo-titulo">
-        <h1>Documentos para registrar vehículo</h1>
+        <h1>Registrar Vehículos</h1>
       </div>
-      <div className="CreacionVehiculo-contenedor">
-        {secciones.map((seccion, index) => {
-          const _promedioProgreso = Math.round(
-            seccion.items.reduce((acc, item) => acc + item.progreso, 0) / (seccion.items.length * 100) * 100
-          );
-          return (
-            <section key={index} className="CreacionVehiculo-seccion" onClick={() => toggleSeccion(index)}>
-              <h2 className="CreacionVehiculo-subtitulo">
-                {seccion.subtitulo} ({_promedioProgreso}%)
-                <span className={`CreacionVehiculo-flecha ${visibleSeccion === index ? "abierta" : ""}`}>
-                  {visibleSeccion === index ? "▼" : "▶"}
-                </span>
-              </h2>
-              {visibleSeccion === index ? (
-                <ul className="CreacionVehiculo-lista">
-                  {seccion.items.map((item, itemIndex) => (
-                    <li key={itemIndex} className="CreacionVehiculo-item">
-                      <span>{item.nombre}</span>
-                      <div className="CreacionVehiculo-item-derecha">
-                        {item.progreso < 100 ? (
-                          <button onClick={(e) => handleOpenDocumento(index, itemIndex, item.nombre, e)}>
-                            Cargar
-                          </button>
-                        ) : (
-                          <button className="CreacionVehiculo-btn-ver" onClick={(e) => handleVerDocumento(index, itemIndex, e)}>
-                            Ver
-                          </button>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div className="CreacionVehiculo-imagen">
-                  {imagenesSecciones[seccion.subtitulo]}
-                </div>
-              )}
-            </section>
-          );
-        })}
+
+      {/* Sección para crear un vehículo nuevo */}
+      <div className="CreacionVehiculo-crear">
+        <input
+          type="text"
+          placeholder="Ingrese placa (ej. ABC123)"
+          value={newPlate}
+          onChange={(e) => setNewPlate(e.target.value)}
+        />
+        <button onClick={handleCreateVehicle}>Crear Vehículo</button>
       </div>
-      <div className="CreacionVehiculo-botonFinal" onClick={enviarVehiculo}>
-        Crear Vehículo
-      </div>
+
+      {/* Dropdown para seleccionar un vehículo creado */}
+      {vehicles.length > 0 && (
+        <div className="CreacionVehiculo-seleccion">
+          <label>Vehículo:</label>
+          <select
+            value={selectedPlate || ""}
+            onChange={(e) => setSelectedPlate(e.target.value)}
+          >
+            <option value="" disabled>
+              Seleccione una placa
+            </option>
+            {vehicles.map((plate, idx) => (
+              <option key={idx} value={plate}>
+                {plate}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Interfaz de edición de documentos, visible si hay vehículo seleccionado */}
+      {selectedPlate && (
+        <>
+          <div className="CreacionVehiculo-contenedor">
+            {secciones.map((seccion, index) => {
+              const _promedioProgreso = Math.round(
+                seccion.items.reduce((acc, item) => acc + item.progreso, 0) /
+                  (seccion.items.length * 100) *
+                  100
+              );
+              return (
+                <section
+                  key={index}
+                  className="CreacionVehiculo-seccion"
+                  onClick={() => toggleSeccion(index)}
+                >
+                  <h2 className="CreacionVehiculo-subtitulo">
+                    {seccion.subtitulo} ({_promedioProgreso}%)
+                    <span className={`CreacionVehiculo-flecha ${visibleSeccion === index ? "abierta" : ""}`}>
+                      {visibleSeccion === index ? "▼" : "▶"}
+                    </span>
+                  </h2>
+                  {visibleSeccion === index ? (
+                    <ul className="CreacionVehiculo-lista">
+                      {seccion.items.map((item, itemIndex) => (
+                        <li key={itemIndex} className="CreacionVehiculo-item">
+                          <span>{item.nombre}</span>
+                          <div className="CreacionVehiculo-item-derecha">
+                            {item.progreso < 100 ? (
+                              <button onClick={(e) => handleOpenDocumento(index, itemIndex, item.nombre, e)}>
+                                Cargar
+                              </button>
+                            ) : (
+                              <button className="CreacionVehiculo-btn-ver" onClick={(e) => handleVerDocumento(index, itemIndex, e)}>
+                                Ver
+                              </button>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="CreacionVehiculo-imagen">
+                      {index === 0 && <FaTruck size={50} />}
+                      {index === 1 && <FaUser size={50} />}
+                      {index === 2 && <FaUserTie size={50} />}
+                      {index === 3 && <FcBusinessman size={50} />}
+                    </div>
+                  )}
+                </section>
+              );
+            })}
+          </div>
+          <div className="CreacionVehiculo-botonFinal" onClick={enviarVehiculo}>
+            Crear Vehículo
+          </div>
+        </>
+      )}
+
       {selectedDocumento && (
         <CargaDocumento
           documentName={selectedDocumento.documentName}
           endpoint={selectedDocumento.endpoint}
-          placa={placa}
+          placa={selectedPlate as string}
           onClose={() => setSelectedDocumento(null)}
           onUploadSuccess={(result: string | string[]) => {
             console.log("Documento subido:", result);
@@ -294,19 +357,26 @@ const CreacionVehiculo: React.FC = () => {
               newSecciones[selectedDocumento.sectionIndex].items[selectedDocumento.itemIndex].url = result;
               return newSecciones;
             });
-            // No cerramos el toggle, lo dejamos abierto.
             setSelectedDocumento(null);
           }}
         />
       )}
+
       {verDocumentoInfo && verDocumento && (
         <VerDocumento
           urls={verDocumentoInfo.urls}
-          onDeleteSuccess={() => {
+          placa={selectedPlate as string}
+          onDeleteSuccess={(nuevasUrls) => {
             setSecciones((prevSecciones) => {
               const newSecciones = [...prevSecciones];
-              newSecciones[verDocumentoInfo.sectionIndex].items[verDocumentoInfo.itemIndex].progreso = 0;
-              newSecciones[verDocumentoInfo.sectionIndex].items[verDocumentoInfo.itemIndex].url = undefined;
+              const itemRef = newSecciones[verDocumentoInfo.sectionIndex].items[verDocumentoInfo.itemIndex];
+              if (nuevasUrls.length === 0) {
+                itemRef.progreso = 0;
+                itemRef.url = undefined;
+              } else {
+                itemRef.progreso = 100;
+                itemRef.url = nuevasUrls;
+              }
               return newSecciones;
             });
             setVerDocumentoInfo(null);

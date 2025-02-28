@@ -3,15 +3,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100%;
   height: 100%;
-  overflow-y: auto;
-  box-sizing: border-box;
   padding-top: 90px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
-/* Título fijo en la parte superior */
+/* Título fijo */
 .CreacionVehiculo-titulo {
   position: fixed;
   top: 0;
@@ -23,21 +22,74 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 15px 10px;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   z-index: 1;
 }
 
-/* Contenedor de secciones */
-.CreacionVehiculo-contenedor {
+/* Sección para crear vehículo (input y botón) */
+.CreacionVehiculo-crear {
+  margin: 20px 0;
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 400px;
+}
 
+.CreacionVehiculo-crear input[type="text"] {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.CreacionVehiculo-crear button {
+  padding: 8px 16px;
+  border: none;
+  background-color: #1ab33b;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.CreacionVehiculo-crear button:hover {
+  background-color: #159e30;
+}
+
+.CreacionVehiculo-btn-ver{
+  background-color: #bde9c6;
+}
+
+/* Dropdown para seleccionar vehículo */
+.CreacionVehiculo-seleccion {
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.CreacionVehiculo-seleccion label {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.CreacionVehiculo-seleccion select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+/* Contenedor de secciones (documentos) */
+.CreacionVehiculo-contenedor {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 15px;
   width: 100%;
-  /* height: 100%; */
-  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 /* Sección individual */
@@ -50,9 +102,14 @@
   max-width: 400px;
   box-sizing: border-box;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-/* Título de cada sección */
+.CreacionVehiculo-seccion:hover {
+  background: #f1f1f1;
+}
+
+/* Título de la sección */
 .CreacionVehiculo-subtitulo {
   font-size: 18px;
   font-weight: bold;
@@ -60,16 +117,14 @@
   border-radius: 5px;
   padding: 10px;
   margin: 0;
-  cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* Flecha del título */
+/* Flecha (ícono) */
 .CreacionVehiculo-flecha {
   font-size: 16px;
-  margin-left: 10px;
   transition: transform 0.3s ease;
 }
 
@@ -84,7 +139,7 @@
   margin: 10px 0;
 }
 
-/* Item de la lista */
+/* Item de documento */
 .CreacionVehiculo-item {
   display: flex;
   justify-content: space-between;
@@ -97,7 +152,7 @@
   cursor: pointer;
 }
 
-/* Contenedor de botones en cada item */
+/* Contenedor de botones en el item */
 .CreacionVehiculo-item-derecha {
   display: flex;
   align-items: center;
@@ -109,10 +164,15 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s ease;
 }
 
+.CreacionVehiculo-item-derecha button:hover {
+  opacity: 0.9;
+}
 
-/* Imagen o ícono de la sección */
+/* Contenedor para ícono o imagen de la sección */
 .CreacionVehiculo-imagen {
   display: flex;
   justify-content: center;
@@ -123,7 +183,7 @@
   margin: 10px 0;
 }
 
-/* Botón final para crear vehículo */
+/* Botón final (acción de crear vehículo, si aplica) */
 .CreacionVehiculo-botonFinal {
   background-color: #fff;
   border: 2px solid rgb(141, 199, 63);
@@ -138,6 +198,7 @@
   margin-top: 20px;
   font-weight: bold;
   color: #333;
+  text-align: center;
 }
 
 .CreacionVehiculo-botonFinal:hover {
@@ -145,7 +206,7 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* Modal de carga */
+/* Modal de carga (CargaDocumento) */
 .CargaDocumento-overlay {
   position: fixed;
   top: 0;
@@ -169,27 +230,30 @@
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-.mensaje-subiendo {
-  margin-top: 10px;
-  font-size: 14px;
-  color: #333;
+.CargaDocumento-btn-cerrar {
+  margin-top: 15px;
+  padding: 8px 16px;
+  background-color: #d33;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
+.CargaDocumento-btn-cerrar:hover {
+  background-color: #b22;
+}
+
+/* Mensajes en modal */
+.mensaje-subiendo,
 .mensaje-progreso {
   margin-top: 10px;
   font-size: 14px;
-  font-weight: bold;
-  color: #4caf50;
 }
 
-.CreacionVehiculo-btn-ver {
-  margin-top: 15px;
-  background-color: #1ab33b;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
+.mensaje-progreso {
+  font-weight: bold;
+  color: #4caf50;
 }
 
 /* Responsive */
@@ -202,7 +266,9 @@
     overflow-y: auto;
   }
   .CreacionVehiculo-titulo {
-    font-size: 0.6rem;
+    font-size: 1rem;
+    height: 70px;
+    padding: 10px;
   }
   .CreacionVehiculo-seccion {
     max-width: 100%;
@@ -220,9 +286,5 @@
     width: 95%;
     max-width: none;
     margin-top: 0;
-    /* z-index: 1000; */
-  }
-  .CreacionVehiculo-imagen {
-    height: 80px;
   }
 }

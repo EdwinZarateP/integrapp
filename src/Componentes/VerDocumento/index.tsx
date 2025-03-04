@@ -22,25 +22,45 @@ const VerDocumento: React.FC<VerDocumentoProps> = ({ urls, placa, onDeleteSucces
   }
   const { verDocumento } = almacenVariables;
 
-  // Estado local para manejar las imágenes que se muestran
-  const [imagenes, setImagenes] = useState<string[]>(urls);
+  // Estado local para manejar los documentos
+  const [documentos, setDocumentos] = useState<string[]>(urls);
   const [cargando, setCargando] = useState(true);
 
-  // Actualizamos el estado local cada vez que cambian las urls recibidas
+  // Actualiza documentos cuando cambian las URLs
   useEffect(() => {
-    setImagenes(urls);
+    setDocumentos(urls);
   }, [urls]);
 
+  // Simula breve delay de carga
   useEffect(() => {
-    // Simulamos un pequeño delay de carga
-    const timer = setTimeout(() => {
-      setCargando(false);
-    }, 500);
+    const timer = setTimeout(() => setCargando(false), 500);
     return () => clearTimeout(timer);
   }, []);
 
   if (!verDocumento) return null;
 
+  /**
+   * Detecta si la URL es una imagen (png, jpg, jpeg, webp)
+   * Ignoramos parámetros de query (por ej. "?t=123")
+   */
+  const esImagen = (url: string): boolean => {
+    const urlSinQuery = url.split("?")[0].toLowerCase();
+    const extensiones = [".png", ".jpg", ".jpeg", ".webp"];
+    return extensiones.some(ext => urlSinQuery.endsWith(ext));
+  };
+
+  /**
+   * Extrae el nombre del archivo sin query
+   */
+  const obtenerNombreArchivo = (url: string): string => {
+    const cleanUrl = url.split("?")[0];
+    return cleanUrl.split("/").pop() || "Documento.pdf";
+  };
+
+  /**
+   * Determina el tipo de documento según el nombre original
+   * (tal como en tu código original).
+   */
   const obtenerTipoDocumentoDesdeUrl = (url: string): string | null => {
     const mappingTipos: Record<string, string> = {
       "tarjetaPropiedad": "tarjetaPropiedad",
@@ -61,34 +81,61 @@ const VerDocumento: React.FC<VerDocumentoProps> = ({ urls, placa, onDeleteSucces
       "rutPropietario": "rutPropietario"
     };
 
+    // Tomamos la parte antes del guion bajo "_"
     const partes = url.split("/").pop()?.split("_");
     const nombreArchivo = partes ? partes[0] : null;
     if (!nombreArchivo) return null;
+
+    // Si empieza con "Foto" => "fotos"
     if (nombreArchivo.toLowerCase() === "foto") {
       return "fotos";
     }
+    // Si coincide con mapping, devolvemos ese tipo
     return mappingTipos[nombreArchivo] || null;
   };
 
-  const handleEliminarImagen = async (urlAEliminar: string) => {
+  /**
+   * Eliminar documento (imagen o PDF)
+   */
+  const handleEliminarDocumento = async (urlAEliminar: string) => {
     const confirmacion = await Swal.fire({
-      title: "¿Eliminar imagen?",
+      title: "¿Eliminar documento?",
       text: "Esta acción no se puede deshacer",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, eliminar",
+      confirmButtonText: "Sí, eliminar"
     });
-
     if (!confirmacion.isConfirmed) return;
 
     try {
-      const tipoDocumento = obtenerTipoDocumentoDesdeUrl(urlAEliminar);
-      if (!tipoDocumento) {
-        throw new Error("No se pudo determinar el tipo de documento.");
-      }
       const urlLimpia = urlAEliminar.split("?")[0];
+      const tipoDocumento = obtenerTipoDocumentoDesdeUrl(urlLimpia);
+
+      if (!tipoDocumento) {
+        // Si no coincide con nada, asume que es un PDF
+        // (o puedes mostrar error si prefieres)
+        // throw new Error("No se pudo determinar el tipo de documento.");
+        // Fallback: lo tratamos como 'pdf'
+        console.warn("Tipo de documento no detectado; usando PDF por defecto.");
+        // Llamamos a /eliminar-documento con tipo=pdf
+        const response = await axios.delete(
+          `${API_BASE_URL}/eliminar-documento?placa=${placa}&tipo=pdf`
+        );
+        if (response.status === 200) {
+          Swal.fire("Eliminado", "El documento ha sido eliminado", "success");
+          const nuevas = documentos.filter((doc) => doc !== urlAEliminar);
+          setDocumentos(nuevas);
+          onDeleteSuccess(nuevas);
+        } else {
+          throw new Error("No se pudo eliminar el documento.");
+        }
+        return;
+      }
+
+      // Si es "fotos", va a eliminar-foto
+      // si no, va a eliminar-documento
       let deleteEndpoint = "";
       if (tipoDocumento === "fotos") {
         deleteEndpoint = `${API_BASE_URL}/eliminar-foto?placa=${placa}&url=${encodeURIComponent(urlLimpia)}`;
@@ -98,16 +145,16 @@ const VerDocumento: React.FC<VerDocumentoProps> = ({ urls, placa, onDeleteSucces
 
       const response = await axios.delete(deleteEndpoint);
       if (response.status === 200) {
-        Swal.fire("Eliminado", "La imagen ha sido eliminada", "success");
-        const nuevas = imagenes.filter((img) => img !== urlAEliminar);
-        setImagenes([...nuevas]);
+        Swal.fire("Eliminado", "El documento ha sido eliminado", "success");
+        const nuevas = documentos.filter((doc) => doc !== urlAEliminar);
+        setDocumentos(nuevas);
         onDeleteSuccess(nuevas);
       } else {
-        throw new Error("No se pudo eliminar la imagen.");
+        throw new Error("No se pudo eliminar el documento.");
       }
     } catch (error) {
-      console.error("❌ Error al eliminar la imagen:", error);
-      Swal.fire("Error", "No se pudo eliminar la imagen", "error");
+      console.error("❌ Error al eliminar el documento:", error);
+      Swal.fire("Error", "No se pudo eliminar el documento", "error");
     }
   };
 
@@ -115,6 +162,7 @@ const VerDocumento: React.FC<VerDocumentoProps> = ({ urls, placa, onDeleteSucces
     <div className="VerDocumento-overlay">
       <div className="VerDocumento-contenedor">
         <button className="VerDocumento-boton-cerrar" onClick={onClose}>✖</button>
+
         {cargando ? (
           <div className="VerDocumento-carga">
             <Lottie animationData={animationData} style={{ height: 200, width: "100%", margin: "auto" }} />
@@ -122,19 +170,44 @@ const VerDocumento: React.FC<VerDocumentoProps> = ({ urls, placa, onDeleteSucces
           </div>
         ) : (
           <div className="VerDocumento-galeria">
-            {imagenes.map((url, index) => (
+            {documentos.map((url, index) => (
               <div key={index} className="VerDocumento-imagen-container">
-                <img 
-                  src={`${url}?t=${new Date().getTime()}`} 
-                  alt={`Documento ${index + 1}`} 
-                  className="VerDocumento-imagen" 
-                />
-                <button
-                  className="VerDocumento-boton-eliminar"
-                  onClick={() => handleEliminarImagen(url)}
-                >
-                  🗑
-                </button>
+                {esImagen(url) ? (
+                  // Mostrar imagen
+                  <>
+                    <img
+                      src={`${url}?t=${new Date().getTime()}`}
+                      alt={`Documento ${index + 1}`}
+                      className="VerDocumento-imagen"
+                    />
+                    <button
+                      className="VerDocumento-boton-eliminar"
+                      onClick={() => handleEliminarDocumento(url)}
+                    >
+                      🗑
+                    </button>
+                  </>
+                ) : (
+                  // Archivos PDF u otros => mostrar nombre y botón Descargar
+                  <div className="VerDocumento-pdf-line">
+                    <span className="VerDocumento-pdf-nombre">{obtenerNombreArchivo(url)}</span>
+                    <a
+                      href={url}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="VerDocumento-pdf-descargar"
+                    >
+                      Descargar
+                    </a>
+                    <button
+                      className="VerDocumento-boton-eliminar"
+                      onClick={() => handleEliminarDocumento(url)}
+                    >
+                      🗑
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

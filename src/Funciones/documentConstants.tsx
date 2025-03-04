@@ -25,7 +25,7 @@ export const endpoints: Record<string, string> = {
 export const tiposMapping: Record<string, string> = {
   "tarjeta de propiedad": "tarjetaPropiedad",
   "soat": "soat",
-  "revisión tecnomecánica": "revisionTecnomecica", // Ajustar si en tu backend se llama "revisionTecnomecanica"
+  "revisión tecnomecánica": "revisionTecnomecanica", // Ajustar si en tu backend se llama "revisionTecnomecanica"
   "tarjeta de remolque": "tarjetaRemolque",
   "fotos": "fotos",
   "póliza de responsabilidad civil": "polizaResponsabilidad",

@@ -1,0 +1,84 @@
+/* Contenedor principal del componente */
+.Datos-contenedor {
+    margin: 0;
+    width: 100%;       /* Ajusta el ancho máximo según tu gusto */
+    padding: 0;
+    height: 100%;
+    overflow-y: auto;
+
+  }
+  
+  /* Título del contenedor principal */
+  .Datos-contenedor h3 {
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    text-align: center;
+  }
+  
+  /* El formulario que contiene todos los campos */
+  .Form-datos-generales {
+    display: flex;
+    /* flex-wrap: wrap;  */
+    gap: 1rem;               /* Espacio entre los campos */
+    background: #fdfdfd;     /* Fondo claro */
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  }
+  
+  /* Título de cada bloque dentro del formulario (Conductor, Propietario, etc.) */
+  .Form-datos-generales h4 {
+    width: 100%;
+    background: rgba(47, 107, 62, 0.1);
+    /* Un color suave para diferenciar la sección */
+    padding: 0.5rem;
+    margin: 0;
+    margin-bottom: 0.3rem;
+    border-radius: 4px;
+    color: #333;
+    font-weight: 600;
+    border: 1px solid #2F6B3E;
+  }
+  
+  /* Cada 'div' con label + input */
+  .Form-datos-generales > div {
+    flex: 1 1 calc(50% - 1rem); /* Toma 50% del contenedor menos el gap */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Estilos para label */
+  .Form-datos-generales label {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: #333;
+  }
+  
+  /* Estilos generales para inputs, selects, textareas */
+  .Form-datos-generales input,
+  .Form-datos-generales select,
+  .Form-datos-generales textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border 0.2s ease;
+  }
+  
+  .Form-datos-generales input:focus,
+  .Form-datos-generales select:focus,
+  .Form-datos-generales textarea:focus {
+    border-color: #1ab33b; /* Color de foco, ajusta a tu estilo */
+  }
+  
+  /* Responsive: en pantallas pequeñas, 1 columna */
+  @media (max-width: 600px) {
+    .Form-datos-generales {
+      padding: 0.5rem;
+    }
+    .Form-datos-generales > div {
+      flex: 1 1 100%;
+    }
+  }
+  

@@ -9,7 +9,7 @@ import Novedad from '../Novedad/index';
 import FormularioHojavida from '../FormularioHojavida/index';
 import Api2 from '../Api/autenticar';
 import Olvidoclave from '../Olvidoclave/index';
-import PaginaIntegra from '../PaginaIntegra/index';
+// import PaginaIntegra from '../PaginaIntegra/index';
 import PortalClientes from '../PortalClientes/index';
 import PortalVentas from '../PortalVentas/index';
 import NoEncontrado from '../NoEncontrado/index';

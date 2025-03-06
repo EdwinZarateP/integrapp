@@ -76,6 +76,11 @@
   border-color: #1ab33b;
 }
 
+.Datos-botonActualizar{
+  padding: 10px;
+  border-radius: 7px;
+}
+
 /* Responsive: en pantallas menores a 900px, las secciones tendrán una sola columna */
 @media (max-width: 900px) {
   .fields-container {

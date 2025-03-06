@@ -366,16 +366,14 @@ const CreacionVehiculo: React.FC = () => {
       )}
 
        {/* Contenido paso 2: llenar formulario */}
-       {currentStep === 2 && (
-      <div className="Paso-contenido">
-      {/* === FORMULARIO COMPLETO === */}
-        <Datos />
-        <button className="Boton-siguiente" onClick={goToNextStep}>
-          Siguiente
-        </button>
-    </div>
-  )}
-
+       {currentStep === 2 && selectedPlate && (
+          <div className="Paso-contenido">
+            <Datos placa={selectedPlate} />
+            <button className="Boton-siguiente" onClick={goToNextStep}>
+              Siguiente
+            </button>
+          </div>
+        )}
 
       {/* Contenido paso 3: Carga de documentos */}
       {currentStep === 3 && selectedPlate && (

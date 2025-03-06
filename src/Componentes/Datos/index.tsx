@@ -1,284 +1,138 @@
 import React from 'react';
-import './estilos.css'; // Importa el archivo CSS
+import './estilos.css';
 
-interface DatosProps {
-  // Si necesitas recibir propiedades, defínelas aquí
-  // Ejemplo: onSubmit?: (formValues: Record<string, any>) => void;
+// Definir la interfaz para los campos de entrada
+interface InputFieldProps {
+  label: string;
+  name: string;
+  type?: string;
 }
 
-const Datos: React.FC<DatosProps> = () => {
+// Componente reutilizable para los inputs
+const InputField: React.FC<InputFieldProps> = ({ label, name, type = 'text' }) => (
+  <div className="input-container">
+    <label>{label}</label>
+    <input type={type} name={name} />
+  </div>
+);
+
+// Definir la interfaz para las secciones del formulario
+interface FormSectionProps {
+  title: string;
+  fields: InputFieldProps[];
+}
+
+// Componente para secciones del formulario
+const FormSection: React.FC<FormSectionProps> = ({ title, fields }) => (
+  <div className="form-section">
+    <h4>{title}</h4>
+    <div className="fields-container">
+      {fields.map(({ label, name, type }) => (
+        <InputField key={name} label={label} name={name} type={type} />
+      ))}
+    </div>
+  </div>
+);
+
+const Datos: React.FC = () => {
+  const sections: FormSectionProps[] = [
+    {
+      title: 'Información del Conductor',
+      fields: [
+        { label: 'Primer Apellido', name: 'condPrimerApellido' },
+        { label: 'Segundo Apellido', name: 'condSegundoApellido' },
+        { label: 'Nombres', name: 'condNombres' },
+        { label: 'Cédula de Ciudadanía', name: 'condCedulaCiudadania' },
+        { label: 'Expedida en', name: 'condExpedidaEn' },
+        { label: 'Dirección', name: 'condDireccion' },
+        { label: 'Ciudad', name: 'condCiudad' },
+        { label: 'Celular', name: 'condCelular' },
+        { label: 'Correo Electrónico', name: 'condCorreo', type: 'email' },
+        { label: 'EPS y ARL', name: 'condEpsArl' },
+        { label: 'No. Licencia', name: 'condNoLicencia' },
+        { label: 'Fecha de Vencimiento', name: 'condFechaVencimientoLic', type: 'date' },
+        { label: 'Categoría', name: 'condCategoriaLic' },
+        { label: 'Grupo Sanguíneo RH', name: 'condGrupoSanguineo' },
+      ],
+    },
+    {
+      title: 'En Caso de Emergencia Avisar a',
+      fields: [
+        { label: 'Nombre', name: 'condNombreEmergencia' },
+        { label: 'Celular', name: 'condCelularEmergencia' },
+        { label: 'Parentesco', name: 'condParentescoEmergencia' },
+      ],
+    },
+    {
+      title: 'Referencias Laborales',
+      fields: [
+        { label: 'Empresa', name: 'condEmpresaRef' },
+        { label: 'Celular', name: 'condCelularRef' },
+        { label: 'Ciudad', name: 'condCiudadRef' },
+        { label: 'Nro. Viajes', name: 'condNroViajesRef', type: 'number' },
+        { label: 'Antigüedad', name: 'condAntiguedadRef' },
+        { label: 'Merc. Transportada', name: 'condMercTransportada' },
+      ],
+    },
+    {
+      title: 'Datos del propietario',
+      fields: [
+        { label: 'Nombre/Razón', name: 'propNombre' },
+        { label: 'Número documento', name: 'propDocumento' },
+        { label: 'Expedida En', name: 'propCiudadExpDoc' },
+        { label: 'Correo', name: 'propCorreo', type: 'email' },
+        { label: 'Celular', name: 'propCelular'},
+        { label: 'Direccion', name: 'propDireccion'},
+        { label: 'Ciudad', name: 'propCiudad' },
+      ],
+    },
+    {
+      title: 'Datos del Tenedor  (En caso que sea distinto al propietario)',
+      fields: [
+        { label: 'Nombre/Razón', name: 'tenedNombre' },
+        { label: 'Número documento', name: 'tenedDocumento' },
+        { label: 'Expedida en', name: 'tenedCiudadExpDoc' },
+        { label: 'Correo', name: 'tenedCorreo', type: 'email' },
+        { label: 'Celular', name: 'tenedCelular'},
+        { label: 'Direccion', name: 'tenedDireccion'},
+        { label: 'Ciudad', name: 'tenedCiudad' },
+      ],
+    },
+    {
+      title: 'Datos del Vehiculo',
+      fields: [
+        { label: 'Modelo', name: 'vehModelo' },
+        { label: 'Marca', name: 'vehMarca' },
+        { label: 'Tipo Carroceria', name: 'vehTipoCarroceria' },        
+        { label: 'Linea', name: 'vehLinea'},
+        { label: 'Color', name: 'vehColor' },
+        { label: 'Repotenciado', name: 'vehRepotenciado'},
+        { label: 'Ano', name: 'vehAno' },
+        { label: 'Empresa Satelital', name: 'vehEmpresaSat' },
+        { label: 'Usuario Satelital', name: 'vehUsuarioSat' },
+        { label: 'Clave Satelital', name: 'vehClaveSat' },
+      ],
+    },
+    {
+      title: 'Datos del Remolque',
+      fields: [
+        { label: 'Placa Remolque', name: 'RemolPlaca' },
+        { label: 'Modelo', name: 'RemolModelo' },
+        { label: 'Clase/config', name: 'RemolClase' },        
+        { label: 'Tipo Carroceria', name: 'RemolTipoCarroceria'},
+        { label: 'Alto', name: 'RemolAlto' },
+        { label: 'Largo', name: 'RemolLargo'},
+        { label: 'Ancho', name: 'RemolAncho' }
+      ],
+    },
+  ];
+
   return (
     <div className="Datos-contenedor">
       <form className="Form-datos-generales">
-        {/* INFORMACIÓN DEL CONDUCTOR */}
-        <h4>Información del Conductor</h4>
-        <div>
-          <label>Primer Apellido</label>
-          <input type="text" name="DatoPrimerApellido" />
-        </div>
-        <div>
-          <label>Segundo Apellido</label>
-          <input type="text" name="DatoSegundoApellido" />
-        </div>
-        <div>
-          <label>Nombres</label>
-          <input type="text" name="DatoNombres" />
-        </div>
-        <div>
-          <label>Cédula de Ciudadanía</label>
-          <input type="text" name="DatoCedulaCiudadania" />
-        </div>
-        <div>
-          <label>Expedida en</label>
-          <input type="text" name="DatoExpedidaEn" />
-        </div>
-        <div>
-          <label>Dirección</label>
-          <input type="text" name="DatoDireccionConductor" />
-        </div>
-        <div>
-          <label>Ciudad</label>
-          <input type="text" name="DatoCiudadConductor" />
-        </div>
-        <div>
-          <label>Celular</label>
-          <input type="text" name="DatoCelularConductor" />
-        </div>
-        <div>
-          <label>Correo Electrónico</label>
-          <input type="email" name="DatoCorreoConductor" />
-        </div>
-        <div>
-          <label>EPS</label>
-          <input type="text" name="DatoEps" />
-        </div>
-        <div>
-          <label>ARL</label>
-          <input type="text" name="DatoArl" />
-        </div>
-        <div>
-          <label>No. Licencia</label>
-          <input type="text" name="DatoNoLicencia" />
-        </div>
-        <div>
-          <label>Fecha de Vencimiento</label>
-          <input type="date" name="DatoFechaVencimiento" />
-        </div>
-        <div>
-          <label>Categoría</label>
-          <input type="text" name="DatoCategoria" />
-        </div>
-        <div>
-          <label>Grupo Sanguíneo RH</label>
-          <input type="text" name="DatoGrupoSanguineo" />
-        </div>
-
-        {/* EN CASO DE EMERGENCIA */}
-        <h4>En Caso de Emergencia Avisar a:</h4>
-        <div>
-          <label>Nombre</label>
-          <input type="text" name="DatoNombreEmergencia" />
-        </div>
-        <div>
-          <label>Celular</label>
-          <input type="text" name="DatoCelularEmergencia" />
-        </div>
-        <div>
-          <label>Parentesco</label>
-          <input type="text" name="DatoParentescoEmergencia" />
-        </div>
-
-        {/* REFERENCIAS */}
-        <h4>Referencias Personales</h4>
-        {/* Referencia 1 */}
-        <div>
-          <label>Nombre y Apellido </label>
-          <input type="text" name="DatoNombreApellidoRef1" />
-        </div>
-        <div>
-          <label>Celular </label>
-          <input type="text" name="DatoCelularRef1" />
-        </div>
-        <div>
-          <label>Ciudad </label>
-          <input type="text" name="DatoCiudadRef1" />
-        </div>
-        <div>
-          <label>Parentesco </label>
-          <input type="text" name="DatoParentescoRef1" />
-        </div>
-
-        <h4>Referencias Laborales</h4>
-
-        {/* Referencia 2 */}
-        <div>
-          <label>Empresa </label>
-          <input type="text" name="DatoEmpresaRef2" />
-        </div>
-        <div>
-          <label>Celular </label>
-          <input type="text" name="DatoCelularRef2" />
-        </div>
-        <div>
-          <label>Ciudad </label>
-          <input type="text" name="DatoCiudadRef2" />
-        </div>
-        <div>
-          <label>Nro. Viajes</label>
-          <input type="number" name="DatoNroViajesRef2" />
-        </div>
-        <div>
-          <label>Antigüedad</label>
-          <input type="text" name="DatoAntiguedadRef2" />
-        </div>
-        <div>
-          <label>Merc. Transportada</label>
-          <input type="text" name="DatoMercTransportada" />
-        </div>
-
-        {/* DATOS DEL PROPIETARIO */}
-        <h4>Datos del Propietario</h4>
-        <div>
-          <label>Nombre/Razón Social</label>
-          <input type="text" name="DatoNombrePropietario" />
-        </div>
-        <div>
-          <label>Cédula/NIT</label>
-          <input type="text" name="DatoCedulaNitPropietario" />
-        </div>
-        <div>
-          <label>Expedida en</label>
-          <input type="text" name="DatoExpedidaEnPropietario" />
-        </div>
-        <div>
-          <label>Correo Electrónico</label>
-          <input type="email" name="DatoCorreoPropietario" />
-        </div>
-        <div>
-          <label>Dirección</label>
-          <input type="text" name="DatoDireccionPropietario" />
-        </div>
-        <div>
-          <label>Ciudad</label>
-          <input type="text" name="DatoCiudadPropietario" />
-        </div>
-        <div>
-          <label>Celular</label>
-          <input type="text" name="DatoCelularPropietario" />
-        </div>
-
-        {/* DATOS DEL TENEDOR */}
-        <h4>Datos del Tenedor (En caso que sea distinto al propietario)</h4>
-        <div>
-          <label>Nombre/Razón Social</label>
-          <input type="text" name="DatoNombreTenedor" />
-        </div>
-        <div>
-          <label>Cédula/NIT</label>
-          <input type="text" name="DatoCedulaNitTenedor" />
-        </div>
-        <div>
-          <label>Expedida en</label>
-          <input type="text" name="DatoExpedidaEnTenedor" />
-        </div>
-        <div>
-          <label>Correo Electrónico</label>
-          <input type="email" name="DatoCorreoTenedor" />
-        </div>
-        <div>
-          <label>Dirección</label>
-          <input type="text" name="DatoDireccionTenedor" />
-        </div>
-        <div>
-          <label>Ciudad</label>
-          <input type="text" name="DatoCiudadTenedor" />
-        </div>
-        <div>
-          <label>Celular</label>
-          <input type="text" name="DatoCelularTenedor" />
-        </div>
-
-        {/* INFORMACIÓN VEHÍCULO */}
-        <h4>Información del Vehículo</h4>
-        <div>
-          <label>Placa</label>
-          <input type="text" name="DatoPlacaVehiculo" />
-        </div>
-        <div>
-          <label>Modelo</label>
-          <input type="text" name="DatoModeloVehiculo" />
-        </div>
-        <div>
-          <label>Marca</label>
-          <input type="text" name="DatoMarcaVehiculo" />
-        </div>
-        <div>
-          <label>Tipo Carrocería</label>
-          <input type="text" name="DatoTipoCarroceriaVehiculo" />
-        </div>
-        <div>
-          <label>Línea</label>
-          <input type="text" name="DatoLineaVehiculo" />
-        </div>
-        <div>
-          <label>Color</label>
-          <input type="text" name="DatoColorVehiculo" />
-        </div>
-        <div>
-          <label>Repotenciado (Sí/No)</label>
-          <input type="text" name="DatoRepotenciado" />
-        </div>
-        <div>
-          <label>Año</label>
-          <input type="number" name="DatoAnoRepotenciado" />
-        </div>
-        <div>
-          <label>Satelital (Sí/No)</label>
-          <input type="text" name="DatoSatelital" />
-        </div>
-        <div>
-          <label>Empresa Satelital</label>
-          <input type="text" name="DatoEmpresaSatelital" />
-        </div>
-        <div>
-          <label>Usuario</label>
-          <input type="text" name="DatoUsuario" />
-        </div>
-        <div>
-          <label>Clave</label>
-          <input type="text" name="DatoClave" />
-        </div>
-
-        {/* INFORMACIÓN DE TRAYLER (REMOLQUE) */}
-        <h4>Información de Trayler (Remolque)</h4>
-        <div>
-          <label>Placa</label>
-          <input type="text" name="DatoPlacaRemolque" />
-        </div>
-        <div>
-          <label>Modelo</label>
-          <input type="text" name="DatoModeloRemolque" />
-        </div>
-        <div>
-          <label>Clase/Config</label>
-          <input type="text" name="DatoClaseConfigRemolque" />
-        </div>
-        <div>
-          <label>Tipo Carrocería</label>
-          <input type="text" name="DatoTipoCarroceriaRemolque" />
-        </div>
-        <div>
-          <label>Medidas (Alto)</label>
-          <input type="text" name="DatoMedidasAltoRemolque" />
-        </div>
-        <div>
-          <label>Medidas (Largo)</label>
-          <input type="text" name="DatoMedidasLargoRemolque" />
-        </div>
-        <div>
-          <label>Medidas (Ancho)</label>
-          <input type="text" name="DatoMedidasAnchoRemolque" />
-        </div>
+        {sections.map(({ title, fields }) => (
+          <FormSection key={title} title={title} fields={fields} />
+        ))}
       </form>
     </div>
   );

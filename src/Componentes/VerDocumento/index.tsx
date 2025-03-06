@@ -64,7 +64,7 @@ const VerDocumento: React.FC<VerDocumentoProps> = ({ urls, placa, onDeleteSucces
   const obtenerTipoDocumentoDesdeUrl = (url: string): string | null => {
     const mappingTipos: Record<string, string> = {
       "tarjetaPropiedad": "tarjetaPropiedad",
-      "soat": "soat",
+      "SOAT": "soat",
       "revisionTecnomecanica": "revisionTecnomecanica",
       "tarjetaRemolque": "tarjetaRemolque",
       "fotos": "fotos",
@@ -75,7 +75,9 @@ const VerDocumento: React.FC<VerDocumentoProps> = ({ urls, placa, onDeleteSucces
       "licencia": "licencia",
       "planillaEps": "planillaEps",
       "planillaArl": "planillaArl",
-      "certificacionBancaria": "certificacionBancaria",
+      "condCertificacionBancaria": "condCertificacionBancaria",
+      "propCertificacionBancaria": "propCertificacionBancaria",
+      "tenedCertificacionBancaria": "tenedCertificacionBancaria",
       "documentoAcreditacionTenedor": "documentoAcreditacionTenedor",
       "rutTenedor": "rutTenedor",
       "rutPropietario": "rutPropietario"

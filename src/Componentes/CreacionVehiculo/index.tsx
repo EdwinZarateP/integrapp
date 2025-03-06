@@ -31,6 +31,7 @@ interface VerDocumentoInfo {
   itemIndex: number;
   urls: string[];
 }
+const normalizeKey = (key: string) => key.trim().toLowerCase();
 
 const initialSecciones: SeccionDocumentos[] = [
   {
@@ -41,23 +42,23 @@ const initialSecciones: SeccionDocumentos[] = [
       { nombre: "Revisión Tecnomecánica", progreso: 0 },
       { nombre: "Tarjeta de Remolque", progreso: 0 },
       { nombre: "Fotos", progreso: 0 },
-      { nombre: "Póliza de Responsabilidad Civil", progreso: 0 },
-      { nombre: "Documento de Identidad del Conductor", progreso: 0 }
+      { nombre: "Póliza de Responsabilidad Civil", progreso: 0 },      
     ]
   },
   {
     subtitulo: "2. Documentos del Conductor",
     items: [
+      { nombre: "Documento de Identidad del Conductor", progreso: 0 },
       { nombre: "Licencia de Conducción Vigente", progreso: 0 },
-      { nombre: "Planilla de EPS", progreso: 0 },
-      { nombre: "Planilla de ARL", progreso: 0 }
+      { nombre: "Planilla de EPS y ARL", progreso: 0 },
+      { nombre: "Foto Conductor", progreso: 0 },
     ]
   },
   {
     subtitulo: "3. Documentos del Tenedor",
     items: [
       { nombre: "Documento de Identidad del Tenedor", progreso: 0 },
-      { nombre: "Certificación Bancaria", progreso: 0 },
+      { nombre: "certificación bancaria tenedor", progreso: 0 },
       { nombre: "Documento que lo acredite como Tenedor", progreso: 0 },
       { nombre: "RUT Tenedor", progreso: 0 }
     ]
@@ -144,20 +145,23 @@ const CreacionVehiculo: React.FC = () => {
       const response = await fetch(
         `https://integrappi-dvmh.onrender.com/vehiculos/obtener-vehiculos?id_usuario=${idUsuario}`
       );
-      if (response.ok) {
-        const data = await response.json();
-        if (data.vehicles && Array.isArray(data.vehicles)) {
-          const plates = data.vehicles.map((veh: any) => veh.placa);
-          setVehicles(plates);
-          if (plates.length > 0 && !selectedPlate) {
-            setSelectedPlate(plates[0]);
-          }
+      if (!response.ok) throw new Error("Error en la respuesta del servidor");
+  
+      const data = await response.json();
+      if (data.vehicles && Array.isArray(data.vehicles)) {
+        const plates = data.vehicles.map((veh: any) => veh.placa);
+        setVehicles(plates);
+        if (plates.length > 0 && !selectedPlate) {
+          setSelectedPlate(plates[0]);
         }
+      } else {
+        setVehicles([]); // Asegurar que siempre haya un valor válido
       }
     } catch (error) {
       console.error("Error al obtener vehículos:", error);
+      Swal.fire("Error", "No se pudo obtener la lista de vehículos.", "error");
     }
-  };
+  };  
 
   // Cargar la lista de vehículos al montar el componente
   useEffect(() => {
@@ -182,33 +186,24 @@ const CreacionVehiculo: React.FC = () => {
             prevSecciones.map((seccion) => ({
               ...seccion,
               items: seccion.items.map((item) => {
-                const field = tiposMapping[item.nombre.toLowerCase()] || "";
+                const field = tiposMapping[normalizeKey(item.nombre)] || "";
+          
                 if (field) {
                   if (field === "fotos") {
-                    // Manejo de fotos (array)
-                    if (Array.isArray(vehiculo[field]) && vehiculo[field].length > 0) {
-                      return {
-                        ...item,
-                        progreso: 100,
-                        url: vehiculo[field],
-                      };
-                    } else {
-                      return { ...item, progreso: 0, url: undefined };
-                    }
-                  } else if (vehiculo[field]) {
-                    // El campo existe y contiene una URL
                     return {
                       ...item,
-                      progreso: 100,
-                      url: vehiculo[field],
+                      progreso: Array.isArray(vehiculo[field]) && vehiculo[field].length > 0 ? 100 : 0,
+                      url: vehiculo[field] || undefined
                     };
+                  } else if (vehiculo[field]) {
+                    return { ...item, progreso: 100, url: vehiculo[field] };
                   }
                 }
-                // Por defecto, sin datos
                 return { ...item, progreso: 0, url: undefined };
               }),
             }))
           );
+          
         } else {
           // Si no hay datos del vehículo, resetear secciones
           setSecciones(initialSecciones);
@@ -224,18 +219,15 @@ const CreacionVehiculo: React.FC = () => {
   // ========== LÓGICA DE STEPS (PASOS) ==========
 
   const goToNextStep = () => {
-    // Validar solamente si se está en el paso 1 y no hay placa seleccionada
-    if (currentStep === 1 && !selectedPlate) {
+    if (currentStep === 1 && (!selectedPlate || selectedPlate.trim() === "")) {
       Swal.fire("Atención", "Debe crear o seleccionar un vehículo primero.", "warning");
       return;
     }
   
-    // Si estamos en step 1 y ya hay placa, avanza a step 2
-    // Si estamos en step 2, avanza a step 3
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     }
-  };
+  };  
   
   const goToPrevStep = () => {
     // Retrocede un paso mientras no estemos en el 1
@@ -257,13 +249,15 @@ const CreacionVehiculo: React.FC = () => {
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.stopPropagation();
-    const endpoint = endpoints[documentName];
+    const normalizedKey = normalizeKey(documentName); // Normaliza el nombre del documento
+    const endpoint = endpoints[normalizedKey];
+  
     if (!endpoint) {
-      alert(`No hay endpoint definido para ${documentName}`);
+      Swal.fire("Error", `No hay endpoint definido para ${documentName}`, "error");
       return;
     }
     setSelectedDocumento({ sectionIndex, itemIndex, documentName, endpoint });
-  };
+  };  
 
   const handleVerDocumento = (
     sectionIndex: number,
@@ -462,22 +456,18 @@ const CreacionVehiculo: React.FC = () => {
       )}
 
       {/* Modal de carga de documentos */}
-      {selectedDocumento && (
+      {selectedDocumento && selectedPlate && (
         <CargaDocumento
           documentName={selectedDocumento.documentName}
           endpoint={selectedDocumento.endpoint}
-          placa={selectedPlate as string}
+          placa={selectedPlate}
           onClose={() => setSelectedDocumento(null)}
           onUploadSuccess={(result: string | string[]) => {
             console.log("Documento subido:", result);
             setSecciones((prevSecciones) => {
               const newSecciones = [...prevSecciones];
-              newSecciones[selectedDocumento.sectionIndex].items[
-                selectedDocumento.itemIndex
-              ].progreso = 100;
-              newSecciones[selectedDocumento.sectionIndex].items[
-                selectedDocumento.itemIndex
-              ].url = result;
+              newSecciones[selectedDocumento.sectionIndex].items[selectedDocumento.itemIndex].progreso = 100;
+              newSecciones[selectedDocumento.sectionIndex].items[selectedDocumento.itemIndex].url = result;
               return newSecciones;
             });
             setSelectedDocumento(null);
@@ -493,22 +483,21 @@ const CreacionVehiculo: React.FC = () => {
           onDeleteSuccess={(nuevasUrls) => {
             setSecciones((prevSecciones) => {
               const newSecciones = [...prevSecciones];
-              const itemRef =
-                newSecciones[verDocumentoInfo.sectionIndex].items[
-                  verDocumentoInfo.itemIndex
-                ];
-              if (nuevasUrls.length === 0) {
+              const itemRef = newSecciones[verDocumentoInfo.sectionIndex].items[verDocumentoInfo.itemIndex];
+          
+              if (!nuevasUrls || nuevasUrls.length === 0) {
                 itemRef.progreso = 0;
                 itemRef.url = undefined;
               } else {
                 itemRef.progreso = 100;
                 itemRef.url = nuevasUrls;
               }
+          
               return newSecciones;
             });
             setVerDocumentoInfo(null);
             setVerDocumento(false);
-          }}
+          }}          
           onClose={() => {
             setVerDocumentoInfo(null);
             setVerDocumento(false);

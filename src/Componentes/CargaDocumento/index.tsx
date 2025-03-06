@@ -83,7 +83,7 @@ const CargaDocumento: React.FC<CargaDocumentoProps> = ({
         <h2>Cargar {documentName}</h2>
         <div className="CargaDocumento-file-input-wrapper">
           <label className="CargaDocumento-btn-file" htmlFor="file-upload">
-            {documentName === "Fotos" ? "Elegir documentos" : "Elegir documento"}
+            {documentName === "Fotos" ? "Elegir Archivos" : "Elegir Archivo"}
           </label>
           <span className="CargaDocumento-file-text">
             {selectedFileNames}

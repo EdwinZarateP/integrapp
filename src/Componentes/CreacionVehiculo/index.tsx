@@ -359,7 +359,7 @@ const CreacionVehiculo: React.FC = () => {
             </div>
           )}
 
-          <button className="Boton-siguiente" onClick={goToNextStep}>
+          <button className="CreacionVehiculo-Boton-siguiente" onClick={goToNextStep}>
             Siguiente
           </button>
         </div>
@@ -368,17 +368,19 @@ const CreacionVehiculo: React.FC = () => {
        {/* Contenido paso 2: llenar formulario */}
        {currentStep === 2 && selectedPlate && (
           <div className="Paso-contenido">
+            <h3>Diligencia datos para {selectedPlate}</h3>
             <Datos placa={selectedPlate} />
-            <button className="Boton-siguiente" onClick={goToNextStep}>
-              Siguiente
-            </button>
+            <div className="CreacionVehiculo-Botones-navegacion">
+              <button onClick={goToPrevStep}>Atrás</button> {/* ✅ Botón "Atrás" */}
+              <button onClick={goToNextStep}>Siguiente</button> {/* ✅ Botón "Siguiente" */}
+            </div>
           </div>
         )}
 
       {/* Contenido paso 3: Carga de documentos */}
       {currentStep === 3 && selectedPlate && (
         <div className="Paso-contenido">
-          <h2>3. Carga de Documentos para {selectedPlate}</h2>
+          <h3>Carga de Documentos para {selectedPlate}</h3>
           <div className="CreacionVehiculo-contenedor">
             {secciones.map((seccion, index) => {
               const _promedioProgreso = Math.round(
@@ -446,12 +448,13 @@ const CreacionVehiculo: React.FC = () => {
             })}
           </div>
 
-          <div className="Botones-navegacion">
-            <button onClick={goToPrevStep}>Atrás</button>
-            <button onClick={enviarVehiculo}>Finalizar Registro</button>
+          <div className="CreacionVehiculo-Botones-navegacion">
+            <button onClick={goToPrevStep}>Atrás</button> {/* ✅ Botón "Atrás" */}
+            <button onClick={enviarVehiculo}>Finalizar Registro</button> {/* ✅ Cambié "Siguiente" por "Finalizar Registro" */}
           </div>
         </div>
       )}
+
 
       {/* Modal de carga de documentos */}
       {selectedDocumento && selectedPlate && (

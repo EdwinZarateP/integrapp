@@ -23,8 +23,8 @@ const App: React.FC = () => {
       hijo={
     <Router basename="/integrapp">
       <Routes>
-        <Route path="/" element={<PaginaIntegra />} />
-        <Route path="/InicioIntegrApp" element={<Inicio />} />  
+        {/* <Route path="/" element={<PaginaIntegra />} /> */}
+        <Route path="/" element={<Inicio />} />  
         <Route path="/InicioPropietarios" element={<InicioPropietarios />} />               
         <Route path="/Registro" element={<Registro />} />
         <Route path="/Olvidoclave" element={<Olvidoclave />} />

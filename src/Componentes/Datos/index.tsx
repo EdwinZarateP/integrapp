@@ -89,40 +89,38 @@ const Datos: React.FC<DatosProps> = () => {
         </div>
 
         {/* REFERENCIAS */}
-        <h4>Referencias</h4>
+        <h4>Referencias Personales</h4>
         {/* Referencia 1 */}
         <div>
-          <label>Nombre y Apellido (Ref. 1)</label>
+          <label>Nombre y Apellido </label>
           <input type="text" name="DatoNombreApellidoRef1" />
         </div>
         <div>
-          <label>Celular (Ref. 1)</label>
+          <label>Celular </label>
           <input type="text" name="DatoCelularRef1" />
         </div>
         <div>
-          <label>Ciudad (Ref. 1)</label>
+          <label>Ciudad </label>
           <input type="text" name="DatoCiudadRef1" />
         </div>
         <div>
-          <label>Parentesco (Ref. 1)</label>
+          <label>Parentesco </label>
           <input type="text" name="DatoParentescoRef1" />
         </div>
 
+        <h4>Referencias Laborales</h4>
+
         {/* Referencia 2 */}
         <div>
-          <label>Empresa (Ref. 2)</label>
+          <label>Empresa </label>
           <input type="text" name="DatoEmpresaRef2" />
         </div>
         <div>
-          <label>Contacto (Ref. 2)</label>
-          <input type="text" name="DatoContactoRef2" />
-        </div>
-        <div>
-          <label>Celular (Ref. 2)</label>
+          <label>Celular </label>
           <input type="text" name="DatoCelularRef2" />
         </div>
         <div>
-          <label>Ciudad (Ref. 2)</label>
+          <label>Ciudad </label>
           <input type="text" name="DatoCiudadRef2" />
         </div>
         <div>

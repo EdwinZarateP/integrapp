@@ -117,7 +117,7 @@ const PaginaIntegra: React.FC = () => {
       <div className="PaginaIntegra-opciones">
         {[
           { icon: <IoIosPeople />, text: "Portal Clientes", onClick: () => navigate("/PortalClientes") },
-          { icon: <FaTruck />, text: "Portal Transportadores", onClick: () => navigate("/InicioIntegrApp") },
+          { icon: <FaTruck />, text: "Portal Transportadores", onClick: () => navigate("/") },
           { icon: <LiaPeopleCarrySolid />, text: "Portal ventas", onClick: () => navigate("/PortalVentas") },          
           { icon: <LiaPeopleCarrySolid />, text: "Intranet" },
           { icon: <FaTools />, text: "Más Herramientas" },

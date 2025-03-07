@@ -190,7 +190,7 @@ const Datos: React.FC<DatosProps> = ({ placa }) => {
         { label: 'Linea', name: 'vehLinea'},
         { label: 'Color', name: 'vehColor' },
         { label: 'Repotenciado', name: 'vehRepotenciado', options: ["Sí", "No"] },
-        { label: 'Ano', name: 'vehAno', type: 'number' },
+        { label: 'Año', name: 'vehAno', type: 'number' },
         { label: 'Empresa Satelital', name: 'vehEmpresaSat' },
         { label: 'Usuario Satelital', name: 'vehUsuarioSat' },
         { label: 'Clave Satelital', name: 'vehClaveSat' },

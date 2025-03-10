@@ -1,14 +1,16 @@
 /* Contenedor principal del formulario */
 .Datos-contenedor {
+  position: relative;
   margin: 0;
   width: 100%;
   padding: 0;
   height: 100%;
   overflow-y: auto;
+  /* Si es necesario, ajusta el margin-top para que no se oculte nada */
 }
 
 /* Estilos generales del formulario */
-.Form-datos-generales {
+.Datos-Form-datos-generales {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -16,10 +18,11 @@
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+
 }
 
 /* Estilo para cada sección del formulario */
-.form-section {
+.Datos-form-section {
   width: 100%;
   padding: 1rem;
   background: rgba(47, 107, 62, 0.1);
@@ -28,7 +31,7 @@
 }
 
 /* Título de cada sección */
-.form-section h4 {
+.Datos-form-section h4 {
   width: 100%;
   margin: 0;
   padding-bottom: 0.5rem;
@@ -38,14 +41,14 @@
 }
 
 /* Contenedor de los inputs dentro de cada sección */
-.fields-container {
+.Datos-fields-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 columnas por defecto */
+  grid-template-columns: repeat(3, 1fr); /* 2 columnas por defecto */
   gap: 1rem;
 }
 
 /* Contenedor de cada input */
-.input-container {
+.Datos-input-container {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
@@ -53,15 +56,15 @@
 }
 
 /* Estilos para los labels */
-.input-container label {
+.Datos-input-container label {
   font-weight: 600;
   color: #333;
 }
 
 /* Estilos generales para inputs, selects y textareas */
-.input-container input,
-.input-container select,
-.input-container textarea {
+.Datos-input-container input,
+.Datos-input-container select,
+.Datos-input-container textarea {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -70,20 +73,106 @@
   transition: border 0.2s ease;
 }
 
-.input-container input:focus,
-.input-container select:focus,
-.input-container textarea:focus {
+.Datos-input-container input:focus,
+.Datos-input-container select:focus,
+.Datos-input-container textarea:focus {
   border-color: #1ab33b;
 }
 
-.Datos-botonActualizar{
+/* Botón Guardar Cambios */
+.Datos-botonActualizar {
+  cursor: pointer;
   padding: 10px;
   border-radius: 7px;
+  font-weight: 600;
+  background-color:rgba(47, 107, 62, 0.1);
 }
+
+.Datos-botonActualizar:hover {
+  background-color: rgba(47, 107, 62, 0.5);
+}
+
+/* Barra de avance sticky en la parte superior */
+.Datos-avance-container {
+  position: sticky;
+  top: 0;
+  background: white; /* Fondo blanco para contraste */
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+/* Estilos para la barra de progreso */
+.Datos-barra-avance {
+  flex-grow: 1;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.Datos-progreso {
+  height: 100%;
+  background: #2F6B3E;
+  transition: width 0.3s ease;
+}
+
+.Datos-avance-texto {
+  font-size: 14px;
+  font-weight: bold;
+  color: #2F6B3E;
+  white-space: nowrap;
+}
+
+/* Botón Siguiente en la barra de avance */
+.Datos-boton-siguiente {
+  background: #2F6B3E;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.Datos-boton-siguiente:hover {
+  background: #25632E;
+}
+
+/* Estilos para el contenedor del checkbox */
+.Datos-toggle-tenedor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 1rem 0;
+}
+
+/* Estilo del checkbox */
+.Datos-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* Estilo de la etiqueta */
+.Datos-checkbox-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+}
+
+/* Efecto al pasar el mouse */
+.Datos-checkbox-label:hover {
+  color: #2f6b3e;
+}
+
 
 /* Responsive: en pantallas menores a 900px, las secciones tendrán una sola columna */
 @media (max-width: 900px) {
-  .fields-container {
-    grid-template-columns: 1fr; /* Solo una columna en pantallas pequeñas */
+  .Datos-fields-container {
+    grid-template-columns: 1fr;
   }
 }

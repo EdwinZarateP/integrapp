@@ -12,9 +12,9 @@ import { ContextoApp } from "../../Contexto/index";
 import { obtenerVehiculoPorPlaca } from '../../Funciones/ObtenerInfoPlaca';
 import { endpoints, tiposMapping } from '../../Funciones/documentConstants';
 
-import './estilos.css'; // Usa el mismo CSS base, o sepáralo en tabsSteps.css, etc.
+import './estilos.css';
 
-// Interfaces
+// Interfaces para documentos y secciones
 interface DocumentoItem {
   nombre: string;
   progreso: number; // 0 si no está cargado, 100 si está cargado
@@ -31,18 +31,21 @@ interface VerDocumentoInfo {
   itemIndex: number;
   urls: string[];
 }
+
+// Función para normalizar nombres de campos
 const normalizeKey = (key: string) => key.trim().toLowerCase();
 
+// Definición inicial de secciones para los documentos
 const initialSecciones: SeccionDocumentos[] = [
   {
     subtitulo: "1. Documentos del Vehículo",
     items: [
       { nombre: "Tarjeta de Propiedad", progreso: 0 },
-      { nombre: "SOAT", progreso: 0 },
+      { nombre: "soat", progreso: 0 },
       { nombre: "Revisión Tecnomecánica", progreso: 0 },
       { nombre: "Tarjeta de Remolque", progreso: 0 },
       { nombre: "Fotos", progreso: 0 },
-      { nombre: "Póliza de Responsabilidad Civil", progreso: 0 },      
+      { nombre: "Póliza de Responsabilidad Civil", progreso: 0 },
     ]
   },
   {
@@ -52,13 +55,14 @@ const initialSecciones: SeccionDocumentos[] = [
       { nombre: "Licencia de Conducción Vigente", progreso: 0 },
       { nombre: "Planilla de EPS y ARL", progreso: 0 },
       { nombre: "Foto Conductor", progreso: 0 },
+      { nombre: "Certificación Bancaria Conductor", progreso: 0 },
     ]
   },
   {
     subtitulo: "3. Documentos del Tenedor",
     items: [
       { nombre: "Documento de Identidad del Tenedor", progreso: 0 },
-      { nombre: "certificación bancaria tenedor", progreso: 0 },
+      { nombre: "Certificación Bancaria Tenedor", progreso: 0 },
       { nombre: "Documento que lo acredite como Tenedor", progreso: 0 },
       { nombre: "RUT Tenedor", progreso: 0 }
     ]
@@ -67,31 +71,54 @@ const initialSecciones: SeccionDocumentos[] = [
     subtitulo: "4. Documentos del Propietario",
     items: [
       { nombre: "Documento de Identidad del Propietario", progreso: 0 },
+      { nombre: "Certificación Bancaria Propietario", progreso: 0 },
       { nombre: "RUT Propietario", progreso: 0 }
     ]
   }
 ];
 
+// Función para calcular el avance global de documentos
+const getOverallDocumentProgress = (secciones: SeccionDocumentos[]) => {
+  let totalItems = 0;
+  let completed = 0;
+  secciones.forEach(section => {
+    totalItems += section.items.length;
+    section.items.forEach(item => {
+      if (item.progreso === 100) {
+        completed++;
+      }
+    });
+  });
+  return totalItems === 0 ? 0 : Math.round((completed / totalItems) * 100);
+};
+
 const CreacionVehiculo: React.FC = () => {
-  // Obtenemos variables de contexto
+  /***********************
+   * Contexto y cookies
+   ***********************/
   const almacenVariables = useContext(ContextoApp);
   if (!almacenVariables) {
     throw new Error("El contexto no está disponible. Envuelve este componente en un proveedor de contexto.");
   }
   const { verDocumento, setVerDocumento } = almacenVariables;
-
-  // Recoge el idUsuario de las cookies
   const idUsuario = Cookies.get('tenedorIntegrapp') || '';
 
-  // States para manejar el paso actual (1 o 2)
+  /***********************
+   * Estados para el paso actual y para la gestión del vehículo
+   ***********************/
   const [currentStep, setCurrentStep] = useState<number>(1);
-
-  // States de creación/selec. de vehículo (Paso 1)
   const [newPlate, setNewPlate] = useState<string>("");
   const [vehicles, setVehicles] = useState<string[]>([]);
   const [selectedPlate, setSelectedPlate] = useState<string | null>(null);
 
-  // States de documentos (Paso 2)
+  /***********************
+   * Estado para controlar la validez del formulario (Paso 2)
+   ***********************/
+  const [datosValidos, setDatosValidos] = useState<boolean>(false);
+
+  /***********************
+   * Estados para la carga y gestión de documentos (Pasos 2 y 3)
+   ***********************/
   const [secciones, setSecciones] = useState<SeccionDocumentos[]>(initialSecciones);
   const [visibleSeccion, setVisibleSeccion] = useState<number | null>(null);
   const [selectedDocumento, setSelectedDocumento] = useState<{
@@ -102,8 +129,9 @@ const CreacionVehiculo: React.FC = () => {
   } | null>(null);
   const [verDocumentoInfo, setVerDocumentoInfo] = useState<VerDocumentoInfo | null>(null);
 
-  // ========= LÓGICA PARA CREAR/SELECCIONAR VEHÍCULO ==========
-
+  /***********************
+   * Lógica para crear y seleccionar vehículo (Paso 1)
+   ***********************/
   const handleCreateVehicle = async () => {
     if (!newPlate.trim()) {
       Swal.fire("Error", "Ingrese una placa válida", "error");
@@ -146,7 +174,7 @@ const CreacionVehiculo: React.FC = () => {
         `https://integrappi-dvmh.onrender.com/vehiculos/obtener-vehiculos?id_usuario=${idUsuario}`
       );
       if (!response.ok) throw new Error("Error en la respuesta del servidor");
-  
+
       const data = await response.json();
       if (data.vehicles && Array.isArray(data.vehicles)) {
         const plates = data.vehicles.map((veh: any) => veh.placa);
@@ -155,26 +183,24 @@ const CreacionVehiculo: React.FC = () => {
           setSelectedPlate(plates[0]);
         }
       } else {
-        setVehicles([]); // Asegurar que siempre haya un valor válido
+        setVehicles([]);
       }
     } catch (error) {
       console.error("Error al obtener vehículos:", error);
       Swal.fire("Error", "No se pudo obtener la lista de vehículos.", "error");
     }
-  };  
+  };
 
-  // Cargar la lista de vehículos al montar el componente
   useEffect(() => {
     fetchVehicles();
-    // eslint-disable-next-line
   }, []);
 
-  // ========== LÓGICA PARA OBTENER DOCUMENTOS (CUANDO SE SELECCIONA PLACA) ==========
-
+  /***********************
+   * Lógica para obtener documentos al seleccionar una placa
+   ***********************/
   useEffect(() => {
     const cargarVehiculo = async () => {
       if (!selectedPlate) {
-        // Si no hay placa seleccionada, resetear la estructura de secciones
         setSecciones(initialSecciones);
         return;
       }
@@ -187,7 +213,6 @@ const CreacionVehiculo: React.FC = () => {
               ...seccion,
               items: seccion.items.map((item) => {
                 const field = tiposMapping[normalizeKey(item.nombre)] || "";
-          
                 if (field) {
                   if (field === "fotos") {
                     return {
@@ -203,9 +228,7 @@ const CreacionVehiculo: React.FC = () => {
               }),
             }))
           );
-          
         } else {
-          // Si no hay datos del vehículo, resetear secciones
           setSecciones(initialSecciones);
         }
       } catch (error) {
@@ -216,28 +239,32 @@ const CreacionVehiculo: React.FC = () => {
     cargarVehiculo();
   }, [selectedPlate]);
 
-  // ========== LÓGICA DE STEPS (PASOS) ==========
-
+  /***********************
+   * Funciones para navegar entre pasos
+   ***********************/
   const goToNextStep = () => {
     if (currentStep === 1 && (!selectedPlate || selectedPlate.trim() === "")) {
       Swal.fire("Atención", "Debe crear o seleccionar un vehículo primero.", "warning");
       return;
     }
-  
+    if (currentStep === 2 && !datosValidos) {
+      Swal.fire("Atención", "Debe diligenciar todos los campos del formulario.", "warning");
+      return;
+    }
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     }
-  };  
-  
+  };
+
   const goToPrevStep = () => {
-    // Retrocede un paso mientras no estemos en el 1
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
-  };  
+  };
 
-  // ========== LÓGICA PARA LA CARGA Y VISUALIZACIÓN DE DOCUMENTOS ==========
-
+  /***********************
+   * Lógica para la carga y visualización de documentos
+   ***********************/
   const toggleSeccion = (index: number) => {
     setVisibleSeccion(visibleSeccion === index ? null : index);
   };
@@ -249,15 +276,15 @@ const CreacionVehiculo: React.FC = () => {
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.stopPropagation();
-    const normalizedKey = normalizeKey(documentName); // Normaliza el nombre del documento
+    const normalizedKey = normalizeKey(documentName);
     const endpoint = endpoints[normalizedKey];
-  
+
     if (!endpoint) {
       Swal.fire("Error", `No hay endpoint definido para ${documentName}`, "error");
       return;
     }
     setSelectedDocumento({ sectionIndex, itemIndex, documentName, endpoint });
-  };  
+  };
 
   const handleVerDocumento = (
     sectionIndex: number,
@@ -277,8 +304,15 @@ const CreacionVehiculo: React.FC = () => {
     }
   };
 
+  /***********************
+   * Función para enviar o finalizar el registro del vehículo
+   * El botón "Finalizar Registro" se habilita solo si el avance global es 100%.
+   ***********************/
   const enviarVehiculo = () => {
-    // Aquí iría la lógica final para enviar o guardar
+    if (getOverallDocumentProgress(secciones) < 100) {
+      Swal.fire("Atención", "Debe cargar todos los documentos para finalizar el registro.", "warning");
+      return;
+    }
     Swal.fire({
       title: "🚧 En construcción",
       text: "Estamos trabajando en construir este botón",
@@ -287,48 +321,46 @@ const CreacionVehiculo: React.FC = () => {
     });
   };
 
-  // ========== RENDER PRINCIPAL ==========
-
+  /***********************
+   * Render principal del componente
+   ***********************/
   return (
     <div className="CreacionVehiculo-contenedor-principal">
-
-      {/* Pestañas o Barra de pasos */}
-      <div className="Pasos-contenedor">
-        <div
-          className={`Paso-item ${currentStep === 1 ? 'activo' : ''}`}
-          onClick={() => setCurrentStep(1)}
-        >
+      {/* Barra de pasos */}
+      <div className="CreacionVehiculo-Pasos-contenedor">
+        <div className={`CreacionVehiculo-Paso-item ${currentStep === 1 ? 'activo' : ''}`}
+          onClick={() => setCurrentStep(1)}>
           Paso 1
         </div>
-        <div
-          className={`Paso-item ${currentStep === 2 ? 'activo' : ''}`}
+        <div className={`CreacionVehiculo-Paso-item ${currentStep === 2 ? 'activo' : ''}`}
           onClick={() => {
             if (selectedPlate) {
               setCurrentStep(2);
             } else {
               Swal.fire("Atención", "Debe crear o seleccionar un vehículo antes de avanzar.", "warning");
             }
-          }}
-        >
+          }}>
           Paso 2
         </div>
-        <div
-          className={`Paso-item ${currentStep === 3 ? 'activo' : ''}`}
+        <div className={`CreacionVehiculo-Paso-item ${currentStep === 3 ? 'activo' : ''} ${!datosValidos ? 'deshabilitado' : ''}`}
           onClick={() => {
+            if (!datosValidos) {
+              Swal.fire("Atención", "Debe diligenciar todos los campos del formulario del Paso 2 para continuar.", "warning");
+              return;
+            }
             if (selectedPlate) {
               setCurrentStep(3);
             } else {
               Swal.fire("Atención", "Debe crear o seleccionar un vehículo antes de avanzar.", "warning");
             }
-          }}
-        >
+          }}>
           Paso 3
         </div>
       </div>
 
-      {/* Contenido paso 1: Crear o seleccionar vehículo */}
+      {/* Contenido según el paso seleccionado */}
       {currentStep === 1 && (
-        <div className="Paso-contenido">
+        <div className="CreacionVehiculo-Paso-contenido">
           <h3>Crear o Seleccionar una placa</h3>
           <div className="CreacionVehiculo-crear">
             <input
@@ -339,7 +371,6 @@ const CreacionVehiculo: React.FC = () => {
             />
             <button onClick={handleCreateVehicle}>Crear placa</button>
           </div>
-
           {vehicles.length > 0 && (
             <div className="CreacionVehiculo-seleccion">
               <label>Placa:</label>
@@ -358,49 +389,51 @@ const CreacionVehiculo: React.FC = () => {
               </select>
             </div>
           )}
-
           <button className="CreacionVehiculo-Boton-siguiente" onClick={goToNextStep}>
             Siguiente
           </button>
         </div>
       )}
 
-       {/* Contenido paso 2: llenar formulario */}
-       {currentStep === 2 && selectedPlate && (
-          <div className="Paso-contenido">
-            <h3>Diligencia datos para {selectedPlate}</h3>
-            <Datos placa={selectedPlate} />
-            <div className="CreacionVehiculo-Botones-navegacion">
-              <button onClick={goToPrevStep}>Atrás</button> {/* ✅ Botón "Atrás" */}
-              <button onClick={goToNextStep}>Siguiente</button> {/* ✅ Botón "Siguiente" */}
+      {currentStep === 2 && selectedPlate && (
+        <div className="CreacionVehiculo-Paso-contenido">
+          <h3>Diligencia datos para {selectedPlate}</h3>
+          <Datos placa={selectedPlate} onValidChange={setDatosValidos} />
+          <div className="CreacionVehiculo-Botones-navegacion">
+            <button onClick={goToPrevStep}>Atrás</button>
+            <button onClick={goToNextStep} disabled={!datosValidos}>
+              Siguiente
+            </button>
+          </div>
+        </div>
+      )}
+
+      {currentStep === 3 && selectedPlate && (
+        <div className="CreacionVehiculo-Paso-contenido">
+          <h3>Carga de Documentos para {selectedPlate}</h3>
+          {/* Barra de avance de documentos sticky en la parte superior */}
+          <div className="CreacionVehiculo-avance-container">
+            <span className="CreacionVehiculo-avance-texto">
+              Carga Documentos: {getOverallDocumentProgress(secciones)}%
+            </span>
+            <div className="CreacionVehiculo-barra-avance">
+              <div
+                className="CreacionVehiculo-barra-progreso"
+                style={{ width: `${getOverallDocumentProgress(secciones)}%` }}
+              />
             </div>
           </div>
-        )}
-
-      {/* Contenido paso 3: Carga de documentos */}
-      {currentStep === 3 && selectedPlate && (
-        <div className="Paso-contenido">
-          <h3>Carga de Documentos para {selectedPlate}</h3>
           <div className="CreacionVehiculo-contenedor">
             {secciones.map((seccion, index) => {
               const _promedioProgreso = Math.round(
                 (seccion.items.reduce((acc, item) => acc + item.progreso, 0) /
-                  (seccion.items.length * 100)) *
-                  100
+                  (seccion.items.length * 100)) * 100
               );
               return (
-                <section
-                  key={index}
-                  className="CreacionVehiculo-seccion"
-                  onClick={() => toggleSeccion(index)}
-                >
+                <section key={index} className="CreacionVehiculo-seccion" onClick={() => toggleSeccion(index)}>
                   <h2 className="CreacionVehiculo-subtitulo">
                     {seccion.subtitulo} ({_promedioProgreso}%)
-                    <span
-                      className={`CreacionVehiculo-flecha ${
-                        visibleSeccion === index ? "abierta" : ""
-                      }`}
-                    >
+                    <span className={`CreacionVehiculo-flecha ${visibleSeccion === index ? "abierta" : ""}`}>
                       {visibleSeccion === index ? "▼" : "▶"}
                     </span>
                   </h2>
@@ -411,23 +444,11 @@ const CreacionVehiculo: React.FC = () => {
                           <span>{item.nombre}</span>
                           <div className="CreacionVehiculo-item-derecha">
                             {item.progreso < 100 ? (
-                              <button
-                                onClick={(e) =>
-                                  handleOpenDocumento(
-                                    index,
-                                    itemIndex,
-                                    item.nombre,
-                                    e
-                                  )
-                                }
-                              >
+                              <button onClick={(e) => handleOpenDocumento(index, itemIndex, item.nombre, e)}>
                                 Cargar
                               </button>
                             ) : (
-                              <button
-                                className="CreacionVehiculo-btn-ver"
-                                onClick={(e) => handleVerDocumento(index, itemIndex, e)}
-                              >
+                              <button className="CreacionVehiculo-btn-ver" onClick={(e) => handleVerDocumento(index, itemIndex, e)}>
                                 Ver
                               </button>
                             )}
@@ -447,14 +468,14 @@ const CreacionVehiculo: React.FC = () => {
               );
             })}
           </div>
-
           <div className="CreacionVehiculo-Botones-navegacion">
-            <button onClick={goToPrevStep}>Atrás</button> {/* ✅ Botón "Atrás" */}
-            <button onClick={enviarVehiculo}>Finalizar Registro</button> {/* ✅ Cambié "Siguiente" por "Finalizar Registro" */}
+            <button onClick={goToPrevStep}>Atrás</button>
+            <button onClick={enviarVehiculo} disabled={getOverallDocumentProgress(secciones) < 100}>
+              Finalizar Registro
+            </button>
           </div>
         </div>
       )}
-
 
       {/* Modal de carga de documentos */}
       {selectedDocumento && selectedPlate && (
@@ -485,7 +506,6 @@ const CreacionVehiculo: React.FC = () => {
             setSecciones((prevSecciones) => {
               const newSecciones = [...prevSecciones];
               const itemRef = newSecciones[verDocumentoInfo.sectionIndex].items[verDocumentoInfo.itemIndex];
-          
               if (!nuevasUrls || nuevasUrls.length === 0) {
                 itemRef.progreso = 0;
                 itemRef.url = undefined;
@@ -493,12 +513,11 @@ const CreacionVehiculo: React.FC = () => {
                 itemRef.progreso = 100;
                 itemRef.url = nuevasUrls;
               }
-          
               return newSecciones;
             });
             setVerDocumentoInfo(null);
             setVerDocumento(false);
-          }}          
+          }}
           onClose={() => {
             setVerDocumentoInfo(null);
             setVerDocumento(false);

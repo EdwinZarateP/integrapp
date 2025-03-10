@@ -290,7 +290,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange }) => {
         { label: 'Línea', name: 'vehLinea' },
         { label: 'Color', name: 'vehColor' },
         { label: 'Repotenciado', name: 'vehRepotenciado', options: ["Sí", "No"] },
-        { label: 'Año', name: 'vehAno', type: 'number' },
+        { label: 'Año Repotenciacion', name: 'vehAno', type: 'number', inputProps: { min: 1990, max: 2040 } },
         { label: 'Empresa Satelital', name: 'vehEmpresaSat' },
         { label: 'Usuario Satelital', name: 'vehUsuarioSat' },
         { label: 'Clave Satelital', name: 'vehClaveSat' },

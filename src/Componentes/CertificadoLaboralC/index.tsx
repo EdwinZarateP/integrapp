@@ -9,8 +9,8 @@ const urlLogo = "https://storage.googleapis.com/integrapp/Imagenes/albatroz.png"
 const baseDeDatos = [
   {
     cedula: "1002207691",
-    nombre: "FULANITO PALACIOS",
-    cargo: "AUXILIAR LOGISTICO",
+    nombre: "Armando Bronca",
+    cargo: "Auxiliar Logistico",
     salario: 1465000,
     fechaIngreso: "03 de diciembre de 2024",
   },

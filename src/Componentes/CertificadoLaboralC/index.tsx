@@ -126,11 +126,16 @@ const CertificadoLaboralC: React.FC = () => {
 
       <input
         type="text"
+        inputMode="numeric"
         placeholder="Ingrese número de cédula"
         className="CertificadoLaboralC-input"
         value={cedulaIngresada}
-        onChange={(e) => setCedulaIngresada(e.target.value)}
+        onChange={(e) => {
+          const soloNumeros = e.target.value.replace(/\D/g, "");
+          setCedulaIngresada(soloNumeros);
+        }}
       />
+
       <label className="CertificadoLaboralC-checkbox">
         <input
           type="checkbox"

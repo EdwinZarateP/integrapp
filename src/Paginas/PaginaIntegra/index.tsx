@@ -12,6 +12,7 @@ const PaginaIntegra: React.FC = () => {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [indiceCarrusel, setIndiceCarrusel] = useState(0);
   const [whatsappLink, setWhatsappLink] = useState("https://wa.me/573125443396");
+  const [numeroGuia, setNumeroGuia] = useState("");
 
   const toggleMenu = () => {
     setMenuAbierto(!menuAbierto);
@@ -62,15 +63,27 @@ const PaginaIntegra: React.FC = () => {
       </header>
 
       <div className="PaginaIntegra-busqueda">
-        <div className="PaginaIntegra-busqueda-input">
+        <form
+          className="PaginaIntegra-busqueda-input"
+          onSubmit={(e) => {
+            e.preventDefault(); // Previene que recargue la página
+            if (numeroGuia.trim() !== "") {
+              const url = `https://integra.appsiscore.com/app/app-cliente/cons_publica.php?GUIA=${encodeURIComponent(numeroGuia)}`;
+              window.open(url, "_blank");
+            }
+          }}
+        >
           <input
             type="text"
             placeholder="Rastrea tu guía"
             className="PaginaIntegra-input"
+            value={numeroGuia}
+            onChange={(e) => setNumeroGuia(e.target.value)}
           />
-          <button className="PaginaIntegra-boton">🔍</button>
-        </div>
+          <button className="PaginaIntegra-boton" type="submit">🔍</button>
+        </form>
       </div>
+
 
       <main className="PaginaIntegra-principal">
         <div className="PaginaIntegra-banner">
@@ -83,8 +96,8 @@ const PaginaIntegra: React.FC = () => {
               style={{
                 backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${
                   index === 0
-                    ? "https://png.pngtree.com/png-clipart/20230825/original/pngtree-illustration-of-the-transport-logistics-center-and-trucks-picture-image_8494404.png"
-                    : "https://www.gadsoftware.com/wp-content/uploads/2024/01/Software-de-Gestion-de-Almacenes-WMS.jpg"
+                    ? "https://storage.googleapis.com/integrapp/Imagenes/cedi%20fuera.jpeg"
+                    : "https://storage.googleapis.com/integrapp/Imagenes/cedi%20dentro.jpeg"
                 })`,
               }}
             >
@@ -117,9 +130,9 @@ const PaginaIntegra: React.FC = () => {
       <div className="PaginaIntegra-opciones">
         {[
           { icon: <IoIosPeople />, text: "Portal Clientes", onClick: () => navigate("/PortalClientes") },
-          { icon: <FaTruck />, text: "Portal Transportadores", onClick: () => navigate("/") },
+          { icon: <FaTruck />, text: "Portal Transportadores", onClick: () => navigate("/InicioPropietarios") },
           { icon: <LiaPeopleCarrySolid />, text: "Portal ventas", onClick: () => navigate("/PortalVentas") },          
-          { icon: <LiaPeopleCarrySolid />, text: "Intranet" },
+          { icon: <LiaPeopleCarrySolid />, text: "Portal empleados" },
           { icon: <FaTools />, text: "Más Herramientas" },
         ].map((opcion, index) => (
           <div

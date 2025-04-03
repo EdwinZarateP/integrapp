@@ -20,7 +20,7 @@ const Inicio: React.FC = () => {
 
   const IrPropietarios = () => {
     if(!CodigoTenedorCookie){
-      navigate("/InicioPropietarios");
+      navigate("/loginpropietarios");
     }else{
       navigate("/SalaEspera");
     }

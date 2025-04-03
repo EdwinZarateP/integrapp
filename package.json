@@ -18,6 +18,8 @@
     "firebase": "^10.13.0",
     "gh-pages": "^6.1.1",
     "js-cookie": "^3.0.5",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^5.0.2",
     "jwt-decode": "^4.0.0",
     "lottie-react": "^2.4.0",
     "react": "^18.3.1",

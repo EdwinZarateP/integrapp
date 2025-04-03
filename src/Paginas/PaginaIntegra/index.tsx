@@ -131,8 +131,8 @@ const PaginaIntegra: React.FC = () => {
         {[
           { icon: <IoIosPeople />, text: "Portal Clientes", onClick: () => navigate("/PortalClientes") },
           { icon: <FaTruck />, text: "Portal Transportadores", onClick: () => navigate("/InicioPropietarios") },
-          { icon: <LiaPeopleCarrySolid />, text: "Portal ventas", onClick: () => navigate("/PortalVentas") },          
-          { icon: <LiaPeopleCarrySolid />, text: "Portal empleados" },
+          { icon: <LiaPeopleCarrySolid />, text: "Portal ventas", onClick: () => navigate("/PortalVentas") },
+          { icon: <LiaPeopleCarrySolid />, text: "Portal empleados", onClick: () => navigate("/CertificadoLaboralP") },        
           { icon: <FaTools />, text: "Más Herramientas" },
         ].map((opcion, index) => (
           <div

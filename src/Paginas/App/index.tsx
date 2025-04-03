@@ -12,6 +12,7 @@ import Olvidoclave from '../Olvidoclave/index';
 import PaginaIntegra from '../PaginaIntegra/index';
 import PortalClientes from '../PortalClientes/index';
 import PortalVentas from '../PortalVentas/index';
+import CertificadoLaboralP from '../CertificadoLaboralP/index';
 import NoEncontrado from '../NoEncontrado/index';
 import { ProveedorVariables } from '../../Contexto/index';
 import "./estilos.css";
@@ -35,7 +36,8 @@ const App: React.FC = () => {
         <Route path="/FormularioHojavida" element={<FormularioHojavida />} />        
         <Route path="/Api2" element={<Api2 />} />
         <Route path="/PortalClientes" element={<PortalClientes />} />
-        <Route path="/PortalVentas" element={<PortalVentas />} />                
+        <Route path="/PortalVentas" element={<PortalVentas />} />
+        <Route path="/CertificadoLaboralP" element={<CertificadoLaboralP />} />
         <Route path="*" element={<NoEncontrado />} />
       </Routes>
     </Router>

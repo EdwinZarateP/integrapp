@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { fondoBase64 } from "./fondoBase64";
-import { firmaBase64 } from "./firmaBase64"; // <-- importamos la firma
+import { firmaBase64 } from "./firmaBase64";
 import "./estilos.css";
 
 const urlLogo = "https://storage.googleapis.com/integrapp/Imagenes/albatroz.png";
@@ -132,16 +132,18 @@ const CertificadoLaboralC: React.FC = () => {
     y += 15;
     doc.text("Cordialmente,", margenIzquierdo, y);
 
-    // Firma base64
-    y += 10;
-    const firmaWidth = 50;
-    const firmaHeight = 20;
-    // Insertar la firma centrada
-    doc.addImage(firmaBase64, "PNG", 105 - firmaWidth / 2, y, firmaWidth, firmaHeight);
-    y += firmaHeight + 5;
-
+    // ↓↓↓ Aquí colocamos el nombre y encima la firma ↓↓↓
+    y += 20;
     doc.setFont("Times", "bold");
     doc.text("PATRICIA LEAL AROCA", 105, y, { align: "center" });
+
+    // Firma superpuesta (misma y, un poco más abajo para que cruce el nombre)
+    const firmaWidth = 50;
+    const firmaHeight = 20;
+    const firmaY = y - 10; // para que se superponga al nombre
+    doc.addImage(firmaBase64, "PNG", 105 - firmaWidth / 2, firmaY, firmaWidth, firmaHeight);
+
+    // Info adicional
     y += 6;
     doc.setFont("Times", "normal");
     doc.text("Gerente de gestión humana", 105, y, { align: "center" });

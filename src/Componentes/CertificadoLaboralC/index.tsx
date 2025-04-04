@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { fondoBase64 } from "./fondoBase64";
+import { firmaBase64 } from "./firmaBase64"; // <-- importamos la firma
 import "./estilos.css";
 
 const urlLogo = "https://storage.googleapis.com/integrapp/Imagenes/albatroz.png";
@@ -13,14 +14,10 @@ const baseDeDatos = [
     cargo: "Auxiliar Logistico",
     salario: 1465000,
     fechaIngreso: "03 de diciembre de 2024",
-    tipoContrato: "OBRA Y/O LABOR", // propiedad agregada
+    tipoContrato: "OBRA Y/O LABOR",
   },
 ];
 
-/**
- * Función auxiliar para imprimir “partes” de texto con estilos distintos
- * y evitar que se salgan del ancho máximo. Si se acerca demasiado, salta a la siguiente línea.
- */
 function printParts(
   doc: jsPDF,
   parts: { texto: string; estilo: "normal" | "bold" }[],
@@ -34,19 +31,15 @@ function printParts(
 
   for (const parte of parts) {
     doc.setFont("Times", parte.estilo);
-    // Separar por palabras para controlar mejor el ancho
     const words = parte.texto.split(" ");
 
     for (let i = 0; i < words.length; i++) {
       let word = words[i];
-      // Agregamos un espacio al final de cada palabra, excepto la última
       if (i < words.length - 1) {
         word += " ";
       }
-
       const wordWidth = doc.getTextWidth(word);
 
-      // Si al agregar esta palabra nos pasamos del ancho disponible, bajamos de línea
       if (x + wordWidth > xInicial + maxWidth) {
         y += lineHeight;
         x = xInicial;
@@ -56,8 +49,6 @@ function printParts(
       x += wordWidth;
     }
   }
-
-  // Devuelve la coordenada Y donde terminó de escribir
   return y;
 }
 
@@ -77,12 +68,10 @@ const CertificadoLaboralC: React.FC = () => {
       tipoContrato = "",
     } = empleado || {};
 
-    // Formatear fecha actual
     const fechaEmision = new Date();
     const opcionesFecha = { day: "numeric", month: "long", year: "numeric" } as const;
     const fechaFormateada = fechaEmision.toLocaleDateString("es-ES", opcionesFecha);
 
-    // Formatear cédula con puntos
     const cedulaFormateada = cedula.replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1.");
 
     const doc = new jsPDF();
@@ -90,9 +79,8 @@ const CertificadoLaboralC: React.FC = () => {
 
     const margenIzquierdo = 20;
     let y = 40;
-    const maxAnchoTexto = 170; // ancho máximo para no desbordar
+    const maxAnchoTexto = 170;
 
-    // Título centrado y en negrita
     doc.setFont("Times", "bold");
     doc.setFontSize(14);
     doc.text("EL DEPARTAMENTO DE GESTIÓN HUMANA", 105, y, { align: "center" });
@@ -103,7 +91,6 @@ const CertificadoLaboralC: React.FC = () => {
 
     y += 12;
 
-    // Arreglo de partes con estilos intercalados; el cargo y el tipo de contrato se muestran en negrita.
     const partesTexto: { texto: string; estilo: "normal" | "bold" }[] = [
       { texto: "El señor/a ", estilo: "normal" },
       { texto: nombre, estilo: "bold" },
@@ -124,35 +111,43 @@ const CertificadoLaboralC: React.FC = () => {
       },
     ];
 
-    // Ajustamos fuente y tamaño para este bloque
     doc.setFont("Times", "normal");
     doc.setFontSize(12);
 
-    // Imprimir las partes controlando el ancho
-    // lineHeight: puntos a bajar al hacer salto de línea
     y = printParts(doc, partesTexto, margenIzquierdo, y, maxAnchoTexto, 6);
 
-    // Dejamos un espacio debajo del párrafo
     y += 10;
 
-    // Párrafo adicional: info de contacto
     const infoContacto = `Para mayor información de ser necesario, se pueden comunicar al PBX 7006232 o celular 3183385709.`;
     const lineasContacto = doc.splitTextToSize(infoContacto, maxAnchoTexto);
     doc.text(lineasContacto, margenIzquierdo, y);
     y += lineasContacto.length * 3;
 
-    // Párrafo final
     const infoFinal = `La presente certificación se expide a solicitud del interesado, dado a los ${fechaFormateada} en la ciudad de Bogotá.`;
     const lineasFinal = doc.splitTextToSize(infoFinal, maxAnchoTexto);
     y += 10;
     doc.text(lineasFinal, margenIzquierdo, y);
     y += lineasFinal.length * 6;
 
-    // Cierre
     y += 15;
     doc.text("Cordialmente,", margenIzquierdo, y);
 
-    // Descargar PDF
+    // Firma base64
+    y += 10;
+    const firmaWidth = 50;
+    const firmaHeight = 20;
+    // Insertar la firma centrada
+    doc.addImage(firmaBase64, "PNG", 105 - firmaWidth / 2, y, firmaWidth, firmaHeight);
+    y += firmaHeight + 5;
+
+    doc.setFont("Times", "bold");
+    doc.text("PATRICIA LEAL AROCA", 105, y, { align: "center" });
+    y += 6;
+    doc.setFont("Times", "normal");
+    doc.text("Gerente de gestión humana", 105, y, { align: "center" });
+    y += 6;
+    doc.text("Integra cadena de servicios", 105, y, { align: "center" });
+
     doc.save(`certificado_${cedula}.pdf`);
   };
 

@@ -111,7 +111,7 @@ const CertificadoLaboralC: React.FC = () => {
       { texto: cedulaFormateada, estilo: "bold" },
       { texto: " labora en nuestra empresa desde el " + fechaIngreso + ", desempeñando el cargo de ", estilo: "normal" },
       { texto: cargo, estilo: "bold" },
-      { texto: " con contrato a término ", estilo: "normal" },
+      { texto: " con contrato ", estilo: "normal" },
       { texto: tipoContrato, estilo: "bold" },
       { texto: ".", estilo: "normal" },
       {

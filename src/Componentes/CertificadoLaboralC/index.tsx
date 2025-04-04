@@ -13,8 +13,53 @@ const baseDeDatos = [
     cargo: "Auxiliar Logistico",
     salario: 1465000,
     fechaIngreso: "03 de diciembre de 2024",
+    tipoContrato: "OBRA Y/O LABOR", // propiedad agregada
   },
 ];
+
+/**
+ * Función auxiliar para imprimir “partes” de texto con estilos distintos
+ * y evitar que se salgan del ancho máximo. Si se acerca demasiado, salta a la siguiente línea.
+ */
+function printParts(
+  doc: jsPDF,
+  parts: { texto: string; estilo: "normal" | "bold" }[],
+  xInicial: number,
+  yInicial: number,
+  maxWidth: number,
+  lineHeight: number
+) {
+  let x = xInicial;
+  let y = yInicial;
+
+  for (const parte of parts) {
+    doc.setFont("Times", parte.estilo);
+    // Separar por palabras para controlar mejor el ancho
+    const words = parte.texto.split(" ");
+
+    for (let i = 0; i < words.length; i++) {
+      let word = words[i];
+      // Agregamos un espacio al final de cada palabra, excepto la última
+      if (i < words.length - 1) {
+        word += " ";
+      }
+
+      const wordWidth = doc.getTextWidth(word);
+
+      // Si al agregar esta palabra nos pasamos del ancho disponible, bajamos de línea
+      if (x + wordWidth > xInicial + maxWidth) {
+        y += lineHeight;
+        x = xInicial;
+      }
+
+      doc.text(word, x, y);
+      x += wordWidth;
+    }
+  }
+
+  // Devuelve la coordenada Y donde terminó de escribir
+  return y;
+}
 
 const CertificadoLaboralC: React.FC = () => {
   const [cedulaIngresada, setCedulaIngresada] = useState("");
@@ -29,91 +74,85 @@ const CertificadoLaboralC: React.FC = () => {
       cargo = "",
       salario = 0,
       fechaIngreso = "",
+      tipoContrato = "",
     } = empleado || {};
 
+    // Formatear fecha actual
     const fechaEmision = new Date();
     const opcionesFecha = { day: "numeric", month: "long", year: "numeric" } as const;
     const fechaFormateada = fechaEmision.toLocaleDateString("es-ES", opcionesFecha);
+
+    // Formatear cédula con puntos
+    const cedulaFormateada = cedula.replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1.");
 
     const doc = new jsPDF();
     doc.addImage(fondoBase64, "PNG", 0, 0, 210, 297);
 
     const margenIzquierdo = 20;
-    let y = 60;
+    let y = 40;
+    const maxAnchoTexto = 170; // ancho máximo para no desbordar
 
-    // Título
-    doc.setFont("helvetica", "normal");
+    // Título centrado y en negrita
+    doc.setFont("Times", "bold");
     doc.setFontSize(14);
-    doc.text("EL DEPARTAMENTO DE GESTIÓN HUMANA", margenIzquierdo, y);
+    doc.text("EL DEPARTAMENTO DE GESTIÓN HUMANA", 105, y, { align: "center" });
 
     y += 15;
     doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("CERTIFICA QUE:", margenIzquierdo, y);
+    doc.text("CERTIFICA QUE:", 105, y, { align: "center" });
 
     y += 12;
 
-    const cedulaFormateada = cedula.replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1.");
+    // Arreglo de partes con estilos intercalados; el cargo y el tipo de contrato se muestran en negrita.
+    const partesTexto: { texto: string; estilo: "normal" | "bold" }[] = [
+      { texto: "El señor/a ", estilo: "normal" },
+      { texto: nombre, estilo: "bold" },
+      { texto: ", identificado/a con cédula de ciudadanía número ", estilo: "normal" },
+      { texto: cedulaFormateada, estilo: "bold" },
+      { texto: " labora en nuestra empresa desde el " + fechaIngreso + ", desempeñando el cargo de ", estilo: "normal" },
+      { texto: cargo, estilo: "bold" },
+      { texto: " con contrato a término ", estilo: "normal" },
+      { texto: tipoContrato, estilo: "bold" },
+      { texto: ".", estilo: "normal" },
+      {
+        texto: incluirSalario && salario
+          ? " Con un salario fijo mensual por valor de Un Millón Cuatrocientos Sesenta y Cinco Mil Pesos ($" +
+            salario.toLocaleString() +
+            " m/cte.)."
+          : "",
+        estilo: "normal",
+      },
+    ];
 
-    // Línea 1: El señor/a + nombre
-    let x = margenIzquierdo;
-    doc.setFont("helvetica", "normal");
-    const frag1 = "El señor/a ";
-    doc.text(frag1, x, y);
-    x += doc.getTextWidth(frag1);
+    // Ajustamos fuente y tamaño para este bloque
+    doc.setFont("Times", "normal");
+    doc.setFontSize(12);
 
-    doc.setFont("helvetica", "bold");
-    doc.text(`${nombre},`, x, y);
+    // Imprimir las partes controlando el ancho
+    // lineHeight: puntos a bajar al hacer salto de línea
+    y = printParts(doc, partesTexto, margenIzquierdo, y, maxAnchoTexto, 6);
 
-    // Línea 2: cédula + continuación
+    // Dejamos un espacio debajo del párrafo
     y += 10;
-    x = margenIzquierdo;
-    const frag2 = "identificado/a con cédula de ciudadanía número ";
-    doc.setFont("helvetica", "normal");
-    doc.text(frag2, x, y);
-    x += doc.getTextWidth(frag2);
 
-    doc.setFont("helvetica", "bold");
-    doc.text(cedulaFormateada, x, y);
-
-    // Continuación párrafo justificado
-    y += 12;
-    doc.setFont("helvetica", "normal");
-    const frag3 = "labora en nuestra empresa";
-    const frag4 = fechaIngreso ? ` desde el ${fechaIngreso}` : "";
-    const frag5 = cargo ? `, desempeñando el cargo de ${cargo}` : "";
-    const frag6 = " con contrato a término OBRA Y/O LABOR.";
-
-    const salarioTexto = incluirSalario && salario
-      ? ` Con un salario fijo mensual por valor de Un Millón Cuatrocientos Sesenta y Cinco Mil Pesos ($${salario.toLocaleString()} m/cte.).`
-      : "";
-
-    const cuerpoTexto = frag3 + frag4 + frag5 + frag6 + salarioTexto;
-
-    doc.text(cuerpoTexto, margenIzquierdo, y, {
-      maxWidth: 170,
-      align: "justify",
-    });
-
-    // Párrafos adicionales
-    y += 30;
+    // Párrafo adicional: info de contacto
     const infoContacto = `Para mayor información de ser necesario, se pueden comunicar al PBX 7006232 o celular 3183385709.`;
-    doc.text(infoContacto, margenIzquierdo, y, {
-      maxWidth: 170,
-      align: "justify",
-    });
+    const lineasContacto = doc.splitTextToSize(infoContacto, maxAnchoTexto);
+    doc.text(lineasContacto, margenIzquierdo, y);
+    y += lineasContacto.length * 3;
 
-    y += 20;
+    // Párrafo final
     const infoFinal = `La presente certificación se expide a solicitud del interesado, dado a los ${fechaFormateada} en la ciudad de Bogotá.`;
-    doc.text(infoFinal, margenIzquierdo, y, {
-      maxWidth: 170,
-      align: "justify",
-    });
+    const lineasFinal = doc.splitTextToSize(infoFinal, maxAnchoTexto);
+    y += 10;
+    doc.text(lineasFinal, margenIzquierdo, y);
+    y += lineasFinal.length * 6;
 
     // Cierre
-    y += 30;
+    y += 15;
     doc.text("Cordialmente,", margenIzquierdo, y);
 
+    // Descargar PDF
     doc.save(`certificado_${cedula}.pdf`);
   };
 

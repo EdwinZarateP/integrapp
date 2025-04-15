@@ -146,6 +146,8 @@ const CertificadoLaboralC: React.FC = () => {
     // Info adicional
     y += 6;
     doc.setFont("Times", "normal");
+    doc.text("certificado laboral", 105, y, { align: "center" });
+    y += 6;
     doc.text("Gerente de gestión humana", 105, y, { align: "center" });
     y += 6;
     doc.text("Integra cadena de servicios", 105, y, { align: "center" });

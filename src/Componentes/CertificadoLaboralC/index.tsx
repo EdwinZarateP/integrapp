@@ -81,9 +81,15 @@ const CertificadoLaboralC: React.FC = () => {
         nombre = "",
         identificacion = cedulaIngresada,
         cargo = "",
-        salario = 0,
+        basico = 0,
         fechaIngreso = "",
         tipoContrato = "",
+        auxilioVivienda = 0,
+        auxilioAlimentacion = 0,
+        auxilioMovilidad = 0,
+        auxilioRodamiento = 0,
+        auxilioProductividad = 0,
+        auxilioComunic = 0,
       } = empleado;
 
       // Fecha emisión
@@ -101,7 +107,7 @@ const CertificadoLaboralC: React.FC = () => {
       const cedulaFormateada = identificacion.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
       // Salario en letras y números
-      const salarioEntero = Math.floor(salario);
+      const salarioEntero = Math.floor(basico);
       const letras = salarioEntero > 0
         ? capitalize(convertirNumeroALetras(salarioEntero)) + " pesos"
         : "";
@@ -124,6 +130,7 @@ const CertificadoLaboralC: React.FC = () => {
       doc.text("CERTIFICA QUE:", 105, y, { align: "center" });
       y += 12;
 
+      // Cuerpo principal
       const partesTexto: { texto: string; estilo: "normal" | "bold" }[] = [
         { texto: "El señor/a ", estilo: "normal" },
         { texto: nombre, estilo: "bold" },
@@ -131,17 +138,36 @@ const CertificadoLaboralC: React.FC = () => {
         { texto: cedulaFormateada, estilo: "bold" },
         { texto: ` labora en nuestra empresa desde el ${fechaIngresoFormateada}, desempeñando el cargo de `, estilo: "normal" },
         { texto: cargo, estilo: "bold" },
-        { texto: " con contrato a termino ", estilo: "normal" },
+        { texto: " con contrato a término ", estilo: "normal" },
         { texto: tipoContrato, estilo: "bold" },
         { texto: ".", estilo: "normal" },
         { texto: salarioTexto, estilo: "normal" },
       ];
-
       doc.setFont("Times", "normal");
       doc.setFontSize(12);
       y = printParts(doc, partesTexto, margenIzq, y, maxAncho, 6);
       y += 10;
 
+      // Auxilios solo si incluirSalario está activo
+      if (incluirSalario) {
+        const auxilios = [
+          { label: "AUXILIO VIVIENDA", value: auxilioVivienda },
+          { label: "AUXILIO ALIMENTACIÓN", value: auxilioAlimentacion },
+          { label: "AUXILIO MOVILIDAD", value: auxilioMovilidad },
+          { label: "AUXILIO RODAMIENTO", value: auxilioRodamiento },
+          { label: "AUXILIO PRODUCTIVIDAD", value: auxilioProductividad },
+          { label: "AUXILIO COMUNIC", value: auxilioComunic },
+        ];
+        const activos = auxilios.filter(a => a.value > 0);
+        activos.forEach(a => {
+          doc.setFont("Times");
+          doc.text(`${a.label}: ${a.value.toLocaleString()}`, margenIzq, y);
+          y += 6;
+        });
+        if (activos.length) y += 4;
+      }
+
+      // Pie de contacto y cierre
       const contacto = "Para mayor información de ser necesario, se pueden comunicar al PBX 7006232 o celular 3183385709.";
       const lineasContacto = doc.splitTextToSize(contacto, maxAncho);
       doc.text(lineasContacto, margenIzq, y);
@@ -156,13 +182,11 @@ const CertificadoLaboralC: React.FC = () => {
       y += 15;
       doc.text("Cordialmente,", margenIzq, y);
       y += 20;
-
       doc.setFont("Times", "bold");
       doc.text("PATRICIA LEAL AROCA", 105, y, { align: "center" });
       const firmaW = 50, firmaH = 20;
       doc.addImage(firmaBase64, "PNG", 105 - firmaW / 2, y - 10, firmaW, firmaH);
       y += 6;
-
       doc.setFont("Times", "normal");
       doc.text("certificado laboral", 105, y, { align: "center" });
       y += 6;

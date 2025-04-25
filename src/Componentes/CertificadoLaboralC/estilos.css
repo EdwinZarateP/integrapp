@@ -3,45 +3,32 @@
   max-width: 480px;
   margin: 60px auto;
   padding: 30px;
-  background: #ffffff;
+  background: #fff;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 20px;
+  gap: 24px;
 }
 
-/* Encabezado: Logo + título */
-.CertificadoLaboralC-encabezado {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  justify-content: center;
-}
-
-/* Logo a la izquierda del título */
-.CertificadoLaboralC-logo {
-  height: 48px;
-  object-fit: contain;
-}
-
-/* Título */
+/* Encabezado: título centrado */
 .CertificadoLaboralC-titulo {
   font-size: 26px;
+  text-align: center;
   color: #2c3e50;
   font-weight: 600;
-  margin: 0;
+  margin: 0 0 10px;
 }
 
-/* Campo de texto */
+/* Campo de entrada */
 .CertificadoLaboralC-input {
   padding: 12px 14px;
   border: 1px solid #ced4da;
   border-radius: 10px;
   font-size: 16px;
   transition: border 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
 }
 
 .CertificadoLaboralC-input:focus {
@@ -73,7 +60,7 @@
 }
 
 .CertificadoLaboralC-boton:hover {
-  background-color: #0b4a25;
+  background-color: #2e751b;
   transform: translateY(-1px);
 }
 
@@ -85,15 +72,11 @@
 @media (max-width: 600px) {
   .CertificadoLaboralC-contenedor {
     margin: 30px 20px;
-    padding: 25px;
+    padding: 24px;
   }
 
   .CertificadoLaboralC-titulo {
     font-size: 22px;
-  }
-
-  .CertificadoLaboralC-logo {
-    height: 40px;
   }
 
   .CertificadoLaboralC-boton {

@@ -31,9 +31,10 @@ const Inicio: React.FC = () => {
     mostrarAlerta()
   };
 
-  const IrClientes = () => {
+  const IrEmpleados = () => {
     // navigate("/InicioPropietarios");
-    mostrarAlerta()
+    navigate("/CertificadoLaboralP");
+    // mostrarAlerta()
   };
 
   return (
@@ -54,9 +55,9 @@ const Inicio: React.FC = () => {
           <h2>👨🏻‍💼Modo Propietario</h2>
           <p>Registra tus vehículos, consulta tus manifiestos</p>
         </div>
-        <div className="Inicio-opcion"  onClick={IrClientes}>
-          <h2>📦Modo Cliente</h2>
-          <p>Encuentra el vehículo a tu cargas fácilmente.</p>
+        <div className="Inicio-opcion"  onClick={IrEmpleados}>
+          <h2>📦Empleados</h2>
+          <p>Descarga tu certificado laboral</p>
         </div>
       </div>
     </div>

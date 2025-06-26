@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaTruck, FaTools, FaWhatsapp, FaBars, FaTimes } from "react-icons/fa";
+import { FaTruck, FaBoxOpen, FaWhatsapp, FaBars, FaTimes } from "react-icons/fa";
 import { LiaPeopleCarrySolid } from "react-icons/lia";
 import { IoIosPeople } from "react-icons/io";
 import { RiCustomerService2Line } from "react-icons/ri";
+import { FaPeopleRoof } from "react-icons/fa6";
 import logo from "../../Imagenes/albatros.png";
 import "./estilos.css";
 
@@ -132,8 +133,8 @@ const PaginaIntegra: React.FC = () => {
           { icon: <IoIosPeople />, text: "Portal Clientes", onClick: () => navigate("/PortalClientes") },
           { icon: <FaTruck />, text: "Portal Transportadores", onClick: () => navigate("/InicioPropietarios") },
           { icon: <LiaPeopleCarrySolid />, text: "Portal ventas", onClick: () => navigate("/PortalVentas") },
-          { icon: <LiaPeopleCarrySolid />, text: "Portal empleados", onClick: () => navigate("/CertificadoLaboralP") },        
-          { icon: <FaTools />, text: "Más Herramientas" },
+          { icon: <FaPeopleRoof />, text: "Portal empleados", onClick: () => navigate("/CertificadoLaboralP") },        
+          { icon: <FaBoxOpen />, text: "Portal interno", onClick: () => navigate("/LoginUsuario") },  
         ].map((opcion, index) => (
           <div
             key={index}

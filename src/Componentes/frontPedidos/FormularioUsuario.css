@@ -1,0 +1,11 @@
+/* src/Componentes/frontPedidos/FormularioUsuario.css */
+.FormularioUsuario-contenedor {
+  margin: 1rem;
+}
+.FormularioUsuario-label {
+  font-weight: bold;
+}
+.FormularioUsuario-input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+}

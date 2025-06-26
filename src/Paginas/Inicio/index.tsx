@@ -31,11 +31,6 @@ const Inicio: React.FC = () => {
     mostrarAlerta()
   };
 
-  const IrEmpleados = () => {
-    // navigate("/InicioPropietarios");
-    navigate("/CertificadoLaboralP");
-    // mostrarAlerta()
-  };
 
   return (
     <div className="Inicio-contenedor">
@@ -55,10 +50,10 @@ const Inicio: React.FC = () => {
           <h2>👨🏻‍💼Modo Propietario</h2>
           <p>Registra tus vehículos, consulta tus manifiestos</p>
         </div>
-        <div className="Inicio-opcion"  onClick={IrEmpleados}>
+        {/* <div className="Inicio-opcion"  onClick={IrEmpleados}>
           <h2>📦Empleados</h2>
           <p>Descarga tu certificado laboral</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

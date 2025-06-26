@@ -1,37 +1,51 @@
+// src/hooks/ExtraccionPagos.ts
+
 import { useContext } from "react";
 import axios from "axios";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { ContextoApp } from "../../Contexto/index";
 
-// Define una interfaz para los datos de pagos
+// Interface para cada pago
 interface Pago {
   Manifiesto: string;
   Tenedor: string;
   Fecha: string;
-  PagoSaldo: string; // Renombrado para evitar problemas con espacios
+  PagoSaldo: string;
+}
+
+// Tipado de la respuesta del login
+interface LoginResponse {
+  data: {
+    access_token: string;
+  };
+}
+
+// Tipado de la respuesta de la consulta de pagos
+interface QueryResponse {
+  data: {
+    data: Pago[];
+  };
 }
 
 const ExtraccionPagos = () => {
-  const CodigoTenedorCookie = Cookies.get('tenedorIntegrapp');
-  const almacenVariables = useContext(ContextoApp);
-
-  if (!almacenVariables) {
-    throw new Error("Contexto no definido. Asegúrate de usar el proveedor correctamente.");
+  const codigoTenedor = Cookies.get("tenedorIntegrapp");
+  const contexto = useContext(ContextoApp);
+  if (!contexto) {
+    throw new Error("Contexto no definido. Asegúrate de usar el proveedor.");
   }
 
-  // Extrae las variables necesarias del contexto
   const {
-    setDiccionarioManifiestosPagos,
     DiccionarioManifiestosPagos,
-  } = almacenVariables;
+    setDiccionarioManifiestosPagos,
+  } = contexto;
 
   const fetchPagos = async (): Promise<Pago[]> => {
-    // Verifica si ya hay datos en DiccionarioManifiestosPagos
+    // Si ya hay datos en el contexto, úsalos
     if (DiccionarioManifiestosPagos.length > 0) {
-      console.log("Usando pagos almacenados en el contexto:", DiccionarioManifiestosPagos);
       return DiccionarioManifiestosPagos;
     }
 
+    // 1) Login para obtener token
     const loginUrl =
       "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/auth/loginDbCustomer";
     const loginPayload = {
@@ -43,62 +57,54 @@ const ExtraccionPagos = () => {
       isGroup: 0,
     };
 
-    try {
-      // Login para obtener el token
-      const loginRespuesta = await axios.post(loginUrl, loginPayload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    // Tipamos la respuesta para que data no sea unknown
+    const loginResp = await axios.post<LoginResponse>(
+      loginUrl,
+      loginPayload,
+      { headers: { "Content-Type": "application/json" } }
+    );
+    const token = loginResp.data.data.access_token;
 
-      const token = loginRespuesta.data.data.access_token;
+    // 2) Consulta de pagos
+    const queryUrl =
+      "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/vulcano/customer/00134/index";
+    const queryPayload = {
+      pageSize: 1000,
+      rptId: 27,
+      filter: [
+        { campo: "Fecha", operador: "YEAR>", valor: "2023" },
+        { campo: "Tenedor", operador: "=", valor: codigoTenedor },
+        { campo: "Pago saldo", operador: "=", valor: "Aplicado" },
+      ],
+    };
 
-      const queryUrl =
-        "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/vulcano/customer/00134/index";
-      const queryPayload = {
-        pageSize: 1000,
-        rptId: 27,
-        filter: [
-          {
-            campo: "Fecha",
-            operador: "YEAR>",
-            valor: "2023",
-          },
-          {
-            campo: "Tenedor",
-            operador: "=",
-            valor: CodigoTenedorCookie, 
-          }
-        ],
-      };
-
-      const queryRespuesta = await axios.post(queryUrl, queryPayload, {
+    const queryResp = await axios.post<QueryResponse>(
+      queryUrl,
+      queryPayload,
+      {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      });
-
-      const data = queryRespuesta.data?.data?.data;
-
-      if (!Array.isArray(data)) {
-        throw new Error("La respuesta de la API no contiene un array válido en 'data.data'.");
       }
+    );
 
-      const pagosUnicos = data.reduce((acc: Pago[], item: Pago) => {
-        if (!acc.some((existingItem) => existingItem.Manifiesto === item.Manifiesto)) {
-          acc.push(item);
-        }
-        return acc;
-      }, []);
-
-      setDiccionarioManifiestosPagos(pagosUnicos); // Actualiza el contexto con los pagos únicos
-      // console.log("Pagos obtenidos de la API:", pagosUnicos); 
-
-      return pagosUnicos; // Devuelve los pagos únicos
-    } catch (err) {
-      throw new Error("Error al extraer pagos: " + (err as Error).message);
+    const pagos = queryResp.data.data;
+    if (!Array.isArray(pagos)) {
+      throw new Error("La API no devolvió un array válido en data.data.");
     }
+
+    // 3) Desduplicar por Manifiesto
+    const pagosUnicos = pagos.reduce<Pago[]>((acc, item) => {
+      if (!acc.some((x) => x.Manifiesto === item.Manifiesto)) {
+        acc.push(item);
+      }
+      return acc;
+    }, []);
+
+    // 4) Guardar en contexto y devolver
+    setDiccionarioManifiestosPagos(pagosUnicos);
+    return pagosUnicos;
   };
 
   return { fetchPagos };

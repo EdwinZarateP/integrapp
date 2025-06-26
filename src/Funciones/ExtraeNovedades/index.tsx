@@ -3,13 +3,13 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 import { ContextoApp } from "../../Contexto/index";
 
-// Define una interfaz para los datos de Novedades
-interface Saldo {
-  _id: string; // ID único del manifiesto en MongoDB
+// Define la interfaz para los datos de Novedades
+export interface Saldo {
+  _id: string;         // ID único del manifiesto en MongoDB
   Tenedor: string;
   Manifiesto: string;
   Novedad: string;
-  [key: string]: any; // Permite otros campos dinámicos
+  [key: string]: any;  // Para permitir campos adicionales
 }
 
 const ExtraeNovedades = () => {
@@ -24,22 +24,21 @@ const ExtraeNovedades = () => {
 
   const fetchNovedades = async (): Promise<Saldo[]> => {
     try {
-      
-      // Llama a la API de Novedades usando el tenedor del contexto
       const url = `https://integrappi-dvmh.onrender.com/Novedades/tenedor/${CodigoTenedorCookie}`;
-      const respuesta = await axios.get(url);
-      // console.log("Datos obtenidos de la API de Novedades:", respuesta.data);
 
-      // Valida que la respuesta sea un array antes de continuar
-      const data: Saldo[] = respuesta.data;
+      // Tipamos la respuesta como un array de Saldo
+      const respuesta = await axios.get<Saldo[]>(url);
+      const data = respuesta.data;
+
+      // Validación de tipo por seguridad
       if (!Array.isArray(data)) {
         throw new Error("La respuesta de la API no contiene un array válido.");
       }
 
-      // Guarda los resultados en la variable global `DiccionarioNovedades`
+      // Guarda los datos en el contexto global
       setDiccionarioNovedades(data);
 
-      return data; // Devuelve los Novedades obtenidos
+      return data;
     } catch (err) {
       throw new Error("Error al extraer Novedades: " + (err as Error).message);
     }

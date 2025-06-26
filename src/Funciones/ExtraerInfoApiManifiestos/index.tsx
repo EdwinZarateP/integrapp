@@ -1,9 +1,11 @@
+// src/hooks/useExtraccionManifiestos.ts
+
 import { useContext } from "react";
 import axios from "axios";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { ContextoApp } from "../../Contexto/index";
 
-// Define una interfaz para los manifiestos después de procesarlos
+// Interfaces para el resultado final
 interface Manifiesto {
   Manif_numero: string;
   Estado_mft: string;
@@ -13,11 +15,11 @@ interface Manifiesto {
   Origen: string;
   Destino: string;
   FechaPagoSaldo: string;
-  MontoTotal: number; // Campo numérico
-  ReteFuente: number; // Campo numérico
-  ReteICA: number; // Campo numérico
+  MontoTotal: number;
+  ReteFuente: number;
+  ReteICA: number;
   ReteCREE: string;
-  ValorAnticipado: number; // Campo numérico
+  ValorAnticipado: number;
   AjusteFlete: string;
   Placa: string;
   Fecha_cumpl: string;
@@ -26,7 +28,7 @@ interface Manifiesto {
   deducciones: string;
 }
 
-// Define una interfaz para los manifiestos como llegan desde la API
+// Interfaz para los registros “crudos” que vienen de la API
 interface ManifiestoAPI {
   Manif_numero: string;
   Estado_mft: string;
@@ -36,39 +38,54 @@ interface ManifiestoAPI {
   Origen: string;
   Destino: string;
   FechaPagoSaldo: string;
-  MontoTotal: string; // Campo string recibido
-  ReteFuente: string; // Campo string recibido
-  ReteICA: string; // Campo string recibido
+  MontoTotal: string;
+  ReteFuente: string;
+  ReteICA: string;
   ReteCREE: string;
-  ValorAnticipado: string; // Campo string recibido
+  ValorAnticipado: string;
   AjusteFlete: string;
   Placa: string;
   Fecha_cumpl: string;
   TenId: string;
   Tenedor: string;
   deducciones: string;
+  [key: string]: any;
 }
 
-const ExtraccionManifiestos = () => {
-  const CodigoTenedorCookie = Cookies.get('tenedorIntegrapp');
-  const almacenVariables = useContext(ContextoApp);
+// Tipado de la respuesta del login
+interface LoginResponse {
+  data: {
+    access_token: string;
+  };
+}
 
-  if (!almacenVariables) {
-    throw new Error("Contexto no definido. Asegúrate de usar el proveedor correctamente.");
+// Tipado de la respuesta de consulta de manifiestos
+interface QueryResponse {
+  data: {
+    data: ManifiestoAPI[];
+  };
+}
+
+const useExtraccionManifiestos = () => {
+  const codigoTenedor = Cookies.get("tenedorIntegrapp");
+  const contexto = useContext(ContextoApp);
+
+  if (!contexto) {
+    throw new Error(
+      "Contexto no definido. Asegúrate de envolver con el proveedor."
+    );
   }
 
-  // Extrae las variables necesarias del contexto
-  const {
-    setDiccionarioManifiestosTodos,
-    DiccionarioManifiestosTodos,
-  } = almacenVariables;
+  const { DiccionarioManifiestosTodos, setDiccionarioManifiestosTodos } =
+    contexto;
 
   const fetchManifiestos = async (): Promise<Manifiesto[]> => {
-    // Verifica si ya hay datos en DiccionarioManifiestosTodos
+    // Si ya los tenemos en contexto, no volvemos a llamar
     if (DiccionarioManifiestosTodos.length > 0) {
       return DiccionarioManifiestosTodos;
     }
 
+    // 1) Login para obtener token
     const loginUrl =
       "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/auth/loginDbCustomer";
     const loginPayload = {
@@ -80,75 +97,61 @@ const ExtraccionManifiestos = () => {
       isGroup: 0,
     };
 
-    try {
-      const loginrespuesta = await axios.post(loginUrl, loginPayload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    // axios.post<LoginResponse> infiere que `response.data` es LoginResponse
+    const loginResp = await axios.post<LoginResponse>(loginUrl, loginPayload, {
+      headers: { "Content-Type": "application/json" },
+    });
+    const token = loginResp.data.data.access_token;
 
-      const token = loginrespuesta.data.data.access_token;
+    // 2) Consulta de manifiestos
+    const queryUrl =
+      "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/vulcano/customer/00134/index";
+    const queryPayload = {
+      pageSize: 1000,
+      rptId: 26,
+      filter: [
+        { campo: "Fecha", operador: "YEAR>", valor: "2023" },
+        { campo: "Tenedor", operador: "=", valor: codigoTenedor },
+      ],
+    };
 
-      const queryUrl =
-        "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/vulcano/customer/00134/index";
-      const queryPayload = {
-        pageSize: 1000,
-        rptId: 26,
-        filter: [
-          {
-            campo: "Fecha",
-            operador: "YEAR>",
-            valor: "2023",
-          },
-          {
-            campo: "Tenedor",
-            operador: "=",
-            valor: CodigoTenedorCookie, // Usar el valor de 'tenedor' desde el contexto
-          },
-        ],
-      };
+    // axios.post<QueryResponse> infiere que `response.data` es QueryResponse
+    const queryResp = await axios.post<QueryResponse>(queryUrl, queryPayload, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      const queryrespuesta = await axios.post(queryUrl, queryPayload, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data: ManifiestoAPI[] = queryrespuesta.data?.data?.data;
-
-      if (!Array.isArray(data)) {
-        throw new Error("La respuesta de la API no contiene un array válido en 'data.data'.");
-      }
-
-      // Convertir los campos a números donde sea necesario
-      const manifiestosProcesados: Manifiesto[] = data.map((item) => ({
-        ...item,
-        MontoTotal: parseFloat(item.MontoTotal),
-        ReteFuente: parseFloat(item.ReteFuente),
-        ReteICA: parseFloat(item.ReteICA),
-        ValorAnticipado: parseFloat(item.ValorAnticipado),
-      }));
-
-      const manifiestosUnicos = manifiestosProcesados.reduce(
-        (acc: Manifiesto[], item: Manifiesto) => {
-          if (!acc.some((existingItem) => existingItem.Manif_numero === item.Manif_numero)) {
-            acc.push(item);
-          }
-          return acc;
-        },
-        []
+    const registros = queryResp.data.data.data;
+    if (!Array.isArray(registros)) {
+      throw new Error(
+        "La API no devolvió un array válido en `data.data`."
       );
-
-      setDiccionarioManifiestosTodos(manifiestosUnicos); // Actualiza el contexto
-      // console.log("Manifiestos obtenidos de la API:", manifiestosUnicos);
-      return manifiestosUnicos; // Devuelve los manifiestos únicos
-    } catch (err) {
-      throw new Error("Error al extraer manifiestos: " + (err as Error).message);
     }
+
+    // 3) Parseo de strings a number y desduplicado
+    const procesados: Manifiesto[] = registros.map((r) => ({
+      ...r,
+      MontoTotal: parseFloat(r.MontoTotal),
+      ReteFuente: parseFloat(r.ReteFuente),
+      ReteICA: parseFloat(r.ReteICA),
+      ValorAnticipado: parseFloat(r.ValorAnticipado),
+    }));
+
+    const unicos = procesados.reduce<Manifiesto[]>((acc, m) => {
+      if (!acc.find((x) => x.Manif_numero === m.Manif_numero)) {
+        acc.push(m);
+      }
+      return acc;
+    }, []);
+
+    // 4) Guardar en contexto y devolver
+    setDiccionarioManifiestosTodos(unicos);
+    return unicos;
   };
 
   return { fetchManifiestos };
 };
 
-export default ExtraccionManifiestos;
+export default useExtraccionManifiestos;

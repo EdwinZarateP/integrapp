@@ -34,6 +34,8 @@ const TramitarPedidos: React.FC = () => {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [cargando, setCargando] = useState(false);
+  const [filtroRegional, setFiltroRegional] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Helper para formatear COP sin decimales
@@ -151,10 +153,18 @@ const TramitarPedidos: React.FC = () => {
   };
 
   // Agrupar por placa
-  const grupos = pedidos.reduce<Record<string, Pedido[]>>((acc, p) => {
+
+  
+  const pedidosFiltrados = pedidos.filter(p =>
+    (!filtroRegional || p.regional === filtroRegional) &&
+    (!filtroEstado || p.estado === filtroEstado)
+  );
+
+  const grupos = pedidosFiltrados.reduce<Record<string, Pedido[]>>((acc, p) => {
     (acc[p.placa] ||= []).push(p);
     return acc;
   }, {});
+
 
   return (
     <div className="TramitarPedidos-contenedor">
@@ -165,16 +175,16 @@ const TramitarPedidos: React.FC = () => {
         </button>
       </div>
 
-      <span className="TramitarPedidos-cookieDebug">
+      {/* <span className="TramitarPedidos-cookieDebug">
         Usuario: {usuario} — Perfil: {perfil}
-      </span>
+      </span> */}
 
       {(perfil === 'ADMIN' || perfil === 'OPERADOR') && (
         <div className="TramitarPedidos-upload">
           <input
             ref={fileInputRef}
             type="file"
-            accept=".xls,.xlsx"
+            accept=".xls,.xlsx,.xlsm"
             onChange={handleFileChange}
             className="TramitarPedidos-file"
           />
@@ -185,6 +195,32 @@ const TramitarPedidos: React.FC = () => {
           >
             {cargando ? 'Cargando...' : 'Cargar Archivo'}
           </button>
+        </div>
+      )}
+
+      {perfil !== 'OPERADOR' && (
+        <div className="TramitarPedidos-filtros">
+          <select
+            value={filtroRegional}
+            onChange={(e) => setFiltroRegional(e.target.value)}
+            className="TramitarPedidos-select"
+          >
+            <option value="">Todas las regionales</option>
+            {[...new Set(pedidos.map(p => p.regional))].map(r => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
+
+          <select
+            value={filtroEstado}
+            onChange={(e) => setFiltroEstado(e.target.value)}
+            className="TramitarPedidos-select"
+          >
+            <option value="">Todos los estados</option>
+            {[...new Set(pedidos.map(p => p.estado))].map(e => (
+              <option key={e} value={e}>{e}</option>
+            ))}
+          </select>
         </div>
       )}
 

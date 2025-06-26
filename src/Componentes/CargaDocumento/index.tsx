@@ -13,6 +13,12 @@ interface CargaDocumentoProps {
   onUploadSuccess?: (result: string | string[]) => void;
 }
 
+interface UploadResponse {
+  urls?: string[];
+  url?: string;
+}
+
+
 const CargaDocumento: React.FC<CargaDocumentoProps> = ({
   documentName,
   endpoint,
@@ -58,13 +64,15 @@ const CargaDocumento: React.FC<CargaDocumentoProps> = ({
     setProgress(50);
     try {
       console.log(`Subiendo a: ${endpoint} con tipo ${tipo}`);
-      const response = await axios.put(endpoint, formData, {
+      const response = await axios.put<UploadResponse>(endpoint, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
+
       if (response.status === 200) {
         setProgress(100);
-        if (onUploadSuccess) {
-          onUploadSuccess(response.data.urls || response.data.url);
+        const result = response.data.urls || response.data.url;
+        if (result && onUploadSuccess) {
+          onUploadSuccess(result); // ✅ Ahora el tipo es seguro
         }
       } else {
         alert('Error al subir el documento');

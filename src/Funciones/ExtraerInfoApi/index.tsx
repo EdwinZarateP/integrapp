@@ -2,15 +2,22 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { ContextoApp } from '../../Contexto/index';
 
-// Define una interfaz para los datos de la respuesta
-interface ApiResponse {
-  data: any[]; // Cambia 'any[]' por el tipo correcto según tu API
+// Interfaz para el login
+interface LoginResponse {
+  data: {
+    access_token: string;
+  };
 }
 
-// Define una interfaz para los elementos de manifiestos
+// Interfaz para la consulta de manifiestos
+interface ApiResponse {
+  data: Manifiesto[];
+}
+
+// Interfaz de manifiestos
 interface Manifiesto {
-  Manif_numero: string; 
-  Estado_mft: string;   
+  Manif_numero: string;
+  Estado_mft: string;
   Fecha: string;
   Manif_ministerio: string;
   Tipo_manifiesto: string;
@@ -27,41 +34,47 @@ interface Manifiesto {
   Fecha_cumpl: string;
   TenId: string;
   Tenedor: string;
-  deducciones: string
-  // Agrega otras propiedades según sea necesario
+  deducciones: string;
+  [key: string]: any; // por si vienen más campos
 }
 
 const extraccionManifiestos = () => {
   const almacenVariables = useContext(ContextoApp);
 
-  const [respuesta, setrespuesta] = useState<ApiResponse | null>(null);
+  const [respuesta, setrespuesta] = useState<Manifiesto[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const loginUrl = "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/auth/loginDbCustomer";
+      const loginUrl =
+        "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/auth/loginDbCustomer";
 
       const loginPayload = {
         username: "134APIINTEGRA",
-        idname: "eyJpdiI6InZTN1BBeFF6UEhCSno5VUp0bjRWSFE9PSIsInZhbHVlIjoiMmdjY0g3VlpwZDZNbmdQU2JRTlg4bWRmeXlsQzY4TExLSGJYTVpTcitrOD0iLCJtYWMiOiIyNGM0ZjcyODYyZGY3MDdkZWY4M2EzNzI0YzNjMmIzNjgxZTQ2ODVlYzA2MWY2YWViNTRlYjhjMDE5NDY4ZWEzIiwidGFnIjoiIn0",
+        idname:
+          "eyJpdiI6InZTN1BBeFF6UEhCSno5VUp0bjRWSFE9PSIsInZhbHVlIjoiMmdjY0g3VlpwZDZNbmdQU2JRTlg4bWRmeXlsQzY4TExLSGJYTVpTcitrOD0iLCJtYWMiOiIyNGM0ZjcyODYyZGY3MDdkZWY4M2EzNzI0YzNjMmIzNjgxZTQ2ODVlYzA2MWY2YWViNTRlYjhjMDE5NDY4ZWEzIiwidGFnIjoiIn0",
         agency: "001",
         proyect: "1",
-        isGroup: 0
+        isGroup: 0,
       };
 
       try {
-        // Realiza el login
-        const loginrespuesta = await axios.post(loginUrl, loginPayload, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // ✅ Login con tipado correcto
+        const loginrespuesta = await axios.post<LoginResponse>(
+          loginUrl,
+          loginPayload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         const token = loginrespuesta.data.data.access_token;
 
-        // Realiza la segunda consulta usando el token
-        const queryUrl = "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/vulcano/customer/00134/index";
+        const queryUrl =
+          "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/vulcano/customer/00134/index";
         const queryPayload = {
           pageSize: 1000,
           rptId: 26,
@@ -69,24 +82,28 @@ const extraccionManifiestos = () => {
             {
               campo: "Fecha",
               operador: "YEAR>",
-              valor: "2023"
+              valor: "2023",
             },
             {
               campo: "Tenedor",
               operador: "=",
-              valor: almacenVariables?.tenedor 
-            }
-          ]
+              valor: almacenVariables?.tenedor,
+            },
+          ],
         };
 
-        const queryrespuesta = await axios.post(queryUrl, queryPayload, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        // ✅ Consulta con tipado correcto
+        const queryrespuesta = await axios.post<ApiResponse>(
+          queryUrl,
+          queryPayload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        // Establece la respuesta en el estado
         setrespuesta(queryrespuesta.data.data);
       } catch (err) {
         if (err instanceof Error) {
@@ -100,20 +117,19 @@ const extraccionManifiestos = () => {
     };
 
     fetchData();
-  }, [almacenVariables?.tenedor]); // Agregar almacenVariables.tenedor como dependencia para el efecto
+  }, [almacenVariables?.tenedor]);
 
-  // Función para filtrar los manifiestos únicos
+  // ✅ Filtrar manifiestos únicos
   const filtrarManifiestosUnicos = (data: Manifiesto[]): Manifiesto[] => {
     return data.reduce((acc: Manifiesto[], item) => {
-      if (!acc.some(existingItem => existingItem.Manif_numero === item.Manif_numero)) {
+      if (!acc.some(existing => existing.Manif_numero === item.Manif_numero)) {
         acc.push(item);
       }
       return acc;
     }, []);
   };
 
-  // Filtrar los manifiestos únicos usando la función
-  const manifiestosTodos = respuesta ? filtrarManifiestosUnicos(respuesta.data) : [];
+  const manifiestosTodos = respuesta ? filtrarManifiestosUnicos(respuesta) : [];
 
   return { manifiestosTodos, loading, error };
 };

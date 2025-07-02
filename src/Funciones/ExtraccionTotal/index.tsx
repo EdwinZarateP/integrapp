@@ -5,6 +5,7 @@ import ExtraccionPagos from "../../Funciones/ExtraerInfoApiPagos/index";
 import ExtraeSaldos from "../../Funciones/ExtraeSaldosApi/index";
 import ExtraeNovedades from "../../Funciones/ExtraeNovedades/index";
 
+
 const ExtraccionTotal = () => {
   const almacenVariables = useContext(ContextoApp);
   const { fetchManifiestos } = ExtraccionManifiestos();

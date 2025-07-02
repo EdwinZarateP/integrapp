@@ -3,6 +3,10 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 import { ContextoApp } from "../../Contexto/index";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
+const BASE_URL = `${API_BASE}`;
+
+
 // Define una interfaz para los datos de saldos
 interface Saldo {
   _id: string;        // ID único del manifiesto en MongoDB
@@ -25,7 +29,7 @@ const ExtraeSaldos = () => {
 
   const fetchSaldos = async (): Promise<Saldo[]> => {
     try {
-      const url = `https://integrappi-dvmh.onrender.com/manifiestos/tenedor/${CodigoTenedorCookie}`;
+      const url = `${BASE_URL}/manifiestos/tenedor/${CodigoTenedorCookie}`;
       // 👉 Tipamos response.data como Saldo[]
       const respuesta = await axios.get<Saldo[]>(url);
 

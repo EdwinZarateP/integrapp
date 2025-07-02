@@ -6,6 +6,9 @@ import { ContextoApp } from '../../Contexto/index';
 import confetti from 'canvas-confetti'; // Importar confetti
 import './estilos.css';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
+const BASE_URL = `${API_BASE}/usuarios`;
+
 // Define un tipo para las claves de ContextProps
 type ContextKeys = 'nombre' | 'tenedor' | 'celular' | 'email' | 'password';
 
@@ -72,7 +75,8 @@ const Registro: React.FC = () => {
     setErrorMensaje('');
 
     try {
-      const response = await fetch('https://integrappi-dvmh.onrender.com/usuarios/', {
+      const response = await fetch(`${BASE_URL}/cargar-masivo`,{
+        
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

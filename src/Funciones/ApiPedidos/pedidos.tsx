@@ -21,8 +21,8 @@ export const cargarPedidosMasivo = async (
     });
     return res.data;
   } catch (error: any) {
-    if (error.response?.data?.detail?.errores) {
-      throw error.response.data.detail.errores;
+    if (error.response?.data?.detail) {
+      throw { detail: error.response.data.detail }; // 👈 envuelve en un objeto con detail para consistencia
     }
     throw error.response?.data || error.message;
   }

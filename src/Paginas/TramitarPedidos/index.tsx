@@ -1,6 +1,6 @@
 // src/components/TramitarPedidos/index.tsx
 
-import React, { useState, useEffect, ChangeEvent, useRef } from 'react'; 
+import React, { useState, useEffect, ChangeEvent, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import {
@@ -88,22 +88,44 @@ const TramitarPedidos: React.FC = () => {
     setCargando(true);
     try {
       const res = await cargarPedidosMasivo(file, usuario);
-      await fetchPedidos();
-      const match = res.mensaje.match(/^(\d+)/);
-      const count = match ? Number(match[1]) : pedidos.length;
+      // Si carga bien, muestra mensaje de éxito
       await Swal.fire({
         icon: 'success',
-        title: `${count} líneas cargadas`,
+        title: res.mensaje,
         timer: 2000,
         showConfirmButton: false,
       });
-    } catch {
-      await Swal.fire({ icon: 'error', title: 'Error al cargar archivo' });
+      await fetchPedidos();
+    } catch (error: any) {
+      console.log("🔴 Error al cargar masivo:", error);
+      // extrae la estructura de error de FastAPI
+      const data = error.detail;
+      const title = data?.mensaje ?? 'Error al cargar archivo';
+      const errores = Array.isArray(data?.errores) ? data.errores : [];
+
+      // Muestra los errores de forma clara como lista
+      await Swal.fire({
+        icon: 'error',
+        title,
+        html: errores.length
+          ? (() => {
+              const mostrados = errores.slice(0, 3);
+              const restantes = errores.length - 3;
+              return `
+                <ul style="text-align:left">
+                  ${mostrados.map((e: string) => `<li>${e}</li>`).join('')}
+                </ul>
+                ${restantes > 0 ? `<p>... y ${restantes} error(es) más</p>` : ''}
+              `;
+            })()
+          : 'Ocurrió un error inesperado'
+      });
     } finally {
       setCargando(false);
       resetFileInput();
     }
   };
+
 
   const handleEliminar = async (id: string) => {
     if (!usuario) return;
@@ -153,18 +175,15 @@ const TramitarPedidos: React.FC = () => {
   };
 
   // Agrupar por placa
-
-  
   const pedidosFiltrados = pedidos.filter(p =>
     (!filtroRegional || p.regional === filtroRegional) &&
-    (!filtroEstado || p.estado === filtroEstado)
+    (!filtroEstado   || p.estado    === filtroEstado)
   );
 
   const grupos = pedidosFiltrados.reduce<Record<string, Pedido[]>>((acc, p) => {
     (acc[p.placa] ||= []).push(p);
     return acc;
   }, {});
-
 
   return (
     <div className="TramitarPedidos-contenedor">
@@ -174,10 +193,6 @@ const TramitarPedidos: React.FC = () => {
           <IoExitSharp />
         </button>
       </div>
-
-      {/* <span className="TramitarPedidos-cookieDebug">
-        Usuario: {usuario} — Perfil: {perfil}
-      </span> */}
 
       {(perfil === 'ADMIN' || perfil === 'OPERADOR') && (
         <div className="TramitarPedidos-upload">
@@ -202,7 +217,7 @@ const TramitarPedidos: React.FC = () => {
         <div className="TramitarPedidos-filtros">
           <select
             value={filtroRegional}
-            onChange={(e) => setFiltroRegional(e.target.value)}
+            onChange={e => setFiltroRegional(e.target.value)}
             className="TramitarPedidos-select"
           >
             <option value="">Todas las regionales</option>
@@ -213,7 +228,7 @@ const TramitarPedidos: React.FC = () => {
 
           <select
             value={filtroEstado}
-            onChange={(e) => setFiltroEstado(e.target.value)}
+            onChange={e => setFiltroEstado(e.target.value)}
             className="TramitarPedidos-select"
           >
             <option value="">Todos los estados</option>
@@ -244,14 +259,20 @@ const TramitarPedidos: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {Object.entries(grupos).map(([placa, items]) => (
-              <React.Fragment key={placa}>
-                <tr className="TramitarPedidos-placaHeader">
-                  <td colSpan={13}>Placa: <strong>{placa}</strong></td>
-                </tr>
-                {items.map(p => {
-                  const diff = p.valor_flete - p.valor_flete_sistema;
-                  return (
+            {Object.entries(grupos).map(([placa, items]) => {
+              const totalValorFlete   = items.reduce((sum, p) => sum + p.valor_flete, 0);
+              const valorFleteSistema = items[0].valor_flete_sistema;
+              const diffTotal         = totalValorFlete - valorFleteSistema;
+
+              return (
+                <React.Fragment key={placa}>
+                  <tr className="TramitarPedidos-placaHeader">
+                    <td colSpan={13}>
+                      Placa: <strong>{placa}</strong>
+                    </td>
+                  </tr>
+
+                  {items.map(p => (
                     <tr
                       key={p.id}
                       className={p.estado === 'REQUIERE AUTORIZACION' ? 'TramitarPedidos-row--requiere' : ''}
@@ -263,10 +284,8 @@ const TramitarPedidos: React.FC = () => {
                       <td>{p.num_kilos}</td>
                       <td>{p.tipo_vehiculo}</td>
                       <td>{formatCOP(p.valor_flete)}</td>
-                      <td>{formatCOP(p.valor_flete_sistema)}</td>
-                      <td className={`TramitarPedidos-diferencia ${diff < 0 ? 'TramitarPedidos-diferencia--negativa' : ''}`}>
-                        {p.estado === 'REQUIERE AUTORIZACION' ? formatCOP(diff) : '-'}
-                      </td>
+                      <td></td> {/* oculto en detalle */}
+                      <td></td> {/* oculto en detalle */}
                       <td>{p.observaciones}</td>
                       <td>{p.regional}</td>
                       <td>{p.estado}</td>
@@ -283,10 +302,20 @@ const TramitarPedidos: React.FC = () => {
                         )}
                       </td>
                     </tr>
-                  );
-                })}
-              </React.Fragment>
-            ))}
+                  ))}
+
+                  <tr className="TramitarPedidos-placaResumen">
+                    <td colSpan={6}><strong>Total Placa</strong></td>
+                    <td><strong>{formatCOP(totalValorFlete)}</strong></td>
+                    <td><strong>{formatCOP(valorFleteSistema)}</strong></td>
+                    <td className={`TramitarPedidos-diferencia ${diffTotal > 49000 ? 'TramitarPedidos-diferencia--negativa' : ''}`}> 
+                      <strong>{formatCOP(diffTotal)}</strong>
+                    </td>
+                    <td colSpan={4}></td>
+                  </tr>
+                </React.Fragment>
+              );
+            })}
           </tbody>
         </table>
       </div>

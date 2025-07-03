@@ -46,7 +46,7 @@
   transform: scale(1.2);
 }
 
-/* Zona de carga de archivo */
+/* Zona de carga de archivo (trámites y completados) */
 .TramitarPedidos-upload {
   display: flex;
   flex-wrap: wrap;
@@ -85,7 +85,6 @@
 .TramitarPedidos-table {
   width: 100%;
   border-collapse: separate;
-
 }
 
 /* Encabezados pegajosos */
@@ -101,10 +100,10 @@
 
 /* Fila de agrupación por placa */
 .TramitarPedidos-placaHeader td {
-  background: #000000;
+  background: #000;
   font-weight: bold;
   padding: 0.75rem;
-  color: #ffffff;
+  color: #fff;
 }
 
 /* Celdas del cuerpo */
@@ -182,13 +181,48 @@
 /* Filtros */
 .TramitarPedidos-filtros {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
-  margin: 1rem 0;
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+  justify-content: left;
+  align-items: center;
 }
+
 .TramitarPedidos-select {
   padding: 0.4rem;
   border-radius: 4px;
   border: 1px solid #ccc;
+}
+
+.TramitarPedidos-botonCompletados{
+  padding: 0.4rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+}
+
+/* Pestañas */
+.TramitarPedidos-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.TramitarPedidos-tabs button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: #e0e0e0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.TramitarPedidos-tabs button.active {
+  background: #007bff;
+  color: #fff;
+}
+
+/* Filtros de completados (fecha) */
+.TramitarPedidos-completados .TramitarPedidos-filtros label {
+  margin-right: 1rem;
 }
 
 /* Ajustes para pantallas pequeñas */

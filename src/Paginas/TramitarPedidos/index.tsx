@@ -14,6 +14,7 @@ import {
   exportarCompletados
 } from '../../Funciones/ApiPedidos/pedidos';
 import { IoExitSharp } from 'react-icons/io5';
+import logo from '../../Imagenes/albatros.png';
 import './estilos.css';
 
 interface Pedido {
@@ -246,7 +247,10 @@ const TramitarPedidos: React.FC = () => {
     <div className="TramitarPedidos-contenedor">
       {/* HEADER */}
       <div className="TramitarPedidos-header">
-        <h2 className="TramitarPedidos-titulo">Tramitar Pedidos</h2>
+          <h2 className="TramitarPedidos-titulo">
+          <img src={logo} alt="Logo Integra" className="TramitarPedidos-Logo" />
+          Tramitar Pedidos
+        </h2>
         <button onClick={handleLogout} className="TramitarPedidos-botonCerrarSesion">
           <IoExitSharp />
         </button>

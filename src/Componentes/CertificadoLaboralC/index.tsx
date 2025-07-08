@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import "jspdf-autotable";
 import "./estilos.css";
 
-const API_BASE = "https://integrappi-dvmh.onrender.com";
+const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
 const BUSCAR_URL = `${API_BASE}/empleados/buscar?identificacion=`;
 const ENVIAR_URL = `${API_BASE}/empleados/enviar`;
 

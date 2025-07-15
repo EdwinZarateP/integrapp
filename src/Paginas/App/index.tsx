@@ -16,6 +16,7 @@ import CertificadoLaboralP from '../CertificadoLaboralP/index';
 import NoEncontrado from '../NoEncontrado/index';
 import { ProveedorVariables } from '../../Contexto/index';
 import Pedidos from '../Pedidos/index';
+import PedidosCompletados from '../PedidosCompletados/index';
 import LoginUsuario from '../LoginUsuarios/index'
 import "./estilos.css";
 
@@ -41,6 +42,7 @@ const App: React.FC = () => {
         <Route path="/PortalVentas" element={<PortalVentas />} />
         <Route path="/CertificadoLaboralP" element={<CertificadoLaboralP />} />
         <Route path="/Pedidos" element={<Pedidos />} />
+        <Route path="/PedidosCompletados" element={<PedidosCompletados />} />
         <Route path="/LoginUsuario" element={<LoginUsuario/>} />
         <Route path="*" element={<NoEncontrado />} />
       </Routes>

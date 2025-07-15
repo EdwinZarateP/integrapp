@@ -21,3 +21,11 @@
   cursor: not-allowed;
   box-shadow: none;
 }
+
+/* Responsive: pantallas menores a 600px */
+@media (max-width: 600px) {
+  .CargarPedidos-boton {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+}

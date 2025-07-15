@@ -1,6 +1,6 @@
-/* src/Paginas/Pedidos.css */
+/* src/Paginas/PedidosCompletados.css */
 
-.Pedidos-contenedor {
+.PedidosCompletados-contenedor {
   padding: 1rem;
   background-color: #efefef;
   height: 100vh;
@@ -9,7 +9,7 @@
   flex-direction: column;
 }
 
-.Pedidos-header {
+.PedidosCompletados-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -22,30 +22,30 @@
   gap: 1rem;
 }
 
-.Pedidos-select {
+.PedidosCompletados-select {
   appearance: none;
   -webkit-appearance: none;
   font-size: 1.8rem;
   font-weight: bold;
   color: #333;
-  padding: 0.2rem 0.5rem;
   border: none;
   background: transparent;
   cursor: pointer;
   flex: 1 1 auto;
   max-width: 400px;
   text-align: center;
+  padding: 0;
 }
 
-.Pedidos-select option {
-  font-size: 1.5rem;
+.PedidosCompletados-select option {
+  font-size: 1.6rem;
 }
 
-.Pedidos-select:focus {
+.PedidosCompletados-select:focus {
   outline: none;
 }
 
-.Pedidos-botonCerrar {
+.PedidosCompletados-botonCerrar {
   max-width: 80px;
   background-color: #d9534f;
   color: white;
@@ -61,53 +61,31 @@
   white-space: nowrap;
 }
 
-.Pedidos-botonCerrar:hover {
+.PedidosCompletados-botonCerrar:hover {
   background-color: #c9302c;
 }
 
-.Pedidos-iconoCerrar {
+.PedidosCompletados-iconoCerrar {
   font-size: 1.2rem;
 }
 
-.Pedidos-cuerpo {
+.PedidosCompletados-cuerpo {
   flex: 1 1 auto;
   overflow-y: auto;
   padding-bottom: 100px;
 }
 
-.Pedidos-botones {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #ffffff;
-  border-top: 1px solid #ddd;
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
-  z-index: 1000;
-}
-
 @media (max-width: 768px) {
-  .Pedidos-select {
+  .PedidosCompletados-select {
     font-size: 1.2rem;
     max-width: 100%;
   }
 
-  .Pedidos-select option{
+  .PedidosCompletados-select option{
     font-size: 0.9rem;
   }
 
-  .Pedidos-botonCerrar {
+  .PedidosCompletados-botonCerrar {
     justify-content: center;
-  }
-
-  .Pedidos-botones {
-    flex-direction: column;
-    align-items: center;
-    padding: 0.5rem;
   }
 }

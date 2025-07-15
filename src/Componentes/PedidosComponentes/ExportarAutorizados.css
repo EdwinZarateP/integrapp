@@ -23,12 +23,10 @@
   background-color: rgb(64, 108, 109);
 }
 
-@media (max-width: 768px) {
-  .ExportarAutorizados-contenedor {
-    padding: 0 1rem;
-  }
-
+/* Responsive: pantallas menores a 600px */
+@media (max-width: 600px) {
   .ExportarAutorizados-boton {
-    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
   }
 }

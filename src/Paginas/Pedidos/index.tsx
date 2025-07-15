@@ -1,5 +1,5 @@
 // src/Paginas/Pedidos.tsx
-
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaSignOutAlt } from 'react-icons/fa';
 import CargarPedidos from '../../Componentes/PedidosComponentes/CargarPedidos';
@@ -8,39 +8,49 @@ import ExportarAutorizados from '../../Componentes/PedidosComponentes/ExportarAu
 import ImportarPedidosVulcano from '../../Componentes/PedidosComponentes/importarPedidosVulcano';
 import './estilos.css';
 
-const Pedidos = () => {
+const Pedidos: React.FC = () => {
   const navigate = useNavigate();
+  const [vista, setVista] = useState<'gestion' | 'completados'>('gestion');
 
   const cerrarSesion = () => {
-    // Eliminar cookies
     document.cookie = 'usuarioPedidosCookie=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
     document.cookie = 'regionalPedidosCookie=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
     document.cookie = 'perfilPedidosCookie=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-
-    // Redirigir a login
     navigate('/LoginUsuario');
+  };
+
+  const handleVistaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value as 'gestion' | 'completados';
+    setVista(val);
+    if (val === 'completados') {
+      navigate('/pedidoscompletados');
+    }
   };
 
   return (
     <div className="Pedidos-contenedor">
       <div className="Pedidos-header">
-        <h1 className="Pedidos-titulo">Gestión de Pedidos</h1>
+        <select
+          className="Pedidos-select"
+          value={vista}
+          onChange={handleVistaChange}
+        >
+          <option value="gestion">Gestión de Pedidos</option>
+          <option value="completados">Pedidos completados</option>
+        </select>
         <button className="Pedidos-botonCerrar" onClick={cerrarSesion}>
           <FaSignOutAlt className="Pedidos-iconoCerrar" />
         </button>
       </div>
 
       <div className="Pedidos-cuerpo">
-        <TablaPedidos/>
-
+        <TablaPedidos />
         <div className="Pedidos-botones">
           <CargarPedidos />
-          <ExportarAutorizados/>
-          <ImportarPedidosVulcano/>
-
+          <ExportarAutorizados />
+          <ImportarPedidosVulcano />
         </div>
       </div>
-
     </div>
   );
 };

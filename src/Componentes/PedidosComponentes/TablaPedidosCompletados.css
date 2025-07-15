@@ -1,0 +1,121 @@
+/* src/Componentes/TablaPedidosCompletados.css */
+.TablaPedidosCompletados-contenedor {
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: inherit;
+  margin-top: 20px;
+}
+
+.TablaPedidosCompletados-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.TablaPedidosCompletados-filtros select,
+.TablaPedidosCompletados-filtros input[type="date"] {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.TablaPedidosCompletados-button {
+  margin: 0.2rem;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #158e45;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.TablaPedidosCompletados-button:hover {
+  background-color: #0f6b35;
+}
+
+.TablaPedidosCompletados-wrapper {
+  max-height: 50vh;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.TablaPedidosCompletados-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.5rem;
+  min-width: 900px;
+}
+
+.TablaPedidosCompletados-table th,
+.TablaPedidosCompletados-table td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.TablaPedidosCompletados-expand {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+}
+
+.TablaPedidosCompletados-row--alert td {
+  background-color: #f8d7da;
+}
+
+.TablaPedidosCompletados-row--expanded td {
+  font-weight: bold;
+}
+
+.TablaPedidosCompletados-cell--error {
+  color: #dc3545;
+}
+
+.TablaPedidosCompletados-details td {
+  padding: 0.5rem;
+  border: 1px dashed #999;
+}
+
+.TablaPedidosCompletados-subtable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  background-color: #f1f1f1;
+  font-size: 0.8rem;
+}
+
+.TablaPedidosCompletados-subtable th,
+.TablaPedidosCompletados-subtable td {
+  border: 1px solid #ccc;
+  padding: 0.25rem 0.5rem;
+  text-align: left;
+}
+
+.TablaPedidosCompletados-subtable tr:nth-child(even) td {
+  background-color: #ffffff;
+}
+
+.TablaPedidosCompletados-subtable tr:nth-child(odd) td {
+  background-color: #f9f9f9;
+}
+
+.TablaPedidosCompletados-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  z-index: 2;
+}
+
+.TablaPedidosCompletados-subtable thead th {
+  position: static;
+  z-index: 1;
+}

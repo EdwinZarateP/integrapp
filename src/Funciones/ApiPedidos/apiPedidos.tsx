@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import qs from 'qs';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -58,6 +58,14 @@ export interface ListarVehiculosResponse {
 
 export interface ListarCompletadosResponse {
   consecutivo_vehiculo: string;
+  tipo_vehiculo: string;
+  multiestado: boolean;
+  estados: string[];
+  total_cajas_vehiculo: number;
+  total_kilos_vehiculo: number;
+  total_flete_vehiculo: number;
+  valor_flete_sistema: number;
+  diferencia_flete: number;
   pedidos: Pedido[];
 }
 
@@ -162,10 +170,18 @@ export const exportarCompletados = async (
   regionales?: string[]
 ): Promise<Blob> => {
   const params: any = { usuario, fecha_inicial: fechaInicial, fecha_final: fechaFinal };
-  if (regionales) params.regionales = regionales;
+  if (regionales && regionales.length) {
+    params.regionales = regionales;
+  }
+
   const response = await axios.get<Blob>(
     `${API_BASE}/pedidos/exportar-completados`,
-    { params, responseType: 'blob' }
+    {
+      params,
+      // Serializa arrays así: ?regionales=FUNZA&regionales=GIRARDOTA
+      paramsSerializer: p => qs.stringify(p, { arrayFormat: 'repeat' }),
+      responseType: 'blob',
+    }
   );
   return response.data;
 };

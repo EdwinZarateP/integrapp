@@ -15,7 +15,7 @@ import PortalVentas from '../PortalVentas/index';
 import CertificadoLaboralP from '../CertificadoLaboralP/index';
 import NoEncontrado from '../NoEncontrado/index';
 import { ProveedorVariables } from '../../Contexto/index';
-import TramitarPedidos from '../TramitarPedidos/index';
+import Pedidos from '../Pedidos/index';
 import LoginUsuario from '../LoginUsuarios/index'
 import "./estilos.css";
 
@@ -40,7 +40,7 @@ const App: React.FC = () => {
         <Route path="/PortalClientes" element={<PortalClientes />} />
         <Route path="/PortalVentas" element={<PortalVentas />} />
         <Route path="/CertificadoLaboralP" element={<CertificadoLaboralP />} />
-        <Route path="/TramitarPedidos" element={<TramitarPedidos />} />
+        <Route path="/Pedidos" element={<Pedidos />} />
         <Route path="/LoginUsuario" element={<LoginUsuario/>} />
         <Route path="*" element={<NoEncontrado />} />
       </Routes>

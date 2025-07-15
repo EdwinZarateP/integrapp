@@ -1,0 +1,23 @@
+.ImportarPedidosVulcano-boton {
+  background-color: cadetblue;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  padding: 0.9rem 1.6rem;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 176, 155, 0.25);
+  letter-spacing: 0.5px;
+}
+
+.ImportarPedidosVulcano-boton:hover:not(:disabled) {
+  background-color: rgb(64, 108, 109);
+}
+
+.ImportarPedidosVulcano-boton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}

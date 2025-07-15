@@ -16,7 +16,7 @@ const LoginUsuario: React.FC = () => {
   // Si ya existe cookie, redirige directamente
   useEffect(() => {
     const match = document.cookie.match(/(^| )usuarioPedidosCookie=([^;]+)/);
-    if (match) navigate("/TramitarPedidos", { replace: true });
+    if (match) navigate("/Pedidos", { replace: true });
   }, [navigate]);
 
   const manejarLogin = async (e: React.FormEvent) => {
@@ -27,9 +27,9 @@ const LoginUsuario: React.FC = () => {
     try {
       const res = await loginUsuario(usuario, clave);
 
-      // Definir fecha de expiración para dentro de 7 días
+      // Definir fecha de expiración para dentro de 14 días
       const expiracion = new Date();
-      expiracion.setDate(expiracion.getDate() + 7);
+      expiracion.setDate(expiracion.getDate() + 14);
       const expires = `expires=${expiracion.toUTCString()}`;
 
       // Guardar cookies con expiración
@@ -44,7 +44,7 @@ const LoginUsuario: React.FC = () => {
       });
 
       setTimeout(() => {
-        navigate("/TramitarPedidos", { replace: true });
+        navigate("/Pedidos", { replace: true });
       }, 800);
     } catch {
       setMensajeError("Usuario o clave incorrectos. Inténtalo de nuevo.");

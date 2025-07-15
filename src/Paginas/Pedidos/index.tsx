@@ -1,24 +1,46 @@
 // src/Paginas/Pedidos.tsx
 
-import CargarPedidos from "../../Componentes/frontPedidos/CargarPedidos";
-import TablaPedidos from "../../Componentes/frontPedidos/TablaPedidos";
-// import FiltroPedidos si lo creas luego
-// import ProcesarMasivo si lo creas luego
+import { useNavigate } from 'react-router-dom';
+import { FaSignOutAlt } from 'react-icons/fa';
+import CargarPedidos from '../../Componentes/PedidosComponentes/CargarPedidos';
+import TablaPedidos from '../../Componentes/PedidosComponentes/TablaPedidos';
+import ExportarAutorizados from '../../Componentes/PedidosComponentes/ExportarAutorizados';
+import ImportarPedidosVulcano from '../../Componentes/PedidosComponentes/importarPedidosVulcano';
+import './estilos.css';
 
 const Pedidos = () => {
+  const navigate = useNavigate();
+
+  const cerrarSesion = () => {
+    // Eliminar cookies
+    document.cookie = 'usuarioPedidosCookie=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+    document.cookie = 'regionalPedidosCookie=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+    document.cookie = 'perfilPedidosCookie=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+
+    // Redirigir a login
+    navigate('/LoginUsuario');
+  };
+
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Gestión de Pedidos</h1>
-      
-      {/* Aquí puedes ir agregando por secciones */}
-      <CargarPedidos />
+    <div className="Pedidos-contenedor">
+      <div className="Pedidos-header">
+        <h1 className="Pedidos-titulo">Gestión de Pedidos</h1>
+        <button className="Pedidos-botonCerrar" onClick={cerrarSesion}>
+          <FaSignOutAlt className="Pedidos-iconoCerrar" />
+        </button>
+      </div>
 
-      <hr style={{ margin: "2rem 0" }} />
+      <div className="Pedidos-cuerpo">
+        <TablaPedidos/>
 
-      {/* Aquí luego puedes agregar filtros */}
-      {/* <FiltroPedidos /> */}
+        <div className="Pedidos-botones">
+          <CargarPedidos />
+          <ExportarAutorizados/>
+          <ImportarPedidosVulcano/>
 
-      <TablaPedidos />
+        </div>
+      </div>
+
     </div>
   );
 };

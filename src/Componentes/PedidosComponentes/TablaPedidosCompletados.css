@@ -68,16 +68,8 @@
   padding: 0;
 }
 
-.TablaPedidosCompletados-row--alert td {
-  background-color: #f8d7da;
-}
-
 .TablaPedidosCompletados-row--expanded td {
   font-weight: bold;
-}
-
-.TablaPedidosCompletados-cell--error {
-  color: #dc3545;
 }
 
 .TablaPedidosCompletados-details td {

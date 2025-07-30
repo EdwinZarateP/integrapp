@@ -14,12 +14,19 @@ export interface FiltrosConUsuario {
   filtros?: FiltrosPedidos;
 }
 
+export interface CargarMasivoResult {
+  mensaje: string;
+  tiempo_segundos: number;
+  detalles: Pedido[];
+}
+
 export interface Pedido {
   id: string;
   fecha_creacion: string;
   cliente_nombre: string;
   origen: string;
   destino: string;
+  destino_real: string;
   num_cajas: number;
   num_kilos: number;
   tipo_vehiculo: string;
@@ -53,6 +60,7 @@ export interface ListarVehiculosResponse {
   /** Nuevo: suma de todos los costos reales (flete + desvío + cargue + punto adicional) */
   costo_real_vehiculo: number;
   valor_flete_sistema: number;
+  total_flete_solicitado: number;
   /** Nuevo: suma teórica según tarifa + otros_costos + desvío */
   costo_teorico_vehiculo: number;
   total_puntos_vehiculo: number;
@@ -75,6 +83,7 @@ export interface ListarCompletadosResponse {
   total_kilos_vehiculo: number;
   total_flete_vehiculo: number;
   valor_flete_sistema: number;
+  total_flete_solicitado: number;
   total_punto_adicional: number;
   total_cargue_descargue: number;
   total_desvio: number;
@@ -88,7 +97,7 @@ export const cargarPedidosMasivo = async (
   creadoPor: string,
   archivo: File,
   onUploadProgress?: (e: ProgressEvent) => void
-): Promise<{ mensaje: string; detalles: Pedido[] }> => {
+): Promise<CargarMasivoResult> => {
   const formData = new FormData();
   formData.append('creado_por', creadoPor);
   formData.append('archivo', archivo);
@@ -98,13 +107,14 @@ export const cargarPedidosMasivo = async (
     onUploadProgress
   };
 
-  const response = await axios.post(
-  `${API_BASE}/pedidos/cargar-masivo`,
-  formData,
-  config
-);
+  // Indicamos el tipo genérico CargarMasivoResult
+  const response = await axios.post<CargarMasivoResult>(
+    `${API_BASE}/pedidos/cargar-masivo`,
+    formData,
+    config
+  );
 
-return response.data as { mensaje: string; detalles: Pedido[] };
+  return response.data;
 };
 
 

@@ -9,7 +9,7 @@ import {
 } from '../../Funciones/ApiPedidos/apiPedidos';
 import './TablaPedidosCompletados.css';
 
-const regionalOptions = ['FUNZA', 'GIRARDOTA', 'BUCARAMANGA', 'CALI', 'BARRANQUILLA'];
+const regionalOptions = ['FUNZA','KABI', 'GIRARDOTA', 'BUCARAMANGA', 'CALI', 'BARRANQUILLA'];
 
 const TablaPedidosCompletados: React.FC = () => {
   const perfil = Cookies.get('perfilPedidosCookie') || '';

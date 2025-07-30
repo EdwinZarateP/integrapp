@@ -11,7 +11,7 @@ import './TablaPedidos.css';
 const formatoMoneda = (v: number) =>
   v.toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
 const estadosDisponibles = ['AUTORIZADO', 'REQUIERE AUTORIZACION', 'COMPLETADO'];
-const regionesDisponibles = ['FUNZA', 'GIRARDOTA', 'BUCARAMANGA', 'CALI', 'BARRANQUILLA'];
+const regionesDisponibles = ['FUNZA', 'KABI', 'GIRARDOTA', 'BUCARAMANGA', 'CALI', 'BARRANQUILLA'];
 
 const TablaPedidos: React.FC = () => {
   const [pedidos, setPedidos] = useState<any[]>([]);
@@ -24,6 +24,7 @@ const TablaPedidos: React.FC = () => {
   const [filtroRegional, setFiltroRegional] = useState('TODOS');
   const [mostrarModalFiltros, setMostrarModalFiltros] = useState(false);
   const [esPantallaGrande, setEsPantallaGrande] = useState(window.innerWidth >= 900);
+  
 
   // Detectar cambios en el tamaño de la pantalla
   useLayoutEffect(() => {
@@ -154,20 +155,19 @@ const TablaPedidos: React.FC = () => {
                 <th>Vehículo</th>
                 <th>Acciones</th>
                 <th>Tipo</th>
-                <th>Destino</th>
+                <th>Destino Final</th>
                 <th>Estados</th>
-                <th>Cajas</th>
-                <th>Kilos</th>
-                <th>Flete Sys</th>
-                <th>Flete Real</th>
-                <th>Costo Real</th>
-                <th>Costo Teórico</th>
                 <th>Puntos</th>
-                <th>Pto. Teo</th>
-                <th>Cargue Teo</th>
-                <th>Pto. Adic.</th>
+                <th>Kilos</th>
+                <th>Flete Teorico</th>
+                <th>Car/desc Teorico</th>
+                <th>Pto Adic Teórico</th>                
+                <th>Total Teórico</th>   
+                <th>Flete Solicitado</th>
                 <th>Cargue</th>
-                <th>Desvío</th>
+                <th>Pto Adic Solicitado</th>
+                <th>Desvío</th>   
+                <th>Total Solicitado</th>                             
                 <th>Diferencia</th>
               </tr>
             </thead>
@@ -197,18 +197,17 @@ const TablaPedidos: React.FC = () => {
                     <td>{g.tipo_vehiculo.split('_')[0]}</td>
                     <td>{g.destino}</td>
                     <td>{g.estados.join(', ')}</td>
-                    <td>{g.total_cajas_vehiculo}</td>
+                    <td>{g.total_puntos_vehiculo}</td>
                     <td>{g.total_kilos_vehiculo}</td>
                     <td>{formatoMoneda(g.valor_flete_sistema)}</td>
-                    <td>{formatoMoneda(g.total_flete_vehiculo)}</td>
-                    <td>{formatoMoneda(g.costo_real_vehiculo)}</td>
-                    <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td>
-                    <td>{g.total_puntos_vehiculo}</td>
-                    <td>{formatoMoneda(g.total_punto_adicional_teorico)}</td>
                     <td>{formatoMoneda(g.total_cargue_descargue_teorico)}</td>
-                    <td>{formatoMoneda(g.total_punto_adicional)}</td>
-                    <td>{formatoMoneda(g.total_cargue_descargue)}</td>
+                    <td>{formatoMoneda(g.total_punto_adicional_teorico)}</td>                    
+                    <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td> 
+                    <td>{formatoMoneda(g.total_flete_solicitado)}</td>                                        
+                    <td>{formatoMoneda(g.total_cargue_descargue)}</td>                                   
+                    <td>{formatoMoneda(g.total_punto_adicional)}</td>                    
                     <td>{formatoMoneda(g.total_desvio_vehiculo || 0)}</td>
+                    <td>{formatoMoneda(g.costo_real_vehiculo)}</td>                    
                     <td className={g.diferencia_flete > 0 ? 'TablaPedidos-cell--error' : ''}>
                       {formatoMoneda(g.diferencia_flete)}
                     </td>
@@ -219,9 +218,8 @@ const TablaPedidos: React.FC = () => {
                         <table className="TablaPedidos-subtable">
                           <thead>
                             <tr>
-                              <th>Pedido</th><th>Origen</th><th>Destino</th><th>Cliente</th>
-                              <th>Cajas</th><th>Kilos</th><th>Desvío</th><th>Cargue</th>
-                              <th>Pto. Adic.</th><th>Obs.</th><th>Estado</th>
+                              <th>Pedido</th><th>Origen</th><th>Destino Real</th><th>Cliente</th>
+                              <th>Destinatario</th><th>Kilos</th><th>Entregas</th><th>Observaciones</th><th>Estado</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -229,13 +227,11 @@ const TablaPedidos: React.FC = () => {
                               <tr key={p.id}>
                                 <td>{p.consecutivo_integrapp}</td>
                                 <td>{p.origen}</td>
-                                <td>{p.destino}</td>
+                                <td>{p.destino_real}</td>
                                 <td>{p.cliente_nombre}</td>
-                                <td>{p.num_cajas}</td>
+                                <td>{p.ubicacion_descargue}</td>                                
                                 <td>{p.num_kilos}</td>
-                                <td>{formatoMoneda(p.desvio)}</td>
-                                <td>{formatoMoneda(p.cargue_descargue)}</td>
-                                <td>{formatoMoneda(p.punto_adicional)}</td>
+                                <td>{p.planilla_siscore}</td>
                                 <td>{p.observaciones}</td>
                                 <td>{p.estado}</td>
                               </tr>

@@ -19,6 +19,7 @@ const CargarPedidos: React.FC = () => {
   const handleArchivo = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const archivo = e.target.files?.[0] ?? null;
     if (!archivo) return;
+
     const usuario = Cookies.get('usuarioPedidosCookie');
     if (!usuario) {
       Swal.fire('Error', 'Usuario no válido.', 'error');
@@ -27,8 +28,21 @@ const CargarPedidos: React.FC = () => {
 
     setLoading(true);
     try {
+      // Llamada al backend
       const res = await cargarPedidosMasivo(usuario, archivo);
-      Swal.fire('Éxito', res.mensaje, 'success').then(() => window.location.reload());
+
+      // Popup de éxito con tiempo redondeado a segundos
+      const segundos = Math.round(res.tiempo_segundos);
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        html: `
+          ${res.mensaje}<br/>
+          <b>Tiempo:</b> ${segundos} s
+        `,
+        confirmButtonText: 'OK'
+      }).then(() => window.location.reload());
+
     } catch (err: any) {
       console.error('Error de API:', err.response?.data);
 
@@ -44,15 +58,20 @@ const CargarPedidos: React.FC = () => {
       }
 
       if (typeof data === 'string') {
+        // Mensaje de error simple
         Swal.fire('Error', data, 'error');
       } else if (data?.errores && Array.isArray(data.errores)) {
+        // Lista de errores del archivo
         Swal.fire({
           title: data.mensaje || 'Errores en el archivo',
-          html: `<ul style="text-align:left">${data.errores.map((e: string) => `<li>${e}</li>`).join('')}</ul>`,
+          html: `<ul style="text-align:left">${data.errores
+            .map((e: string) => `<li>${e}</li>`)
+            .join('')}</ul>`,
           icon: 'error',
           width: 600
         });
       } else {
+        // Cualquier otro formato de error
         const msg = data?.mensaje || err.response?.statusText || err.message;
         Swal.fire('Error', msg, 'error');
       }

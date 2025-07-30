@@ -1,6 +1,10 @@
-/* TablaPedidos.css - Versión Mejorada */
+/* ============================================
+   TablaPedidos.css - Versión Mejorada (Orden Lógico)
+   ============================================ */
 
-/* Estilos generales */
+/* --------------------------------------------
+   1. Estilos Generales del Contenedor
+   -------------------------------------------- */
 .TablaPedidos-contenedor {
   margin: 20px;
   overflow-x: auto;
@@ -13,7 +17,9 @@
   height: 90%;
 }
 
-/* Filtros */
+/* --------------------------------------------
+   2. Filtros (pantalla grande)
+   -------------------------------------------- */
 .TablaPedidos-filtros {
   display: flex;
   gap: 15px;
@@ -24,24 +30,18 @@
   position: sticky;
   top: 0;
   z-index: 30;
-
-  
 }
 
-.TablaPedidos-filtros select{
+.TablaPedidos-filtros select {
   width: 155px;
   padding: 7px;
   color: white;
   border-radius: 7px 7px 0 0;
-  flex-wrap: wrap;
-  position: sticky;
-  top: 0;
-  z-index: 30;
   cursor: pointer;
   background-color: #888a8e;
 }
 
-.TablaPedidos-filtros button{
+.TablaPedidos-filtros button {
   background-color: #888a8e;
   width: 55px;
   border-radius: 7px;
@@ -49,8 +49,9 @@
   cursor: pointer;
 }
 
-
-
+/* --------------------------------------------
+   3. Filtros Móvil: Botón y Modal
+   -------------------------------------------- */
 /* Botón para mostrar filtros en móvil */
 .TablaPedidos-btn-filtros-mobile {
   display: none;
@@ -69,10 +70,7 @@
 /* Modal para filtros en móvil */
 .TablaPedidos-modal-filtros {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
@@ -122,7 +120,9 @@
   color: white;
 }
 
-/* Contenedor de tabla con scroll */
+/* --------------------------------------------
+   4. Contenedor de la Tabla (Scroll Vertical)
+   -------------------------------------------- */
 .TablaPedidos-tabla-container {
   flex: 1;
   overflow-y: auto;
@@ -130,7 +130,9 @@
   border-radius: 0 0 10px 10px;
 }
 
-/* Tabla principal - Cabecera fija */
+/* --------------------------------------------
+   5. Estilos Base de la Tabla
+   -------------------------------------------- */
 .TablaPedidos-table {
   width: 100%;
   border-collapse: separate;
@@ -139,6 +141,9 @@
   position: relative;
 }
 
+/* --------------------------------------------
+   6. Cabecera Fija
+   -------------------------------------------- */
 .TablaPedidos-table-titulos {
   position: sticky;
   top: 0;
@@ -155,8 +160,12 @@
   top: 0;
   z-index: 20;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
 }
 
+/* --------------------------------------------
+   7. Cuerpo de la Tabla (Filas)
+   -------------------------------------------- */
 .TablaPedidos-table td {
   padding: 14px 10px;
   border-bottom: 1px solid #e0e0e0;
@@ -165,21 +174,51 @@
   transition: all 0.3s ease;
 }
 
-/* Fondo rosado para celdas que requieren autorización */
+/* Tamaño de letra para todas las celdas del cuerpo */
+.TablaPedidos-table tbody td {
+  font-size: 0.9rem;
+}
+
+
+/* --------------------------------------------
+   8. Estados de Fila
+   -------------------------------------------- */
+/* Fila con pedidos que requieren autorización */
+.TablaPedidos-row--requires-auth {
+  background-color: #1e7e34;
+}
+
 .TablaPedidos-row--requires-auth td {
-  background-color: #ffe6e6 !important;
+  background-color: #ffc8c8;
 }
 
 /* Filas expandibles */
 .TablaPedidos-row--expanded {
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) ;
 }
 
 .TablaPedidos-row--expanded td {
-  background-color: #bde4c6;
-  
+  background-color: #faf3cd;
 }
 
+/* --------------------------------------------
+   9. Columnas Específicas en Negrita
+   -------------------------------------------- */
+/* Encabezados de “Total Teórico” (columna 12) y “Total Solicitado” (columna 17) */
+.TablaPedidos-table th:nth-child(12),
+.TablaPedidos-table th:nth-child(17) {
+  font-weight: 700;
+}
+
+/* Celdas de “Total Teórico” y “Total Solicitado” */
+.TablaPedidos-table td:nth-child(12),
+.TablaPedidos-table td:nth-child(17) {
+  font-weight: 700;
+}
+
+/* --------------------------------------------
+   10. Detalles Expandibles
+   -------------------------------------------- */
 .TablaPedidos-details {
   background-color: #f9f9f9;
 }
@@ -189,7 +228,9 @@
   background-color: #f5f9ff;
 }
 
-/* Subtables */
+/* --------------------------------------------
+   11. Subtables (dentro de Detalles)
+   -------------------------------------------- */
 .TablaPedidos-subtable {
   width: calc(100% - 50px);
   border-collapse: separate;
@@ -201,12 +242,14 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.TablaPedidos-subtable th{
+.TablaPedidos-subtable th {
   background-color: #0d1048;
   z-index: 10;
 }
 
-/* Botones */
+/* --------------------------------------------
+   12. Botones en la Tabla
+   -------------------------------------------- */
 .TablaPedidos-table button {
   padding: 8px 15px;
   margin: 4px;
@@ -224,60 +267,62 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-
-.TablaPedidos-btn-autorizar{
+.TablaPedidos-btn-autorizar {
   background-color: #1e7e34;
   color: white;
   width: 80px;
 }
 
-.TablaPedidos-btn-eliminar{
+.TablaPedidos-btn-eliminar {
   background-color: red;
   color: white;
   width: 80px;
 }
-/* Responsive */
+
+/* --------------------------------------------
+   13. Responsive
+   -------------------------------------------- */
+/* Ajustes generales */
 @media (max-width: 1200px) {
-  .TablaPedidos-table th, 
+  .TablaPedidos-table th,
   .TablaPedidos-table td {
     padding: 12px 8px;
     font-size: 14px;
   }
 }
 
+/* Móvil (<900px) */
 @media (max-width: 900px) {
   .TablaPedidos-contenedor {
     height: 90%;
   }
-
   .TablaPedidos-filtros {
     display: none;
   }
-  
   .TablaPedidos-btn-filtros-mobile {
     display: block;
   }
-  
   .TablaPedidos-tabla-container {
     overflow-x: auto;
   }
-  
   .TablaPedidos-table {
     min-width: 1200px;
   }
-  
   .TablaPedidos-subtable {
     min-width: 1000px;
   }
 }
 
+/* Escritorio (>=901px) */
 @media (min-width: 901px) {
   .TablaPedidos-btn-filtros-mobile {
     display: none;
   }
 }
 
-/* Scroll personalizado */
+/* --------------------------------------------
+   14. Scroll Personalizado
+   -------------------------------------------- */
 .TablaPedidos-tabla-container::-webkit-scrollbar {
   height: 10px;
   width: 10px;
@@ -294,7 +339,10 @@
   border: 2px solid #f1f1f1;
 }
 
-/* Otras mejoras */
+/* --------------------------------------------
+   15. Utilidades y Mejoras
+   -------------------------------------------- */
+/* Celda de diferencia positiva en rojo */
 .TablaPedidos-cell--error {
   color: #dc3545;
   font-weight: bold;

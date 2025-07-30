@@ -166,6 +166,9 @@ const TablaPedidosCompletados: React.FC = () => {
                   <th>Total Kilos</th>
                   <th>Total Flete</th>
                   <th>Vlr. Flete Sistema</th>
+                  <th>Puntos adicionales</th>
+                  <th>Cargue/Descargue</th>
+                  <th>Seguro</th>
                   <th>Diferencia</th>
                 </tr>
               </thead>
@@ -193,17 +196,20 @@ const TablaPedidosCompletados: React.FC = () => {
                       <td>{group.total_flete_vehiculo.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
                       <td>{group.valor_flete_sistema.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
                       <td className={group.diferencia_flete>0?'TablaPedidosCompletados-cell--error':''}>{group.diferencia_flete.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
+                      <td>{group.total_punto_adicional.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
+                      <td>{group.total_cargue_descargue.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
+                      <td>{group.total_desvio.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
                     </tr>
 
                     {expanded.has(group.consecutivo_vehiculo) && (
                       <tr className="TablaPedidosCompletados-details">
                         <td colSpan={9}>
                           <table className="TablaPedidosCompletados-subtable">
-                            <thead><tr><th>Pedido</th><th>Origen</th><th>Destino</th><th>Punto</th><th>Cliente</th><th>Cajas</th><th>Kilos</th><th>Desvíos</th><th>Pto. Adicional</th><th>Cargue/Desc.</th><th>Obs.</th></tr></thead>
+                            <thead><tr><th>Pedido</th><th>Origen</th><th>Destino</th><th>Punto</th><th>Cliente</th><th>Cajas</th><th>Kilos</th><th>Obs.</th></tr></thead>
                             <tbody>
                               {group.pedidos.map(p=> (
                                 <tr key={p.id}>
-                                  <td>{p.consecutivo_integrapp}</td><td>{p.origen}</td><td>{p.destino}</td><td>{p.ubicacion_descargue}</td><td>{p.cliente_nombre}</td><td>{p.num_cajas}</td><td>{p.num_kilos}</td><td>{p.desvio}</td><td>{p.punto_adicional}</td><td>{p.cargue_descargue}</td><td>{p.observaciones}</td>
+                                  <td>{p.consecutivo_integrapp}</td><td>{p.origen}</td><td>{p.destino}</td><td>{p.ubicacion_descargue}</td><td>{p.cliente_nombre}</td><td>{p.num_cajas}</td><td>{p.num_kilos}</td><td>{p.observaciones}</td>
                                 </tr>
                               ))}
                             </tbody>

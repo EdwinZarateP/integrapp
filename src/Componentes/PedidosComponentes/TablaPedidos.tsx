@@ -1,188 +1,241 @@
-// src/Componentes/TablaPedidos.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import Cookies from 'js-cookie';
 import Swal from 'sweetalert2';
 import {
   listarPedidosVehiculos,
   autorizarPorConsecutivoVehiculo,
   eliminarPedidosPorConsecutivoVehiculo,
-  ListarVehiculosResponse
 } from '../../Funciones/ApiPedidos/apiPedidos';
 import './TablaPedidos.css';
 
-const regionalOptions = ['FUNZA', 'GIRARDOTA', 'BUCARAMANGA', 'CALI', 'BARRANQUILLA'];
-const estadoOptions = ['AUTORIZADO', 'REQUIERE AUTORIZACION', 'COMPLETADO'];
+const formatoMoneda = (v: number) =>
+  v.toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
+const estadosDisponibles = ['AUTORIZADO', 'REQUIERE AUTORIZACION', 'COMPLETADO'];
+const regionesDisponibles = ['FUNZA', 'GIRARDOTA', 'BUCARAMANGA', 'CALI', 'BARRANQUILLA'];
 
 const TablaPedidos: React.FC = () => {
-  const [data, setData] = useState<ListarVehiculosResponse[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const [regionalFiltro, setRegionalFiltro] = useState<string>(Cookies.get('regionalPedidosCookie') || '');
-  const [estadoFiltro, setEstadoFiltro] = useState<string>('TODOS');
-
+  const [pedidos, setPedidos] = useState<any[]>([]);
+  const [cargando, setCargando] = useState(false);
+  const [expandido, setExpandido] = useState<Set<string>>(new Set());
   const perfil = Cookies.get('perfilPedidosCookie') || '';
   const usuario = Cookies.get('usuarioPedidosCookie') || '';
-  const usuarioRegional = Cookies.get('regionalPedidosCookie') || '';
+  const regionalUsuario = Cookies.get('regionalPedidosCookie') || '';
+  const [filtroEstado, setFiltroEstado] = useState('TODOS');
+  const [filtroRegional, setFiltroRegional] = useState('TODOS');
+  const [mostrarModalFiltros, setMostrarModalFiltros] = useState(false);
+  const [esPantallaGrande, setEsPantallaGrande] = useState(window.innerWidth >= 900);
 
-  const buildFiltros = () => {
-    const filtros: any = {};
-    // Estado
-    if (estadoFiltro !== 'TODOS') filtros.estados = [estadoFiltro];
-    else filtros.estados = [...estadoOptions];
-    // Regional
+  // Detectar cambios en el tamaño de la pantalla
+  useLayoutEffect(() => {
+    const actualizarTamañoPantalla = () => {
+      setEsPantallaGrande(window.innerWidth >= 900);
+    };
+    window.addEventListener('resize', actualizarTamañoPantalla);
+    return () => window.removeEventListener('resize', actualizarTamañoPantalla);
+  }, []);
+
+  const obtenerPedidos = async () => {
+    setCargando(true);
+    const filtros: any = {
+      estados: filtroEstado === 'TODOS' ? estadosDisponibles : [filtroEstado],
+    };
     if (['ADMIN', 'GERENTE', 'ANALISTA'].includes(perfil)) {
-      if (regionalFiltro !== 'TODOS') filtros.regionales = [regionalFiltro];
+      if (filtroRegional !== 'TODOS') filtros.regionales = [filtroRegional];
     } else {
-      filtros.regionales = [usuarioRegional];
+      filtros.regionales = [regionalUsuario];
     }
-    return filtros;
-  };
-
-  const fetchData = async () => {
-    setLoading(true);
     try {
-      const filtros = buildFiltros();
       const res = await listarPedidosVehiculos(usuario, filtros);
-      setData(res);
-    } catch (err: any) {
-      Swal.fire('Error', err.response?.data?.message || err.message, 'error');
+      setPedidos(res);
+    } catch (e: any) {
+      Swal.fire('Error', e.response?.data?.detail || e.message, 'error');
     } finally {
-      setLoading(false);
+      setCargando(false);
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { 
+    obtenerPedidos(); 
+  }, []);
 
-  const toggleExpand = (id: string) => {
-    const copy = new Set(expanded);
-    copy.has(id) ? copy.delete(id) : copy.add(id);
-    setExpanded(copy);
+  const manejarExpandir = (id: string) => {
+    const copia = new Set(expandido);
+    copia.has(id) ? copia.delete(id) : copia.add(id);
+    setExpandido(copia);
   };
 
-  const handleAutorizar = async (consec: string) => {
+  const manejarAutorizar = async (consec: string) => {
     try {
       await autorizarPorConsecutivoVehiculo([consec], usuario);
       Swal.fire('Listo', 'Vehículo autorizado', 'success');
-      fetchData();
-    } catch (err: any) {
-      Swal.fire('Error', err.response?.data?.detail || err.message, 'error');
+      obtenerPedidos();
+    } catch (e: any) {
+      Swal.fire('Error', e.response?.data?.detail || e.message, 'error');
     }
   };
 
-  const handleEliminar = async (consec: string) => {
-    const confirm = await Swal.fire({
-      title: '¿Confirmar eliminación?',
-      text: `Vehículo ${consec}`,
+  const manejarEliminar = async (consec: string) => {
+    const { isConfirmed } = await Swal.fire({
+      title: '¿Eliminar vehículo?',
+      text: consec,
       icon: 'warning',
-      showCancelButton: true
+      showCancelButton: true,
     });
-    if (confirm.isConfirmed) {
+    if (isConfirmed) {
       try {
         await eliminarPedidosPorConsecutivoVehiculo(consec, usuario);
         Swal.fire('Eliminado', 'Vehículo eliminado', 'success');
-        fetchData();
-      } catch (err: any) {
-        Swal.fire('Error', err.response?.data?.detail || err.message, 'error');
+        obtenerPedidos();
+      } catch (e: any) {
+        Swal.fire('Error', e.response?.data?.detail || e.message, 'error');
       }
     }
   };
 
   return (
     <div className="TablaPedidos-contenedor">
-      <div className="TablaPedidos-filtros">
-        {['ADMIN','GERENTE','ANALISTA'].includes(perfil) && (
-          <select value={regionalFiltro} onChange={e => setRegionalFiltro(e.target.value)}>
-            <option value="TODOS">Todas las regionales</option>
-            {regionalOptions.map(r => <option key={r} value={r}>{r}</option>)}
+      {/* Filtros para pantalla grande */}
+      {esPantallaGrande && (
+        <div className="TablaPedidos-filtros">
+          {['ADMIN', 'GERENTE', 'ANALISTA'].includes(perfil) && (
+            <select value={filtroRegional} onChange={e => setFiltroRegional(e.target.value)}>
+              <option value="TODOS">Todas regionales</option>
+              {regionesDisponibles.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+          )}
+          <select value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)}>
+            <option value="TODOS">Todos estados</option>
+            {estadosDisponibles.map(e => <option key={e} value={e}>{e}</option>)}
           </select>
-        )}
-        <select value={estadoFiltro} onChange={e => setEstadoFiltro(e.target.value)}>
-          <option value="TODOS">Todos los estados</option>
-          {estadoOptions.map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
-        <button className="TablaPedidos-button" onClick={fetchData}>Filtrar</button>
-      </div>
+          <button onClick={obtenerPedidos}>Filtrar</button>
+        </div>
+      )}
+      
+      {/* Botón para mostrar filtros en pantalla pequeña */}
+      {!esPantallaGrande && (
+        <button 
+          className="TablaPedidos-btn-filtros-mobile"
+          onClick={() => setMostrarModalFiltros(true)}
+        >
+          Filtros
+        </button>
+      )}
 
-      {loading ? (
-        <p className="TablaPedidos-loading">Cargando...</p>
+      {/* Modal para filtros en pantalla pequeña */}
+      {mostrarModalFiltros && !esPantallaGrande && (
+        <div className="TablaPedidos-modal-filtros">
+          <div className="TablaPedidos-modal-contenido">
+            {['ADMIN', 'GERENTE', 'ANALISTA'].includes(perfil) && (
+              <select value={filtroRegional} onChange={e => setFiltroRegional(e.target.value)}>
+                <option value="TODOS">Todas regionales</option>
+                {regionesDisponibles.map(r => <option key={r} value={r}>{r}</option>)}
+              </select>
+            )}
+            <select value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)}>
+              <option value="TODOS">Todos estados</option>
+              {estadosDisponibles.map(e => <option key={e} value={e}>{e}</option>)}
+            </select>
+            <div className="TablaPedidos-modal-botones">
+              <button onClick={obtenerPedidos}>Filtrar</button>
+              <button onClick={() => setMostrarModalFiltros(false)}>Cerrar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {cargando ? (
+        <p>Cargando...</p>
       ) : (
-        <div className="TablaPedidos-wrapper">
+        <div className="TablaPedidos-tabla-container">
           <table className="TablaPedidos-table">
-            <thead>
+            <thead className='TablaPedidos-table-titulos'>
               <tr>
                 <th></th>
                 <th>Vehículo</th>
-                <th>Tipo</th>
-                <th>Estados</th>
-                <th>Total Cajas</th>
-                <th>Total Kilos</th>
-                <th>Total Flete</th>
-                <th>Vlr. Flete Sistema</th>
-                <th>Diferencia</th>
                 <th>Acciones</th>
+                <th>Tipo</th>
+                <th>Destino</th>
+                <th>Estados</th>
+                <th>Cajas</th>
+                <th>Kilos</th>
+                <th>Flete Sys</th>
+                <th>Flete Real</th>
+                <th>Costo Real</th>
+                <th>Costo Teórico</th>
+                <th>Puntos</th>
+                <th>Pto. Teo</th>
+                <th>Cargue Teo</th>
+                <th>Pto. Adic.</th>
+                <th>Cargue</th>
+                <th>Desvío</th>
+                <th>Diferencia</th>
               </tr>
             </thead>
             <tbody>
-              {data.map(group => (
-                <React.Fragment key={group.consecutivo_vehiculo}>
+              {pedidos.map(g => (
+                <React.Fragment key={g.consecutivo_vehiculo}>
                   <tr className={
-                    `${expanded.has(group.consecutivo_vehiculo)? 'TablaPedidos-row--expanded':''} ` +
-                    `${group.diferencia_flete>0&&group.estados.includes('REQUIERE AUTORIZACION')? 'TablaPedidos-row--alert':''}`
+                    `${expandido.has(g.consecutivo_vehiculo) ? 'TablaPedidos-row--expanded' : ''} ` +
+                    `${g.estados.includes('REQUIERE AUTORIZACION') ? 'TablaPedidos-row--requires-auth' : ''}`
                   }>
+                    <td><button onClick={() => manejarExpandir(g.consecutivo_vehiculo)}>
+                      {expandido.has(g.consecutivo_vehiculo) ? '−' : '+'}
+                    </button></td>
+                    <td>{g.consecutivo_vehiculo}</td>
                     <td>
-                      <button
-                        className="TablaPedidos-expand"
-                        onClick={() => toggleExpand(group.consecutivo_vehiculo)}
-                      >{expanded.has(group.consecutivo_vehiculo) ? '−' : '+'}</button>
-                    </td>
-                    <td>{group.consecutivo_vehiculo}</td>
-                    <td>{group.tipo_vehiculo}</td>
-                    <td>{group.estados.join(', ')}</td>
-                    <td>{group.total_cajas_vehiculo}</td>
-                    <td>{group.total_kilos_vehiculo}</td>
-                    <td>{group.total_flete_vehiculo?.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
-                    <td>{group.valor_flete_sistema?.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
-                    <td className={group.diferencia_flete>0?'TablaPedidos-cell--error':''}>
-                      {group.diferencia_flete?.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}
-                    </td>
-                    <td>
-                      {group.estados.includes('REQUIERE AUTORIZACION') && ['ADMIN','GERENTE'].includes(perfil) && (
-                        <button className="TablaPedidos-button" onClick={()=>handleAutorizar(group.consecutivo_vehiculo)}>
+                      {g.estados.includes('REQUIERE AUTORIZACION') && ['ADMIN', 'GERENTE'].includes(perfil) && (
+                        <button className="TablaPedidos-btn-autorizar" onClick={() => manejarAutorizar(g.consecutivo_vehiculo)}>
                           Autorizar
                         </button>
                       )}
-                      {['ADMIN','OPERADOR'].includes(perfil) && (
-                        <button className="TablaPedidos-button TablaPedidos-button--eliminar" onClick={()=>handleEliminar(group.consecutivo_vehiculo)}>
+                      {['ADMIN', 'OPERADOR'].includes(perfil) && (
+                        <button className="TablaPedidos-btn-eliminar" onClick={() => manejarEliminar(g.consecutivo_vehiculo)}>
                           Eliminar
                         </button>
                       )}
                     </td>
+                    <td>{g.tipo_vehiculo.split('_')[0]}</td>
+                    <td>{g.destino}</td>
+                    <td>{g.estados.join(', ')}</td>
+                    <td>{g.total_cajas_vehiculo}</td>
+                    <td>{g.total_kilos_vehiculo}</td>
+                    <td>{formatoMoneda(g.valor_flete_sistema)}</td>
+                    <td>{formatoMoneda(g.total_flete_vehiculo)}</td>
+                    <td>{formatoMoneda(g.costo_real_vehiculo)}</td>
+                    <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td>
+                    <td>{g.total_puntos_vehiculo}</td>
+                    <td>{formatoMoneda(g.total_punto_adicional_teorico)}</td>
+                    <td>{formatoMoneda(g.total_cargue_descargue_teorico)}</td>
+                    <td>{formatoMoneda(g.total_punto_adicional)}</td>
+                    <td>{formatoMoneda(g.total_cargue_descargue)}</td>
+                    <td>{formatoMoneda(g.total_desvio_vehiculo || 0)}</td>
+                    <td className={g.diferencia_flete > 0 ? 'TablaPedidos-cell--error' : ''}>
+                      {formatoMoneda(g.diferencia_flete)}
+                    </td>
                   </tr>
-                  {expanded.has(group.consecutivo_vehiculo) && (
+                  {expandido.has(g.consecutivo_vehiculo) && (
                     <tr className="TablaPedidos-details">
-                      <td colSpan={10}>
+                      <td colSpan={19}>
                         <table className="TablaPedidos-subtable">
                           <thead>
                             <tr>
-                              <th>Pedido</th><th>Origen</th><th>Destino</th><th>Punto</th>
-                              <th>Cliente</th><th>Cajas</th><th>Kilos</th>
-                              <th>Desvíos</th><th>Pto. Adicional</th><th>Cargue/Desc.</th>
-                              <th>Obs.</th><th>Estado</th>
+                              <th>Pedido</th><th>Origen</th><th>Destino</th><th>Cliente</th>
+                              <th>Cajas</th><th>Kilos</th><th>Desvío</th><th>Cargue</th>
+                              <th>Pto. Adic.</th><th>Obs.</th><th>Estado</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {group.pedidos.map(p=>(
+                            {g.pedidos.map((p: any) => (
                               <tr key={p.id}>
                                 <td>{p.consecutivo_integrapp}</td>
                                 <td>{p.origen}</td>
                                 <td>{p.destino}</td>
-                                <td>{p.ubicacion_descargue}</td>
                                 <td>{p.cliente_nombre}</td>
                                 <td>{p.num_cajas}</td>
                                 <td>{p.num_kilos}</td>
-                                <td>{p.desvio}</td>
-                                <td>{p.punto_adicional}</td>
-                                <td>{p.cargue_descargue}</td>
+                                <td>{formatoMoneda(p.desvio)}</td>
+                                <td>{formatoMoneda(p.cargue_descargue)}</td>
+                                <td>{formatoMoneda(p.punto_adicional)}</td>
                                 <td>{p.observaciones}</td>
                                 <td>{p.estado}</td>
                               </tr>

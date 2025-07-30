@@ -42,7 +42,6 @@ export interface Pedido {
   observaciones_aprobador?: string;
   estado?: string;
 }
-
 export interface ListarVehiculosResponse {
   consecutivo_vehiculo: string;
   multiestado: boolean;
@@ -51,10 +50,21 @@ export interface ListarVehiculosResponse {
   total_cajas_vehiculo: number;
   total_kilos_vehiculo: number;
   total_flete_vehiculo: number;
+  /** Nuevo: suma de todos los costos reales (flete + desvío + cargue + punto adicional) */
+  costo_real_vehiculo: number;
   valor_flete_sistema: number;
+  /** Nuevo: suma teórica según tarifa + otros_costos + desvío */
+  costo_teorico_vehiculo: number;
+  total_puntos_vehiculo: number;
+  total_punto_adicional: number;
+  total_punto_adicional_teorico: number;
+  total_cargue_descargue: number;
+  total_cargue_descargue_teorico: number;
+  total_desvio_vehiculo: number;
   diferencia_flete: number;
   pedidos: Pedido[];
 }
+
 
 export interface ListarCompletadosResponse {
   consecutivo_vehiculo: string;
@@ -65,6 +75,9 @@ export interface ListarCompletadosResponse {
   total_kilos_vehiculo: number;
   total_flete_vehiculo: number;
   valor_flete_sistema: number;
+  total_punto_adicional: number;
+  total_cargue_descargue: number;
+  total_desvio: number;
   diferencia_flete: number;
   pedidos: Pedido[];
 }

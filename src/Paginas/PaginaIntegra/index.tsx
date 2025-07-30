@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaTruck, FaBoxOpen, FaWhatsapp, FaBars, FaTimes } from "react-icons/fa";
+import { FaTruck,  FaWhatsapp, FaBars, FaTimes } from "react-icons/fa";
+import { GiRadioTower } from "react-icons/gi";
 import { LiaPeopleCarrySolid } from "react-icons/lia";
 import { IoIosPeople } from "react-icons/io";
 import { RiCustomerService2Line } from "react-icons/ri";
@@ -134,7 +135,7 @@ const PaginaIntegra: React.FC = () => {
           { icon: <FaTruck />, text: "Portal Transportadores", onClick: () => navigate("/InicioPropietarios") },
           { icon: <LiaPeopleCarrySolid />, text: "Portal ventas", onClick: () => navigate("/PortalVentas") },
           { icon: <FaPeopleRoof />, text: "Portal empleados", onClick: () => navigate("/CertificadoLaboralP") },        
-          { icon: <FaBoxOpen />, text: "Portal interno", onClick: () => navigate("/LoginUsuario") },  
+          { icon: <GiRadioTower />, text: "Torre de control", onClick: () => navigate("/LoginUsuario") },  
         ].map((opcion, index) => (
           <div
             key={index}

@@ -1,3 +1,5 @@
+// src/Funciones/apiPedidos.tsx
+
 import axios from 'axios';
 import qs from 'qs';
 
@@ -23,13 +25,16 @@ export interface CargarMasivoResult {
 export interface Pedido {
   id: string;
   fecha_creacion: string;
-  cliente_nombre: string;
+  nit_cliente: string;
+  nombre_cliente: string;
   origen: string;
   destino: string;
   destino_real: string;
   num_cajas: number;
   num_kilos: number;
+  num_kilos_sicetac?: number;
   tipo_vehiculo: string;
+  tipo_vehiculo_sicetac?:string;
   valor_declarado: number;
   planilla_siscore?: string;
   valor_flete: number;
@@ -47,21 +52,25 @@ export interface Pedido {
   creado_por: string;
   tipo_viaje: 'CARGA MASIVA' | 'PAQUETEO';
   observaciones_aprobador?: string;
+  Observaciones_ajustes?: string;
+  numero_pedido?: string;
   estado?: string;
 }
+
 export interface ListarVehiculosResponse {
   consecutivo_vehiculo: string;
+  tipo_vehiculo?: string;  
+  tipo_vehiculo_sicetac?: string;  
+  destino: string;   
   multiestado: boolean;
-  tipo_vehiculo?: string;
   estados: string[];
   total_cajas_vehiculo: number;
   total_kilos_vehiculo: number;
+  total_kilos_vehiculo_sicetac?: number;
   total_flete_vehiculo: number;
-  /** Nuevo: suma de todos los costos reales (flete + desvío + cargue + punto adicional) */
   costo_real_vehiculo: number;
   valor_flete_sistema: number;
   total_flete_solicitado: number;
-  /** Nuevo: suma teórica según tarifa + otros_costos + desvío */
   costo_teorico_vehiculo: number;
   total_puntos_vehiculo: number;
   total_punto_adicional: number;
@@ -73,22 +82,66 @@ export interface ListarVehiculosResponse {
   pedidos: Pedido[];
 }
 
-
 export interface ListarCompletadosResponse {
   consecutivo_vehiculo: string;
-  tipo_vehiculo: string;
+  tipo_vehiculo?: string;
+  tipo_vehiculo_sicetac?: string;  
+  destino: string;       
   multiestado: boolean;
   estados: string[];
   total_cajas_vehiculo: number;
   total_kilos_vehiculo: number;
+  total_kilos_vehiculo_sicetac?: number;
   total_flete_vehiculo: number;
+  costo_real_vehiculo: number;
   valor_flete_sistema: number;
   total_flete_solicitado: number;
+  costo_teorico_vehiculo: number;
+  total_puntos_vehiculo: number;
   total_punto_adicional: number;
+  total_punto_adicional_teorico: number;
   total_cargue_descargue: number;
-  total_desvio: number;
+  total_cargue_descargue_teorico: number;
+  total_desvio_vehiculo: number;
   diferencia_flete: number;
   pedidos: Pedido[];
+}
+
+// ---- Ajustes por vehículo ----
+export interface AjusteVehiculo {
+  consecutivo_vehiculo: string;
+  tipo_vehiculo_sicetac?: string;
+  total_kilos_vehiculo_sicetac?: number;
+  total_desvio_vehiculo?: number;
+  total_punto_adicional?: number;
+  Observaciones_ajustes?: string; // comentario opcional por vehículo
+}
+
+export interface AjustesVehiculosPayload {
+  usuario: string;                 // quien ejecuta (valida perfil/regional)
+  ajustes: AjusteVehiculo[];
+}
+
+export interface AjusteResultado {
+  consecutivo_vehiculo: string;
+  regional: string;
+  docs_actualizados: number;
+  usr_solicita_ajuste: string;
+  tipo_vehiculo_sicetac: string;
+  total_kilos_vehiculo_sicetac: number;
+  total_desvio_vehiculo: number;
+  total_punto_adicional: number;
+  costo_real_vehiculo: number;
+  costo_teorico_vehiculo: number;
+  diferencia_flete: number;
+  nuevo_estado: 'AUTORIZADO' | 'REQUIERE AUTORIZACION';
+}
+
+
+export interface AjustarTotalesVehiculoResponse {
+  mensaje: string;
+  resultados: AjusteResultado[];
+  errores?: string[]; // presente si hubo algunos consecutivos con problemas
 }
 
 // 1) Cargar pedidos masivo
@@ -222,6 +275,19 @@ export const listarVehiculosCompletados = async (
     `${API_BASE}/pedidos/listar-vehiculo-completados`,
     body,
     { params }
+  );
+  return response.data;
+};
+
+// 9) Ajustar totales por vehículo y recalcular estado
+export const ajustarTotalesVehiculo = async (
+  usuario: string,
+  ajustes: AjusteVehiculo[]
+): Promise<AjustarTotalesVehiculoResponse> => {
+  const body: AjustesVehiculosPayload = { usuario, ajustes };
+  const response = await axios.put<AjustarTotalesVehiculoResponse>(
+    `${API_BASE}/pedidos/ajustar-totales-vehiculo`,
+    body
   );
   return response.data;
 };

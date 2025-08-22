@@ -23,7 +23,7 @@ const Pedidos: React.FC = () => {
   const handleVistaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value as 'gestion' | 'completados';
     setVista(val);
-    if (val === 'completados') navigate('/pedidoscompletados');
+    if (val === 'completados') navigate('/PedidosCompletados');
   };
 
   return (

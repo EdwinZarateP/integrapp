@@ -6,6 +6,7 @@ import './ExportarAutorizados.css';
 
 const ExportarAutorizados: React.FC = () => {
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const perfil = Cookies.get('perfilPedidosCookie');
@@ -15,6 +16,7 @@ const ExportarAutorizados: React.FC = () => {
   }, []);
 
   const manejarExportacion = async () => {
+    setLoading(true);
     try {
       const blob = await exportarAutorizados();
       const url = window.URL.createObjectURL(blob);
@@ -25,7 +27,6 @@ const ExportarAutorizados: React.FC = () => {
       window.URL.revokeObjectURL(url);
     } catch (err: any) {
       console.error('Error exportando:', err);
-
       let mensaje = 'Error desconocido';
       const response = err?.response;
 
@@ -33,14 +34,7 @@ const ExportarAutorizados: React.FC = () => {
         try {
           const texto = await response.data.text();
           const json = JSON.parse(texto);
-
-          if (json?.detail) {
-            mensaje = json.detail;
-          } else if (json?.mensaje) {
-            mensaje = json.mensaje;
-          } else {
-            mensaje = JSON.stringify(json);
-          }
+          mensaje = json?.detail || json?.mensaje || JSON.stringify(json);
         } catch {
           mensaje = await response.data.text();
         }
@@ -49,6 +43,8 @@ const ExportarAutorizados: React.FC = () => {
       }
 
       Swal.fire('Error', mensaje, 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,9 +52,21 @@ const ExportarAutorizados: React.FC = () => {
 
   return (
     <div className="ExportarAutorizados-contenedor">
-      <button className="ExportarAutorizados-boton" onClick={manejarExportacion}>
-        Exportar pedidos autorizados
+      <button
+        className="ExportarAutorizados-boton"
+        onClick={manejarExportacion}
+        disabled={loading}
+      >
+        {loading ? (
+          <>
+            Exportando Autorizados...
+            <span className="ExportarAutorizados-spinner" />
+          </>
+        ) : (
+          'Exportar pedidos autorizados'
+        )}
       </button>
+
     </div>
   );
 };

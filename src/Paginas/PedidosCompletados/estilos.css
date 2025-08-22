@@ -1,7 +1,6 @@
 /* src/Paginas/PedidosCompletados.css */
 
 .PedidosCompletados-contenedor {
-  padding: 1rem;
   background-color: #efefef;
   height: 100vh;
   overflow: hidden;
@@ -70,12 +69,12 @@
 }
 
 .PedidosCompletados-cuerpo {
-  flex: 1 1 auto;
+  /* flex: 1 1 auto; */
+  height: 100%;
   overflow-y: auto;
-  padding-bottom: 100px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .PedidosCompletados-select {
     font-size: 1.2rem;
     max-width: 100%;

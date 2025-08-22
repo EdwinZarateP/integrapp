@@ -52,7 +52,6 @@
 /* --------------------------------------------
    3. Filtros Móvil: Botón y Modal
    -------------------------------------------- */
-/* Botón para mostrar filtros en móvil */
 .TablaPedidos-btn-filtros-mobile {
   display: none;
   margin: 10px auto;
@@ -67,7 +66,6 @@
   z-index: 10;
 }
 
-/* Modal para filtros en móvil */
 .TablaPedidos-modal-filtros {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -174,16 +172,13 @@
   transition: all 0.3s ease;
 }
 
-/* Tamaño de letra para todas las celdas del cuerpo */
 .TablaPedidos-table tbody td {
   font-size: 0.9rem;
 }
 
-
 /* --------------------------------------------
    8. Estados de Fila
    -------------------------------------------- */
-/* Fila con pedidos que requieren autorización */
 .TablaPedidos-row--requires-auth {
   background-color: #1e7e34;
 }
@@ -192,7 +187,6 @@
   background-color: #ffc8c8;
 }
 
-/* Filas expandibles */
 .TablaPedidos-row--expanded {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) ;
 }
@@ -204,15 +198,13 @@
 /* --------------------------------------------
    9. Columnas Específicas en Negrita
    -------------------------------------------- */
-/* Encabezados de “Total Teórico” (columna 12) y “Total Solicitado” (columna 17) */
-.TablaPedidos-table th:nth-child(12),
-.TablaPedidos-table th:nth-child(17) {
+.TablaPedidos-table th:nth-child(13),
+.TablaPedidos-table th:nth-child(18) {
   font-weight: 700;
 }
 
-/* Celdas de “Total Teórico” y “Total Solicitado” */
-.TablaPedidos-table td:nth-child(12),
-.TablaPedidos-table td:nth-child(17) {
+.TablaPedidos-table td:nth-child(13),
+.TablaPedidos-table td:nth-child(18) {
   font-weight: 700;
 }
 
@@ -229,7 +221,7 @@
 }
 
 /* --------------------------------------------
-   11. Subtables (dentro de Detalles)
+   11. Subtables
    -------------------------------------------- */
 .TablaPedidos-subtable {
   width: calc(100% - 50px);
@@ -279,10 +271,22 @@
   width: 80px;
 }
 
+/* 👇 NUEVO botón editar */
+.TablaPedidos-btn-editar {
+  background-color: #0d6efd;
+  color: white;
+  width: 80px;
+}
+
+/* Resalta celda de consecutivo (doble clic) */
+.TablaPedidos-cell-consecutivo {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 /* --------------------------------------------
    13. Responsive
    -------------------------------------------- */
-/* Ajustes generales */
 @media (max-width: 1200px) {
   .TablaPedidos-table th,
   .TablaPedidos-table td {
@@ -291,7 +295,6 @@
   }
 }
 
-/* Móvil (<900px) */
 @media (max-width: 900px) {
   .TablaPedidos-contenedor {
     height: 90%;
@@ -313,7 +316,6 @@
   }
 }
 
-/* Escritorio (>=901px) */
 @media (min-width: 901px) {
   .TablaPedidos-btn-filtros-mobile {
     display: none;
@@ -327,12 +329,10 @@
   height: 10px;
   width: 10px;
 }
-
 .TablaPedidos-tabla-container::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 10px;
 }
-
 .TablaPedidos-tabla-container::-webkit-scrollbar-thumb {
   background: #c1c1c1;
   border-radius: 10px;
@@ -340,13 +340,113 @@
 }
 
 /* --------------------------------------------
-   15. Utilidades y Mejoras
+   15. Utilidades
    -------------------------------------------- */
-/* Celda de diferencia positiva en rojo */
 .TablaPedidos-cell--error {
   color: #dc3545;
   font-weight: bold;
   background-color: #fff3f3;
   border-radius: 4px;
   padding: 4px 8px;
+}
+
+/* ============================================
+   MODAL EDITAR (nuevo)
+   ============================================ */
+.TablaPedidos-modal-editar {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(13, 16, 72, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.TablaPedidos-modal-editar-contenido {
+  background: #fff;
+  width: 95%;
+  max-width: 720px;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.2);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.TablaPedidos-modal-editar-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.TablaPedidos-modal-editar-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.TablaPedidos-modal-editar-consec {
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+.TablaPedidos-modal-editar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.TablaPedidos-form-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.TablaPedidos-form-grupo label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.TablaPedidos-form-grupo input,
+.TablaPedidos-form-grupo select,
+.TablaPedidos-form-grupo textarea {
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.95rem;
+}
+
+.TablaPedidos-form-grupo--full {
+  grid-column: 1 / -1;
+}
+
+.TablaPedidos-modal-editar-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.TablaPedidos-btn-cancelar {
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.TablaPedidos-btn-guardar {
+  background-color: #198754;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.TablaPedidos-btn-guardar[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
 }

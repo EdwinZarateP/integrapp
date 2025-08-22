@@ -1,113 +1,295 @@
-/* src/Componentes/TablaPedidosCompletados.css */
+/* ============================================
+   TablaPedidosCompletados.css
+   ============================================ */
+
+/* 1. Contenedor principal */
 .TablaPedidosCompletados-contenedor {
-  padding: 1rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: inherit;
-  margin-top: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  overflow-x: auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background-color: #fff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
+/* 2. Filtros en escritorio */
 .TablaPedidosCompletados-filtros {
   display: flex;
+  gap: 15px;
+  padding-bottom: 10px;
+  color: white;
+  border-radius: 10px 10px 0 0;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 30;
 }
-
-.TablaPedidosCompletados-filtros select,
-.TablaPedidosCompletados-filtros input[type="date"] {
-  padding: 0.4rem 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
+.TablaPedidosCompletados-filtros select {
+  width: 155px;
+  padding: 7px;
+  color: white;
+  border-radius: 7px 7px 0 0;
+  cursor: pointer;
+  background-color: #888a8e;
+}
+.TablaPedidosCompletados-filtros button {
+  background-color: #888a8e;
+  width: 55px;
+  border-radius: 7px;
+  color: white;
   cursor: pointer;
 }
 
-.TablaPedidosCompletados-button {
-  margin: 0.2rem;
-  padding: 0.4rem 0.8rem;
+/* 3. Botón filtros móvil */
+.TablaPedidosCompletados-btn-filtros-mobile {
+  display: none;
+  margin: 10px auto;
+  padding: 10px 20px;
+  background-color: #888a8e;
+  color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  background-color: #158e45;
-  color: #fff;
-  transition: background-color 0.3s ease;
+  font-size: 15px;
+  font-weight: bold;
+  z-index: 10;
 }
 
-.TablaPedidosCompletados-button:hover {
-  background-color: #0f6b35;
+/* 4. Modal filtros móvil */
+.TablaPedidosCompletados-modal-filtros {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.TablaPedidosCompletados-modal-contenido {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.TablaPedidosCompletados-modal-contenido select,
+.TablaPedidosCompletados-modal-contenido input[type="date"] {
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 15px;
+}
+.TablaPedidosCompletados-modal-botones {
+  display: flex;
+  gap: 10px;
+}
+.TablaPedidosCompletados-modal-botones button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+.TablaPedidosCompletados-modal-botones button:first-child {
+  background-color: #1e7e34;
+  color: white;
+}
+.TablaPedidosCompletados-modal-botones button:last-child {
+  background-color: #dc3545;
+  color: white;
 }
 
+/* 5. Contenedor de la tabla (scroll vertical) */
 .TablaPedidosCompletados-wrapper {
-  max-height: 50vh;
+  flex: 1;
   overflow-y: auto;
-  overflow-x: auto;
+  position: relative;
+  border-radius: 0 0 10px 10px;
 }
 
+/* 6. Tabla base */
 .TablaPedidosCompletados-table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0 0.5rem;
-  min-width: 900px;
+  border-spacing: 0;
+  table-layout: auto;
+  position: relative;
 }
 
-.TablaPedidosCompletados-table th,
-.TablaPedidosCompletados-table td {
-  border: 1px solid #ddd;
-  padding: 0.5rem;
-  text-align: left;
-}
-
-.TablaPedidosCompletados-expand {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  padding: 0;
-}
-
-.TablaPedidosCompletados-row--expanded td {
-  font-weight: bold;
-}
-
-.TablaPedidosCompletados-details td {
-  padding: 0.5rem;
-  border: 1px dashed #999;
-}
-
-.TablaPedidosCompletados-subtable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 0.5rem;
-  background-color: #f1f1f1;
-  font-size: 0.8rem;
-}
-
-.TablaPedidosCompletados-subtable th,
-.TablaPedidosCompletados-subtable td {
-  border: 1px solid #ccc;
-  padding: 0.25rem 0.5rem;
-  text-align: left;
-}
-
-.TablaPedidosCompletados-subtable tr:nth-child(even) td {
-  background-color: #ffffff;
-}
-
-.TablaPedidosCompletados-subtable tr:nth-child(odd) td {
-  background-color: #f9f9f9;
-}
-
+/* 7. Cabecera fija */
 .TablaPedidosCompletados-table thead th {
+  background-color: #1e7e34;
+  color: white;
+  padding: 15px 10px;
+  text-align: left;
+  font-weight: 600;
   position: sticky;
   top: 0;
-  background-color: #ffffff;
-  z-index: 2;
+  z-index: 20;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
 }
 
-.TablaPedidosCompletados-subtable thead th {
-  position: static;
-  z-index: 1;
+/* 8. Celdas del cuerpo */
+.TablaPedidosCompletados-table td {
+  padding: 14px 10px;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: middle;
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+.TablaPedidosCompletados-table tbody td {
+  font-size: 0.9rem;
+}
+
+/* --------------------------------------------
+   9. Columnas Específicas en Negrita
+   -------------------------------------------- */
+/* Encabezados de “Total Teórico” (columna 12) y “Total Solicitado” (columna 17) */
+.TablaPedidosCompletados-table th:nth-child(11),
+.TablaPedidosCompletados-table th:nth-child(16) {
+  font-weight: 700;
+}
+
+/* Celdas de “Total Teórico” y “Total Solicitado” */
+.TablaPedidosCompletados-table td:nth-child(11),
+.TablaPedidosCompletados-table td:nth-child(16) {
+  font-weight: 700;
+}
+
+.TablaPedidosCompletados-row--expanded {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+.TablaPedidosCompletados-row--expanded td {
+  background-color: #faf3cd;
+}
+
+/* 10. Detalles expandibles */
+.TablaPedidosCompletados-details {
+  background-color: #f9f9f9;
+}
+.TablaPedidosCompletados-details td {
+  padding: 0 !important;
+  background-color: #f5f9ff;
+}
+
+/* 11. Subtablas dentro de detalles */
+.TablaPedidosCompletados-subtable {
+  width: calc(100% - 50px);
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  margin: 15px 0 15px 50px;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.TablaPedidosCompletados-subtable th {
+  background-color: #0d1048 !important;
+  z-index: 10 !important;
+}
+
+/* 12. Botones dentro de la tabla */
+.TablaPedidosCompletados-button {
+  padding: 8px 15px;
+  margin: 4px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+  white-space: nowrap;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.TablaPedidosCompletados-table button {
+  padding: 8px 15px;
+  margin: 4px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+  white-space: nowrap;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+/* 13. Responsive */
+@media (max-width: 1200px) {
+  .TablaPedidosCompletados-table th,
+  .TablaPedidosCompletados-table td {
+    padding: 12px 8px;
+    font-size: 14px;
+  }
+}
+@media (max-width: 900px) {
+  .TablaPedidosCompletados-contenedor {
+    height: 90%;
+  }
+  .TablaPedidosCompletados-filtros {
+    display: none;
+  }
+  .TablaPedidosCompletados-btn-filtros-mobile {
+    display: block;
+  }
+  .TablaPedidosCompletados-wrapper {
+    overflow-x: auto;
+  }
+  .TablaPedidosCompletados-table {
+    min-width: 1200px;
+  }
+  .TablaPedidosCompletados-subtable {
+    min-width: 1000px;
+  }
+}
+@media (min-width: 901px) {
+  .TablaPedidosCompletados-btn-filtros-mobile {
+    display: none;
+  }
+}
+
+/* 14. Scroll personalizado */
+.TablaPedidosCompletados-wrapper::-webkit-scrollbar,
+.TablaPedidosCompletados-table::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+.TablaPedidosCompletados-wrapper::-webkit-scrollbar-track,
+.TablaPedidosCompletados-table::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+.TablaPedidosCompletados-wrapper::-webkit-scrollbar-thumb,
+.TablaPedidosCompletados-table::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+  border: 2px solid #f1f1f1;
+}
+
+/* 15. Celda de error */
+.TablaPedidosCompletados-cell--error {
+  color: #dc3545;
+  font-weight: bold;
+  background-color: #fff3f3;
+  border-radius: 4px;
+  padding: 4px 8px;
 }

@@ -9,14 +9,26 @@ import {
 } from '../../Funciones/ApiPedidos/apiPedidos';
 import './TablaPedidosCompletados.css';
 
-const regionalOptions = ['FUNZA','KABI', 'GIRARDOTA', 'BUCARAMANGA', 'CALI', 'BARRANQUILLA'];
+const formatoMoneda = (v: number) =>
+  v.toLocaleString('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0
+  });
+
+const regionesDisponibles = [
+  'FUNZA',
+  'KABI',
+  'GIRARDOTA',
+  'BUCARAMANGA',
+  'CALI',
+  'BARRANQUILLA'
+];
 
 const TablaPedidosCompletados: React.FC = () => {
   const perfil = Cookies.get('perfilPedidosCookie') || '';
   const usuario = Cookies.get('usuarioPedidosCookie') || '';
   const usuarioRegional = Cookies.get('regionalPedidosCookie') || '';
-
-  // Fecha de hoy en formato YYYY-MM-DD
   const today = new Date().toISOString().slice(0, 10);
 
   const [data, setData] = useState<ListarCompletadosResponse[]>([]);
@@ -24,14 +36,14 @@ const TablaPedidosCompletados: React.FC = () => {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const [regionalFiltro, setRegionalFiltro] = useState<string>(
-    ['ADMIN','GERENTE','ANALISTA'].includes(perfil) ? 'TODOS' : usuarioRegional
+    ['ADMIN', 'GERENTE', 'ANALISTA'].includes(perfil) ? 'TODOS' : usuarioRegional
   );
   const [fechaInicial, setFechaInicial] = useState<string>(today);
   const [fechaFinal, setFechaFinal] = useState<string>(today);
 
   const buildFiltros = () => {
     const filtros: any = {};
-    if (['ADMIN','GERENTE','ANALISTA'].includes(perfil)) {
+    if (['ADMIN', 'GERENTE', 'ANALISTA'].includes(perfil)) {
       if (regionalFiltro !== 'TODOS') filtros.regionales = [regionalFiltro];
     } else {
       filtros.regionales = [usuarioRegional];
@@ -44,13 +56,10 @@ const TablaPedidosCompletados: React.FC = () => {
       Swal.fire('Error', 'Selecciona fecha inicial y final', 'warning');
       return;
     }
-    const inicio = new Date(fechaInicial);
-    const fin = new Date(fechaFinal);
-    if (inicio > fin) {
+    if (new Date(fechaInicial) > new Date(fechaFinal)) {
       Swal.fire('Error', 'La fecha inicial no puede ser posterior a la fecha final', 'warning');
       return;
     }
-
     setLoading(true);
     try {
       const filtros = buildFiltros();
@@ -62,6 +71,7 @@ const TablaPedidosCompletados: React.FC = () => {
       );
       setData(res);
     } catch (err: any) {
+      setData([]);
       const detail =
         err.response?.data?.detail ||
         err.response?.data?.message ||
@@ -72,7 +82,6 @@ const TablaPedidosCompletados: React.FC = () => {
     }
   };
 
-  // Cargar datos al montar con rango hoy
   useEffect(() => {
     fetchData();
   }, []);
@@ -82,29 +91,24 @@ const TablaPedidosCompletados: React.FC = () => {
       Swal.fire('Error', 'Selecciona fecha inicial y final', 'warning');
       return;
     }
-    const inicio = new Date(fechaInicial);
-    const fin = new Date(fechaFinal);
-    if (inicio > fin) {
+    if (new Date(fechaInicial) > new Date(fechaFinal)) {
       Swal.fire('Error', 'La fecha inicial no puede ser posterior a la fecha final', 'warning');
       return;
     }
-
     try {
       const filtros = buildFiltros();
-      const regionales = filtros.regionales;
-
       const blob = await exportarCompletados(
         usuario,
         fechaInicial,
         fechaFinal,
-        regionales
+        filtros.regionales
       );
-      const url = window.URL.createObjectURL(blob);
+      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `pedidos_completados_${new Date().toISOString().slice(0,10)}.xlsx`;
+      a.download = `pedidos_completados_${today}.xlsx`;
       a.click();
-      window.URL.revokeObjectURL(url);
+      URL.revokeObjectURL(url);
     } catch (err: any) {
       const detail =
         err.response?.data?.detail ||
@@ -124,15 +128,18 @@ const TablaPedidosCompletados: React.FC = () => {
 
   return (
     <div className="TablaPedidosCompletados-contenedor">
+      {/* Filtros */}
       <div className="TablaPedidosCompletados-filtros">
-        {['ADMIN','GERENTE','ANALISTA'].includes(perfil) && (
+        {['ADMIN', 'GERENTE', 'ANALISTA'].includes(perfil) && (
           <select
             value={regionalFiltro}
             onChange={e => setRegionalFiltro(e.target.value)}
           >
             <option value="TODOS">Todas las regionales</option>
-            {regionalOptions.map(r => (
-              <option key={r} value={r}>{r}</option>
+            {regionesDisponibles.map(r => (
+              <option key={r} value={r}>
+                {r}
+              </option>
             ))}
           </select>
         )}
@@ -146,7 +153,10 @@ const TablaPedidosCompletados: React.FC = () => {
           value={fechaFinal}
           onChange={e => setFechaFinal(e.target.value)}
         />
-        <button className="TablaPedidosCompletados-button" onClick={fetchData}>
+        <button
+          className="TablaPedidosCompletados-button"
+          onClick={fetchData}
+        >
           Filtrar
         </button>
       </div>
@@ -159,57 +169,95 @@ const TablaPedidosCompletados: React.FC = () => {
             <table className="TablaPedidosCompletados-table">
               <thead>
                 <tr>
-                  <th></th>
                   <th>Vehículo</th>
+                  <th>Acciones</th>
                   <th>Tipo</th>
-                  <th>Total Cajas</th>
-                  <th>Total Kilos</th>
-                  <th>Total Flete</th>
-                  <th>Vlr. Flete Sistema</th>
-                  <th>Puntos adicionales</th>
-                  <th>Cargue/Descargue</th>
-                  <th>Seguro</th>
+                  <th>Destino Final</th>
+                  <th>Estados</th>
+                  <th>Puntos</th>
+                  <th>Kilos</th>
+                  <th>Flete Teorico</th>
+                  <th>Car/desc Teorico Teorico</th>
+                  <th>Pto Adic Teórico</th>
+                  <th>Total Teórico</th>
+                  <th>Flete Solicitado</th>
+                  <th>Car/desc Solicitado</th>
+                  <th>Pto Adic Solicitado</th>
+                  <th>Desvío</th>
+                  <th>Total Solicitado</th>
                   <th>Diferencia</th>
                 </tr>
               </thead>
               <tbody>
-                {data.map(group => (
-                  <React.Fragment key={group.consecutivo_vehiculo}>
-                    <tr className={
-                      `${expanded.has(group.consecutivo_vehiculo)
-                        ? 'TablaPedidosCompletados-row--expanded' : ''} ` +
-                      `${group.diferencia_flete > 0
-                        ? 'TablaPedidosCompletados-row--alert' : ''}`
-                    }>
+                {data.map(g => (
+                  <React.Fragment key={g.consecutivo_vehiculo}>
+                    <tr
+                      className={`${
+                        expanded.has(g.consecutivo_vehiculo)
+                          ? 'TablaPedidosCompletados-row--expanded'
+                          : ''
+                      }`}
+                    >
                       <td>
-                        <button
-                          className="TablaPedidosCompletados-expand"
-                          onClick={() => toggleExpand(group.consecutivo_vehiculo)}
-                        >
-                          {expanded.has(group.consecutivo_vehiculo) ? '−' : '+'}
+                        <button onClick={() => toggleExpand(g.consecutivo_vehiculo)}>
+                          {expanded.has(g.consecutivo_vehiculo) ? '−' : '+'}
                         </button>
                       </td>
-                      <td>{group.consecutivo_vehiculo}</td>
-                      <td>{group.tipo_vehiculo}</td>
-                      <td>{group.total_cajas_vehiculo}</td>
-                      <td>{group.total_kilos_vehiculo}</td>
-                      <td>{group.total_flete_vehiculo.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
-                      <td>{group.valor_flete_sistema.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
-                      <td className={group.diferencia_flete>0?'TablaPedidosCompletados-cell--error':''}>{group.diferencia_flete.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
-                      <td>{group.total_punto_adicional.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
-                      <td>{group.total_cargue_descargue.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
-                      <td>{group.total_desvio.toLocaleString('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0})}</td>
+                      <td>{g.consecutivo_vehiculo}</td>                      
+                       <td>{(g.tipo_vehiculo ?? '').split('_')[0] || '—'}</td>
+                      <td>{g.destino}</td>
+                      <td>{g.estados.join(', ')}</td>
+                      <td>{g.total_puntos_vehiculo}</td>
+                      <td>{g.total_kilos_vehiculo}</td>
+                      <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td>
+                      <td>{formatoMoneda(g.total_cargue_descargue_teorico)}</td>
+                      <td>{formatoMoneda(g.total_punto_adicional_teorico)}</td>
+                      <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td>
+                      <td>{formatoMoneda(g.total_flete_solicitado)}</td>
+                      <td>{formatoMoneda(g.total_cargue_descargue)}</td>
+                      <td>{formatoMoneda(g.total_punto_adicional)}</td>
+                      <td>{formatoMoneda(g.total_desvio_vehiculo)}</td>
+                      <td>{formatoMoneda(g.costo_real_vehiculo)}</td>
+                      <td
+                        className={
+                          g.diferencia_flete > 0 ? 'TablaPedidosCompletados-cell--error' : ''
+                        }
+                      >
+                        {formatoMoneda(g.diferencia_flete)}
+                      </td>
                     </tr>
 
-                    {expanded.has(group.consecutivo_vehiculo) && (
+                    {expanded.has(g.consecutivo_vehiculo) && (
                       <tr className="TablaPedidosCompletados-details">
-                        <td colSpan={9}>
+                        <td colSpan={17}>
                           <table className="TablaPedidosCompletados-subtable">
-                            <thead><tr><th>Pedido</th><th>Origen</th><th>Destino</th><th>Punto</th><th>Cliente</th><th>Cajas</th><th>Kilos</th><th>Obs.</th></tr></thead>
+                            <thead>
+                              <tr>
+                                <th>Pedido</th>
+                                <th>Numero pedido</th>                               
+                                <th>Origen</th>
+                                <th>Destino Real</th>
+                                <th>Cliente</th>
+                                <th>Destinatario</th>
+                                <th>Kilos</th>
+                                <th>Entregas</th>
+                                <th>Observaciones</th>
+                                <th>Estado</th>
+                              </tr>
+                            </thead>
                             <tbody>
-                              {group.pedidos.map(p=> (
+                              {g.pedidos.map(p => (
                                 <tr key={p.id}>
-                                  <td>{p.consecutivo_integrapp}</td><td>{p.origen}</td><td>{p.destino}</td><td>{p.ubicacion_descargue}</td><td>{p.cliente_nombre}</td><td>{p.num_cajas}</td><td>{p.num_kilos}</td><td>{p.observaciones}</td>
+                                  <td>{p.consecutivo_integrapp}</td>
+                                  <td>{p.numero_pedido}</td>
+                                  <td>{p.origen}</td>
+                                  <td>{p.destino_real}</td>
+                                  <td>{p.cliente_nombre}</td>
+                                  <td>{p.ubicacion_descargue}</td>
+                                  <td>{p.num_kilos}</td>
+                                  <td>{p.planilla_siscore}</td>
+                                  <td>{p.observaciones}</td>
+                                  <td>{p.estado}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -224,8 +272,11 @@ const TablaPedidosCompletados: React.FC = () => {
           </div>
 
           {data.length > 0 && (
-            <div style={{ textAlign:'right', marginTop:'1rem' }}>
-              <button className="TablaPedidosCompletados-button" onClick={handleExportar}>
+            <div style={{ textAlign: 'right', marginTop: '1rem' }}>
+              <button
+                className="TablaPedidosCompletados-button"
+                onClick={handleExportar}
+              >
                 Exportar a Excel
               </button>
             </div>

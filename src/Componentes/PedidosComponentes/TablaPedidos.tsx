@@ -304,7 +304,6 @@ const TablaPedidos: React.FC = () => {
                         </button>
                       )}
                     </td>
-
                     <td>{(g.tipo_vehiculo_sicetac || '').split('_')[0]}</td>
                     <td>{g.destino}</td>
                     <td>{g.estados.join(', ')}</td>

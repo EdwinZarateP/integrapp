@@ -69,18 +69,33 @@ const TablaPedidosCompletados: React.FC = () => {
         fechaFinal,
         filtros
       );
+
+      if (!res || res.length === 0) {
+        setData([]);
+        // Swal.fire('Sin resultados', 'No se encontraron pedidos completados en este rango de fechas', 'info');
+        return;
+      }
+
       setData(res);
     } catch (err: any) {
       setData([]);
+      const status = err.response?.status;
       const detail =
         err.response?.data?.detail ||
         err.response?.data?.message ||
         err.message;
-      Swal.fire('Error', detail, 'error');
+
+      if (status === 404 && /No se encontraron vehículos COMPLETADOS/i.test(detail || '')) {
+        Swal.fire('Sin resultados', 'No se encontraron vehículos COMPLETADOS en ese rango.', 'info');
+      } else {
+        Swal.fire('Error', detail, 'error');
+      }
     } finally {
       setLoading(false);
     }
   };
+
+
 
   useEffect(() => {
     fetchData();
@@ -169,23 +184,25 @@ const TablaPedidosCompletados: React.FC = () => {
             <table className="TablaPedidosCompletados-table">
               <thead>
                 <tr>
+                  <th></th>
                   <th>Vehículo</th>
-                  <th>Acciones</th>
                   <th>Tipo</th>
                   <th>Destino Final</th>
                   <th>Estados</th>
                   <th>Puntos</th>
-                  <th>Kilos</th>
+                  <th>Kg Reales</th>
+                  <th>Kg Sicetac</th>
                   <th>Flete Teorico</th>
                   <th>Car/desc Teorico Teorico</th>
-                  <th>Pto Adic Teórico</th>
-                  <th>Total Teórico</th>
+                  <th>Pto Adic Teórico</th>                
+                  <th>Total Teórico</th>   
                   <th>Flete Solicitado</th>
                   <th>Car/desc Solicitado</th>
                   <th>Pto Adic Solicitado</th>
-                  <th>Desvío</th>
-                  <th>Total Solicitado</th>
+                  <th>Desvío</th>   
+                  <th>Total Solicitado</th>                             
                   <th>Diferencia</th>
+                  <th>Observaciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -204,11 +221,12 @@ const TablaPedidosCompletados: React.FC = () => {
                         </button>
                       </td>
                       <td>{g.consecutivo_vehiculo}</td>                      
-                       <td>{(g.tipo_vehiculo ?? '').split('_')[0] || '—'}</td>
+                      <td>{(g.tipo_vehiculo_sicetac || '').split('_')[0]}</td>
                       <td>{g.destino}</td>
                       <td>{g.estados.join(', ')}</td>
                       <td>{g.total_puntos_vehiculo}</td>
                       <td>{g.total_kilos_vehiculo}</td>
+                      <td>{g.total_kilos_vehiculo_sicetac}</td>
                       <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td>
                       <td>{formatoMoneda(g.total_cargue_descargue_teorico)}</td>
                       <td>{formatoMoneda(g.total_punto_adicional_teorico)}</td>
@@ -233,32 +251,24 @@ const TablaPedidosCompletados: React.FC = () => {
                           <table className="TablaPedidosCompletados-subtable">
                             <thead>
                               <tr>
-                                <th>Pedido</th>
-                                <th>Numero pedido</th>                               
-                                <th>Origen</th>
-                                <th>Destino Real</th>
-                                <th>Cliente</th>
-                                <th>Destinatario</th>
-                                <th>Kilos</th>
-                                <th>Entregas</th>
-                                <th>Observaciones</th>
-                                <th>Estado</th>
-                              </tr>
+                              <th>Pedido</th><th>Consecutivo pedido</th><th>Origen</th><th>Destino Real</th><th>Cliente</th>
+                              <th>Destinatario</th><th>Kilos</th><th>Entregas</th><th>Observaciones</th><th>Estado</th>
+                            </tr>
                             </thead>
                             <tbody>
                               {g.pedidos.map(p => (
                                 <tr key={p.id}>
-                                  <td>{p.consecutivo_integrapp}</td>
-                                  <td>{p.numero_pedido}</td>
-                                  <td>{p.origen}</td>
-                                  <td>{p.destino_real}</td>
-                                  <td>{p.cliente_nombre}</td>
-                                  <td>{p.ubicacion_descargue}</td>
-                                  <td>{p.num_kilos}</td>
-                                  <td>{p.planilla_siscore}</td>
-                                  <td>{p.observaciones}</td>
-                                  <td>{p.estado}</td>
-                                </tr>
+                                <td>{p.consecutivo_integrapp}</td>
+                                <td>{p.numero_pedido}</td>
+                                <td>{p.origen}</td>
+                                <td>{p.destino_real}</td>
+                                <td>{p.nombre_cliente}</td>
+                                <td>{p.ubicacion_descargue}</td>
+                                <td>{p.num_kilos}</td>
+                                <td>{p.planilla_siscore}</td>
+                                <td>{p.observaciones}</td>
+                                <td>{p.estado}</td>
+                              </tr>
                               ))}
                             </tbody>
                           </table>

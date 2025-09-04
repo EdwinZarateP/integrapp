@@ -134,7 +134,7 @@ export interface AjusteResultado {
   costo_real_vehiculo: number;
   costo_teorico_vehiculo: number;
   diferencia_flete: number;
-  nuevo_estado: 'AUTORIZADO' | 'REQUIERE AUTORIZACION';
+  nuevo_estado: 'PREAUTORIZADO' | 'REQUIERE AUTORIZACION';
 }
 
 
@@ -291,3 +291,18 @@ export const ajustarTotalesVehiculo = async (
   );
   return response.data;
 };
+
+
+export async function confirmarPreautorizados(
+  consecutivos: string[],
+  usuario: string,
+  observaciones_aprobador?: string
+): Promise<any> {
+  const url = `${API_BASE}/pedidos/confirmar-preautorizados`;
+  const payload: any = { consecutivos, usuario };
+  if (typeof observaciones_aprobador === 'string') {
+    payload.observaciones_aprobador = observaciones_aprobador;
+  }
+  const { data } = await axios.put(url, payload);
+  return data;
+}

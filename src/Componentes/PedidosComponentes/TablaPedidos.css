@@ -2,9 +2,7 @@
    TablaPedidos.css - Versión Mejorada (Orden Lógico)
    ============================================ */
 
-/* --------------------------------------------
-   1. Estilos Generales del Contenedor
-   -------------------------------------------- */
+/* 1. Contenedor */
 .TablaPedidos-contenedor {
   margin: 20px;
   overflow-x: auto;
@@ -17,9 +15,7 @@
   height: 90%;
 }
 
-/* --------------------------------------------
-   2. Filtros (pantalla grande)
-   -------------------------------------------- */
+/* 2. Filtros */
 .TablaPedidos-filtros {
   display: flex;
   gap: 15px;
@@ -49,9 +45,7 @@
   cursor: pointer;
 }
 
-/* --------------------------------------------
-   3. Filtros Móvil: Botón y Modal
-   -------------------------------------------- */
+/* 3. Filtros móvil */
 .TablaPedidos-btn-filtros-mobile {
   display: none;
   margin: 10px auto;
@@ -118,9 +112,7 @@
   color: white;
 }
 
-/* --------------------------------------------
-   4. Contenedor de la Tabla (Scroll Vertical)
-   -------------------------------------------- */
+/* 4. Contenedor tabla */
 .TablaPedidos-tabla-container {
   flex: 1;
   overflow-y: auto;
@@ -128,9 +120,7 @@
   border-radius: 0 0 10px 10px;
 }
 
-/* --------------------------------------------
-   5. Estilos Base de la Tabla
-   -------------------------------------------- */
+/* 5. Tabla base */
 .TablaPedidos-table {
   width: 100%;
   border-collapse: separate;
@@ -139,9 +129,7 @@
   position: relative;
 }
 
-/* --------------------------------------------
-   6. Cabecera Fija
-   -------------------------------------------- */
+/* 6. Cabecera fija */
 .TablaPedidos-table-titulos {
   position: sticky;
   top: 0;
@@ -161,9 +149,7 @@
   font-size: 0.9rem;
 }
 
-/* --------------------------------------------
-   7. Cuerpo de la Tabla (Filas)
-   -------------------------------------------- */
+/* 7. Filas */
 .TablaPedidos-table td {
   padding: 14px 10px;
   border-bottom: 1px solid #e0e0e0;
@@ -176,9 +162,7 @@
   font-size: 0.9rem;
 }
 
-/* --------------------------------------------
-   8. Estados de Fila
-   -------------------------------------------- */
+/* 8. Estados fila */
 .TablaPedidos-row--requires-auth {
   background-color: #1e7e34;
 }
@@ -195,9 +179,7 @@
   background-color: #faf3cd;
 }
 
-/* --------------------------------------------
-   9. Columnas Específicas en Negrita
-   -------------------------------------------- */
+/* 9. Columnas en negrita */
 .TablaPedidos-table th:nth-child(13),
 .TablaPedidos-table th:nth-child(18) {
   font-weight: 700;
@@ -208,9 +190,7 @@
   font-weight: 700;
 }
 
-/* --------------------------------------------
-   10. Detalles Expandibles
-   -------------------------------------------- */
+/* 10. Detalles */
 .TablaPedidos-details {
   background-color: #f9f9f9;
 }
@@ -220,9 +200,7 @@
   background-color: #f5f9ff;
 }
 
-/* --------------------------------------------
-   11. Subtables
-   -------------------------------------------- */
+/* 11. Subtabla */
 .TablaPedidos-subtable {
   width: calc(100% - 50px);
   border-collapse: separate;
@@ -239,9 +217,7 @@
   z-index: 10;
 }
 
-/* --------------------------------------------
-   12. Botones en la Tabla
-   -------------------------------------------- */
+/* 12. Botones */
 .TablaPedidos-table button {
   padding: 8px 15px;
   margin: 4px;
@@ -262,31 +238,35 @@
 .TablaPedidos-btn-autorizar {
   background-color: #1e7e34;
   color: white;
-  width: 80px;
+  width: 110px;
 }
 
 .TablaPedidos-btn-eliminar {
   background-color: red;
   color: white;
-  width: 80px;
+  width: 90px;
 }
 
-/* 👇 NUEVO botón editar */
 .TablaPedidos-btn-editar {
   background-color: #0d6efd;
   color: white;
   width: 80px;
 }
 
-/* Resalta celda de consecutivo (doble clic) */
+/* 👇 NUEVO: botón confirmar (PREAUTORIZADO -> AUTORIZADO) */
+.TablaPedidos-btn-confirmar {
+  background-color: #198754;
+  color: white;
+  /* min-width: 180px; */
+}
+
+/* Doble clic */
 .TablaPedidos-cell-consecutivo {
   cursor: pointer;
   text-decoration: underline;
 }
 
-/* --------------------------------------------
-   13. Responsive
-   -------------------------------------------- */
+/* 13. Responsive */
 @media (max-width: 1200px) {
   .TablaPedidos-table th,
   .TablaPedidos-table td {
@@ -296,35 +276,19 @@
 }
 
 @media (max-width: 900px) {
-  .TablaPedidos-contenedor {
-    height: 90%;
-  }
-  .TablaPedidos-filtros {
-    display: none;
-  }
-  .TablaPedidos-btn-filtros-mobile {
-    display: block;
-  }
-  .TablaPedidos-tabla-container {
-    overflow-x: auto;
-  }
-  .TablaPedidos-table {
-    min-width: 1200px;
-  }
-  .TablaPedidos-subtable {
-    min-width: 1000px;
-  }
+  .TablaPedidos-contenedor { height: 90%; }
+  .TablaPedidos-filtros { display: none; }
+  .TablaPedidos-btn-filtros-mobile { display: block; }
+  .TablaPedidos-tabla-container { overflow-x: auto; }
+  .TablaPedidos-table { min-width: 1200px; }
+  .TablaPedidos-subtable { min-width: 1000px; }
 }
 
 @media (min-width: 901px) {
-  .TablaPedidos-btn-filtros-mobile {
-    display: none;
-  }
+  .TablaPedidos-btn-filtros-mobile { display: none; }
 }
 
-/* --------------------------------------------
-   14. Scroll Personalizado
-   -------------------------------------------- */
+/* 14. Scroll */
 .TablaPedidos-tabla-container::-webkit-scrollbar {
   height: 10px;
   width: 10px;
@@ -339,9 +303,7 @@
   border: 2px solid #f1f1f1;
 }
 
-/* --------------------------------------------
-   15. Utilidades
-   -------------------------------------------- */
+/* 15. Utilidades */
 .TablaPedidos-cell--error {
   color: #dc3545;
   font-weight: bold;
@@ -351,7 +313,7 @@
 }
 
 /* ============================================
-   MODAL EDITAR (nuevo)
+   MODAL EDITAR
    ============================================ */
 .TablaPedidos-modal-editar {
   position: fixed;
@@ -382,15 +344,8 @@
   gap: 10px;
 }
 
-.TablaPedidos-modal-editar-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.TablaPedidos-modal-editar-consec {
-  font-weight: 600;
-  color: #0d6efd;
-}
+.TablaPedidos-modal-editar-header h3 { margin: 0; font-size: 1.1rem; }
+.TablaPedidos-modal-editar-consec { font-weight: 600; color: #0d6efd; }
 
 .TablaPedidos-modal-editar-grid {
   display: grid;
@@ -398,16 +353,8 @@
   gap: 12px;
 }
 
-.TablaPedidos-form-grupo {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.TablaPedidos-form-grupo label {
-  font-weight: 600;
-  font-size: 0.9rem;
-}
+.TablaPedidos-form-grupo { display: flex; flex-direction: column; gap: 6px; }
+.TablaPedidos-form-grupo label { font-weight: 600; font-size: 0.9rem; }
 
 .TablaPedidos-form-grupo input,
 .TablaPedidos-form-grupo select,
@@ -418,9 +365,7 @@
   font-size: 0.95rem;
 }
 
-.TablaPedidos-form-grupo--full {
-  grid-column: 1 / -1;
-}
+.TablaPedidos-form-grupo--full { grid-column: 1 / -1; }
 
 .TablaPedidos-modal-editar-actions {
   display: flex;
@@ -446,7 +391,46 @@
   cursor: pointer;
 }
 
-.TablaPedidos-btn-guardar[disabled] {
-  opacity: 0.7;
+.TablaPedidos-btn-guardar[disabled] { opacity: 0.7; cursor: not-allowed; }
+
+/* ============================================
+   NUEVO: Selección y barra de acciones masivas
+   ============================================ */
+.TablaPedidos-col-select {
+  width: 50px;
+}
+
+.TablaPedidos-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+.TablaPedidos-checkbox--disabled { opacity: 0.5; pointer-events: none; }
+
+.TablaPedidos-bulkbar {
+  position: sticky;
+  top: 0; /* queda debajo de la cabecera de tabla en desktop */
+  z-index: 25;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  gap: 12px;
+}
+
+.TablaPedidos-bulkbar-left { display: flex; align-items: center; gap: 12px; }
+.TablaPedidos-bulkbar-count { font-weight: 600; color: #0d1048; }
+
+.TablaPedidos-bulkbar .TablaPedidos-btn-confirmar {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.TablaPedidos-btn-confirmar[disabled] {
+  opacity: 0.6;
   cursor: not-allowed;
 }

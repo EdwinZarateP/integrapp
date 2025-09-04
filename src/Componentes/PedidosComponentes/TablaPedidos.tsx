@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useMemo } from 'react';
 import Cookies from 'js-cookie';
 import Swal from 'sweetalert2';
 import {
   listarPedidosVehiculos,
-  autorizarPorConsecutivoVehiculo,
+  autorizarPorConsecutivoVehiculo,           // REQUIERE AUTORIZACION -> AUTORIZADO (ADMIN/GERENTE)
   eliminarPedidosPorConsecutivoVehiculo,
-  ajustarTotalesVehiculo,          // 👈 NUEVO
-  AjusteVehiculo                    // 👈 (tipos opcionales, si los exportas)
+  ajustarTotalesVehiculo,                   // Ajustes
+  AjusteVehiculo,
+  confirmarPreautorizados                   // 👈 NUEVO: PREAUTORIZADO -> AUTORIZADO (ADMIN/DESP/OPER)
 } from '../../Funciones/ApiPedidos/apiPedidos';
 import './TablaPedidos.css';
 
 const formatoMoneda = (v: number) =>
   v.toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
 
-const estadosDisponibles = ['AUTORIZADO', 'REQUIERE AUTORIZACION', 'COMPLETADO'];
+const estadosDisponibles = ['PREAUTORIZADO','AUTORIZADO', 'REQUIERE AUTORIZACION', 'COMPLETADO'];
 const regionesDisponibles = ['FUNZA', 'KABI', 'GIRARDOTA', 'BUCARAMANGA', 'CALI', 'BARRANQUILLA'];
 
 const perfilesConEdicion = ['ADMIN', 'DESPACHADOR', 'OPERADOR'] as const;
@@ -54,11 +55,12 @@ const TablaPedidos: React.FC = () => {
     Observaciones_ajustes: ''
   });
 
+  // ✅ Selección múltiple para PREAUTORIZADOS
+  const [seleccionados, setSeleccionados] = useState<Set<string>>(new Set());
+
   // Detectar cambios en el tamaño de la pantalla
   useLayoutEffect(() => {
-    const actualizarTamañoPantalla = () => {
-      setEsPantallaGrande(window.innerWidth >= 900);
-    };
+    const actualizarTamañoPantalla = () => setEsPantallaGrande(window.innerWidth >= 900);
     window.addEventListener('resize', actualizarTamañoPantalla);
     return () => window.removeEventListener('resize', actualizarTamañoPantalla);
   }, []);
@@ -76,6 +78,7 @@ const TablaPedidos: React.FC = () => {
     try {
       const res = await listarPedidosVehiculos(usuario, filtros);
       setPedidos(res);
+      setSeleccionados(new Set()); // limpiar selección al refrescar
     } catch (e: any) {
       Swal.fire('Error', e.response?.data?.detail || e.message, 'error');
     } finally {
@@ -94,13 +97,36 @@ const TablaPedidos: React.FC = () => {
     setExpandido(copia);
   };
 
-  const manejarAutorizar = async (consec: string) => {
+  // --------- Acciones por fila ---------
+  const manejarAutorizarRA = async (consec: string) => {
+    // REQUIERE AUTORIZACION -> AUTORIZADO (ADMIN/GERENTE)
     try {
       await autorizarPorConsecutivoVehiculo([consec], usuario);
       Swal.fire('Listo', 'Vehículo autorizado', 'success');
       obtenerPedidos();
     } catch (e: any) {
       Swal.fire('Error', e.response?.data?.detail || e.message, 'error');
+    }
+  };
+
+  const manejarConfirmarPreautorizado = async (consec: string) => {
+    // PREAUTORIZADO -> AUTORIZADO (ADMIN/DESP/OPER)
+    const { value: obs } = await Swal.fire({
+      title: 'Confirmar PREAUTORIZADO',
+      input: 'textarea',
+      inputLabel: 'Observaciones del aprobador (opcional)',
+      inputPlaceholder: 'Escribe una nota si lo deseas…',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar'
+    });
+    try {
+      await confirmarPreautorizados([consec], usuario, obs ?? undefined);
+      Swal.fire('Listo', 'Vehículo confirmado a AUTORIZADO', 'success');
+      obtenerPedidos();
+    } catch (e: any) {
+      const d = e.response?.data?.detail || e.response?.data || e.message;
+      Swal.fire('Error', typeof d === 'string' ? d : JSON.stringify(d, null, 2), 'error');
     }
   };
 
@@ -122,7 +148,7 @@ const TablaPedidos: React.FC = () => {
     }
   };
 
-  // 👉 Abrir modal con datos del grupo
+  // --------- Edición (ajustes) ----------
   const abrirModalEditar = (g: any) => {
     if (!perfilesConEdicion.includes(perfil as any)) return;
     setEditForm({
@@ -153,7 +179,6 @@ const TablaPedidos: React.FC = () => {
   };
 
   const guardarEdicion = async () => {
-    // Validación mínima
     if (!editForm.consecutivo_vehiculo) {
       Swal.fire('Atención', 'Falta consecutivo_vehiculo', 'warning');
       return;
@@ -162,7 +187,6 @@ const TablaPedidos: React.FC = () => {
       Swal.fire('Atención', 'Selecciona un tipo de vehículo (SICETAC)', 'warning');
       return;
     }
-
     const ajuste: AjusteVehiculo = {
       consecutivo_vehiculo: editForm.consecutivo_vehiculo,
       tipo_vehiculo_sicetac: editForm.tipo_vehiculo_sicetac || undefined,
@@ -184,8 +208,72 @@ const TablaPedidos: React.FC = () => {
     }
   };
 
+  // --------- Selección múltiple (solo PREAUTORIZADO) ----------
+  const puedeSeleccionar = perfilesConEdicion.includes(perfil as any);
+  const preautorizadosVisibles = useMemo(
+    () => pedidos.filter(g => Array.isArray(g.estados) && g.estados.includes('PREAUTORIZADO')),
+    [pedidos]
+  );
+  const hayPreautorizadosVisibles = preautorizadosVisibles.length > 0;
+
+  const toggleSeleccion = (cv: string) => {
+    if (!puedeSeleccionar) return;
+    const s = new Set(seleccionados);
+    s.has(cv) ? s.delete(cv) : s.add(cv);
+    setSeleccionados(s);
+  };
+
+  const toggleSeleccionTodos = () => {
+    if (!puedeSeleccionar || !hayPreautorizadosVisibles) return;
+    const actuales = new Set(seleccionados);
+    const allCvs = preautorizadosVisibles.map(g => g.consecutivo_vehiculo);
+    const todosYa = allCvs.every(cv => actuales.has(cv));
+    if (todosYa) {
+      // deseleccionar todos
+      allCvs.forEach(cv => actuales.delete(cv));
+    } else {
+      // seleccionar todos visibles en PREAUTORIZADO
+      allCvs.forEach(cv => actuales.add(cv));
+    }
+    setSeleccionados(actuales);
+  };
+
+  const manejarConfirmacionMasiva = async () => {
+    if (!seleccionados.size) return;
+    const { value: obs } = await Swal.fire({
+      title: `Confirmar ${seleccionados.size} vehículo(s) preautorizado(s)`,
+      input: 'textarea',
+      inputLabel: 'Observaciones del aprobador (opcional)',
+      inputPlaceholder: 'Escribe una nota si lo deseas…',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar'
+    });
+    try {
+      const res = await confirmarPreautorizados(Array.from(seleccionados), usuario, obs ?? undefined);
+      const msg =
+        typeof res?.mensaje === 'string'
+          ? res.mensaje
+          : `Confirmados: ${Array.from(seleccionados).length}`;
+      Swal.fire('Éxito', msg, 'success');
+      setSeleccionados(new Set());
+      obtenerPedidos();
+    } catch (e: any) {
+      const d = e.response?.data?.detail || e.response?.data || e.message;
+      Swal.fire('Error', typeof d === 'string' ? d : JSON.stringify(d, null, 2), 'error');
+    }
+  };
+
+  // header checkbox marcado si TODOS los preautorizados visibles están seleccionados
+  const headerChecked = useMemo(() => {
+    if (!hayPreautorizadosVisibles) return false;
+    const allCvs = preautorizadosVisibles.map(g => g.consecutivo_vehiculo);
+    return allCvs.length > 0 && allCvs.every(cv => seleccionados.has(cv));
+  }, [preautorizadosVisibles, seleccionados, hayPreautorizadosVisibles]);
+
   return (
     <div className="TablaPedidos-contenedor">
+
       {/* Filtros para pantalla grande */}
       {esPantallaGrande && (
         <div className="TablaPedidos-filtros">
@@ -235,6 +323,36 @@ const TablaPedidos: React.FC = () => {
         </div>
       )}
 
+      {/* 🔽 Barra de acciones masivas (sticky) */}
+      {puedeSeleccionar && (
+        <div className="TablaPedidos-bulkbar">
+          <div className="TablaPedidos-bulkbar-left">
+            <label className={`TablaPedidos-checkbox ${!hayPreautorizadosVisibles ? 'TablaPedidos-checkbox--disabled' : ''}`}>
+              <input
+                type="checkbox"
+                checked={headerChecked}
+                onChange={toggleSeleccionTodos}
+                disabled={!hayPreautorizadosVisibles}
+              />
+              <span>Seleccionar todos PREAUTORIZADOS visibles</span>
+            </label>
+            <span className="TablaPedidos-bulkbar-count">
+              Seleccionados: {seleccionados.size}
+            </span>
+          </div>
+          <div className="TablaPedidos-bulkbar-actions">
+            <button
+              className="TablaPedidos-btn-confirmar"
+              disabled={!seleccionados.size}
+              onClick={manejarConfirmacionMasiva}
+              title="Confirmar PREAUTORIZADOS → AUTORIZADO"
+            >
+              Confirmar PREAUTORIZADOS
+            </button>
+          </div>
+        </div>
+      )}
+
       {cargando ? (
         <p>Cargando...</p>
       ) : (
@@ -242,6 +360,10 @@ const TablaPedidos: React.FC = () => {
           <table className="TablaPedidos-table">
             <thead className='TablaPedidos-table-titulos'>
               <tr>
+                {/* Columna selección solo para perfiles permitidos */}
+                <th className="TablaPedidos-col-select">
+                  {puedeSeleccionar ? 'Sel.' : ''}
+                </th>
                 <th></th>
                 <th>Vehículo</th>
                 <th>Acciones</th>
@@ -252,110 +374,142 @@ const TablaPedidos: React.FC = () => {
                 <th>Kg Reales</th>
                 <th>Kg Sicetac</th>
                 <th>Flete Teorico</th>
-                <th>Car/desc Teorico Teorico</th>
-                <th>Pto Adic Teórico</th>                
-                <th>Total Teórico</th>   
+                <th>Car/desc Teorico</th>
+                <th>Pto Adic Teórico</th>
+                <th>Total Teórico</th>
                 <th>Flete Solicitado</th>
                 <th>Car/desc Solicitado</th>
                 <th>Pto Adic Solicitado</th>
-                <th>Desvío</th>   
-                <th>Total Solicitado</th>                             
+                <th>Desvío</th>
+                <th>Total Solicitado</th>
                 <th>Diferencia</th>
                 <th>Observaciones</th>
               </tr>
             </thead>
             <tbody>
-              {pedidos.map(g => (
-                <React.Fragment key={g.consecutivo_vehiculo}>
-                  <tr className={
-                    `${expandido.has(g.consecutivo_vehiculo) ? 'TablaPedidos-row--expanded' : ''} ` +
-                    `${g.estados.includes('REQUIERE AUTORIZACION') ? 'TablaPedidos-row--requires-auth' : ''}`
-                  }>
-                    <td>
-                      <button onClick={() => manejarExpandir(g.consecutivo_vehiculo)}>
-                        {expandido.has(g.consecutivo_vehiculo) ? '−' : '+'}
-                      </button>
-                    </td>
-
-                    {/* Doble clic para editar */}
-                    <td
-                      className="TablaPedidos-cell-consecutivo"
-                      onDoubleClick={() => abrirModalEditar(g)}
-                      title="Doble clic para editar"
-                    >
-                      {g.consecutivo_vehiculo}
-                    </td>
-
-                    <td>
-                      {g.estados.includes('REQUIERE AUTORIZACION') && ['ADMIN', 'GERENTE'].includes(perfil) && (
-                        <button className="TablaPedidos-btn-autorizar" onClick={() => manejarAutorizar(g.consecutivo_vehiculo)}>
-                          Autorizar
-                        </button>
-                      )}
-                      {['ADMIN', 'OPERADOR'].includes(perfil) && (
-                        <button className="TablaPedidos-btn-eliminar" onClick={() => manejarEliminar(g.consecutivo_vehiculo)}>
-                          Eliminar
-                        </button>
-                      )}
-                      {/* 👇 Botón Editar solo para ADMIN / DESPACHADOR / OPERADOR */}
-                      {perfilesConEdicion.includes(perfil as any) && (
-                        <button className="TablaPedidos-btn-editar" onClick={() => abrirModalEditar(g)}>
-                          Editar
-                        </button>
-                      )}
-                    </td>
-                    <td>{(g.tipo_vehiculo_sicetac || '').split('_')[0]}</td>
-                    <td>{g.destino}</td>
-                    <td>{g.estados.join(', ')}</td>
-                    <td>{g.total_puntos_vehiculo}</td>
-                    <td>{g.total_kilos_vehiculo}</td>
-                    <td>{g.total_kilos_vehiculo_sicetac}</td>
-                    <td>{formatoMoneda(g.valor_flete_sistema)}</td>
-                    <td>{formatoMoneda(g.total_cargue_descargue_teorico)}</td>
-                    <td>{formatoMoneda(g.total_punto_adicional_teorico)}</td>
-                    <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td>
-                    <td>{formatoMoneda(g.total_flete_solicitado)}</td>
-                    <td>{formatoMoneda(g.total_cargue_descargue)}</td>
-                    <td>{formatoMoneda(g.total_punto_adicional)}</td>
-                    <td>{formatoMoneda(g.total_desvio_vehiculo || 0)}</td>
-                    <td>{formatoMoneda(g.costo_real_vehiculo)}</td>
-                    <td className={g.diferencia_flete > 0 ? 'TablaPedidos-cell--error' : ''}>
-                      {formatoMoneda(g.diferencia_flete)}
-                    </td>
-                    <td>{g.Observaciones_ajustes}</td>
-                  </tr>
-
-                  {expandido.has(g.consecutivo_vehiculo) && (
-                    <tr className="TablaPedidos-details">
-                      <td colSpan={19}>
-                        <table className="TablaPedidos-subtable">
-                          <thead>
-                            <tr>
-                              <th>Pedido</th><th>Origen</th><th>Destino Real</th><th>Cliente</th>
-                              <th>Destinatario</th><th>Kilos</th><th>Entregas</th><th>Observaciones</th><th>Estado</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {g.pedidos.map((p: any) => (
-                              <tr key={p.id}>
-                                <td>{p.consecutivo_integrapp}</td>
-                                <td>{p.origen}</td>
-                                <td>{p.destino_real}</td>
-                                <td>{p.nombre_cliente}</td>
-                                <td>{p.ubicacion_descargue}</td>
-                                <td>{p.num_kilos}</td>
-                                <td>{p.planilla_siscore}</td>
-                                <td>{p.observaciones}</td>
-                                <td>{p.estado}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+              {pedidos.map(g => {
+                const esPreaut = Array.isArray(g.estados) && g.estados.includes('PREAUTORIZADO');
+                const seleccionado = seleccionados.has(g.consecutivo_vehiculo);
+                return (
+                  <React.Fragment key={g.consecutivo_vehiculo}>
+                    <tr className={
+                      `${expandido.has(g.consecutivo_vehiculo) ? 'TablaPedidos-row--expanded' : ''} ` +
+                      `${g.estados.includes('REQUIERE AUTORIZACION') ? 'TablaPedidos-row--requires-auth' : ''}`
+                    }>
+                      {/* Checkbox por fila */}
+                      <td className="TablaPedidos-col-select">
+                        {puedeSeleccionar && esPreaut ? (
+                          <input
+                            type="checkbox"
+                            checked={seleccionado}
+                            onChange={() => toggleSeleccion(g.consecutivo_vehiculo)}
+                            aria-label={`Seleccionar ${g.consecutivo_vehiculo}`}
+                          />
+                        ) : null}
                       </td>
+
+                      {/* Expandir */}
+                      <td>
+                        <button onClick={() => manejarExpandir(g.consecutivo_vehiculo)}>
+                          {expandido.has(g.consecutivo_vehiculo) ? '−' : '+'}
+                        </button>
+                      </td>
+
+                      {/* Doble clic para editar */}
+                      <td
+                        className="TablaPedidos-cell-consecutivo"
+                        onDoubleClick={() => abrirModalEditar(g)}
+                        title="Doble clic para editar"
+                      >
+                        {g.consecutivo_vehiculo}
+                      </td>
+
+                      <td>
+                        {/* REQUIERE AUTORIZACION -> AUTORIZAR (ADMIN/GERENTE) */}
+                        {g.estados.includes('REQUIERE AUTORIZACION') && ['ADMIN', 'GERENTE'].includes(perfil) && (
+                          <button
+                            className="TablaPedidos-btn-autorizar"
+                            onClick={() => manejarAutorizarRA(g.consecutivo_vehiculo)}
+                          >
+                            Autorizar
+                          </button>
+                        )}
+                        {/* PREAUTORIZADO -> CONFIRMAR (ADMIN/DESP/OPER) */}
+                        {esPreaut && perfilesConEdicion.includes(perfil as any) && (
+                          <button
+                            className="TablaPedidos-btn-confirmar"
+                            onClick={() => manejarConfirmarPreautorizado(g.consecutivo_vehiculo)}
+                          >
+                            Confirmar
+                          </button>
+                        )}
+                        {/* Eliminar */}
+                        {['ADMIN', 'OPERADOR'].includes(perfil) && (
+                          <button className="TablaPedidos-btn-eliminar" onClick={() => manejarEliminar(g.consecutivo_vehiculo)}>
+                            Eliminar
+                          </button>
+                        )}
+                        {/* Editar */}
+                        {perfilesConEdicion.includes(perfil as any) && (
+                          <button className="TablaPedidos-btn-editar" onClick={() => abrirModalEditar(g)}>
+                            Editar
+                          </button>
+                        )}
+                      </td>
+
+                      <td>{(g.tipo_vehiculo_sicetac || '').split('_')[0]}</td>
+                      <td>{g.destino}</td>
+                      <td>{g.estados.join(', ')}</td>
+                      <td>{g.total_puntos_vehiculo}</td>
+                      <td>{g.total_kilos_vehiculo}</td>
+                      <td>{g.total_kilos_vehiculo_sicetac}</td>
+                      <td>{formatoMoneda(g.valor_flete_sistema)}</td>
+                      <td>{formatoMoneda(g.total_cargue_descargue_teorico)}</td>
+                      <td>{formatoMoneda(g.total_punto_adicional_teorico)}</td>
+                      <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td>
+                      <td>{formatoMoneda(g.total_flete_solicitado)}</td>
+                      <td>{formatoMoneda(g.total_cargue_descargue)}</td>
+                      <td>{formatoMoneda(g.total_punto_adicional)}</td>
+                      <td>{formatoMoneda(g.total_desvio_vehiculo || 0)}</td>
+                      <td>{formatoMoneda(g.costo_real_vehiculo)}</td>
+                      <td className={g.diferencia_flete > 0 ? 'TablaPedidos-cell--error' : ''}>
+                        {formatoMoneda(g.diferencia_flete)}
+                      </td>
+                      <td>{g.Observaciones_ajustes}</td>
                     </tr>
-                  )}
-                </React.Fragment>
-              ))}
+
+                    {expandido.has(g.consecutivo_vehiculo) && (
+                      <tr className="TablaPedidos-details">
+                        <td colSpan={21}>
+                          <table className="TablaPedidos-subtable">
+                            <thead>
+                              <tr>
+                                <th>Pedido</th><th>Origen</th><th>Destino Real</th><th>Cliente</th>
+                                <th>Destinatario</th><th>Kilos</th><th>Entregas</th><th>Observaciones</th><th>Estado</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {g.pedidos.map((p: any) => (
+                                <tr key={p.id}>
+                                  <td>{p.consecutivo_integrapp}</td>
+                                  <td>{p.origen}</td>
+                                  <td>{p.destino_real}</td>
+                                  <td>{p.nombre_cliente}</td>
+                                  <td>{p.ubicacion_descargue}</td>
+                                  <td>{p.num_kilos}</td>
+                                  <td>{p.planilla_siscore}</td>
+                                  <td>{p.observaciones}</td>
+                                  <td>{p.estado}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>

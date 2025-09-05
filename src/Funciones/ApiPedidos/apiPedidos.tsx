@@ -5,7 +5,9 @@ import qs from 'qs';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
 
-// Interfaces
+// =======================
+// Interfaces / Tipos base
+// =======================
 export interface FiltrosPedidos {
   estados?: string[];
   regionales?: string[];
@@ -34,7 +36,7 @@ export interface Pedido {
   num_kilos: number;
   num_kilos_sicetac?: number;
   tipo_vehiculo: string;
-  tipo_vehiculo_sicetac?:string;
+  tipo_vehiculo_sicetac?: string;
   valor_declarado: number;
   planilla_siscore?: string;
   valor_flete: number;
@@ -59,9 +61,9 @@ export interface Pedido {
 
 export interface ListarVehiculosResponse {
   consecutivo_vehiculo: string;
-  tipo_vehiculo?: string;  
-  tipo_vehiculo_sicetac?: string;  
-  destino: string;   
+  tipo_vehiculo?: string;
+  tipo_vehiculo_sicetac?: string;
+  destino: string;
   multiestado: boolean;
   estados: string[];
   total_cajas_vehiculo: number;
@@ -85,8 +87,8 @@ export interface ListarVehiculosResponse {
 export interface ListarCompletadosResponse {
   consecutivo_vehiculo: string;
   tipo_vehiculo?: string;
-  tipo_vehiculo_sicetac?: string;  
-  destino: string;       
+  tipo_vehiculo_sicetac?: string;
+  destino: string;
   multiestado: boolean;
   estados: string[];
   total_cajas_vehiculo: number;
@@ -114,11 +116,13 @@ export interface AjusteVehiculo {
   total_kilos_vehiculo_sicetac?: number;
   total_desvio_vehiculo?: number;
   total_punto_adicional?: number;
-  Observaciones_ajustes?: string; // comentario opcional por vehículo
+  Observaciones_ajustes?: string;
+  total_cargue_descargue?: number;
+  total_flete_solicitado?: number;
 }
 
 export interface AjustesVehiculosPayload {
-  usuario: string;                 // quien ejecuta (valida perfil/regional)
+  usuario: string; // quien ejecuta (valida perfil/regional)
   ajustes: AjusteVehiculo[];
 }
 
@@ -134,9 +138,11 @@ export interface AjusteResultado {
   costo_real_vehiculo: number;
   costo_teorico_vehiculo: number;
   diferencia_flete: number;
-  nuevo_estado: 'PREAUTORIZADO' | 'REQUIERE AUTORIZACION';
+  nuevo_estado:
+    | 'PREAUTORIZADO'
+    | 'REQUIERE AUTORIZACION COORDINADOR'
+    | 'REQUIERE AUTORIZACION GERENTE';
 }
-
 
 export interface AjustarTotalesVehiculoResponse {
   mensaje: string;
@@ -144,8 +150,30 @@ export interface AjustarTotalesVehiculoResponse {
   errores?: string[]; // presente si hubo algunos consecutivos con problemas
 }
 
+// ---- Respuestas de endpoints con `mensaje` (para evitar `{}`) ----
+export interface AutorizarResponse {
+  mensaje: string;
+}
+
+export interface ConfirmarPreautResponse {
+  mensaje: string;
+  actualizados?: number;
+}
+
+export interface FusionarVehiculosResponse {
+  mensaje: string;
+  consecutivo_resultante: string;
+  docs_actualizados: number;
+  totales?: any;
+  estado?: any;
+  consecutivos_fusionados?: string[];
+}
+
+// =======================
+// Endpoints
+// =======================
+
 // 1) Cargar pedidos masivo
-// Añade la firma opcional onUploadProgress
 export const cargarPedidosMasivo = async (
   creadoPor: string,
   archivo: File,
@@ -157,20 +185,16 @@ export const cargarPedidosMasivo = async (
 
   const config = {
     headers: { 'Content-Type': 'multipart/form-data' },
-    onUploadProgress
+    onUploadProgress,
   };
 
-  // Indicamos el tipo genérico CargarMasivoResult
-  const response = await axios.post<CargarMasivoResult>(
+  const { data } = await axios.post<CargarMasivoResult>(
     `${API_BASE}/pedidos/cargar-masivo`,
     formData,
     config
   );
-
-  return response.data;
+  return data;
 };
-
-
 
 // 2) Listar pedidos por vehículo (multiestado)
 export const listarPedidosVehiculos = async (
@@ -178,48 +202,47 @@ export const listarPedidosVehiculos = async (
   filtros?: FiltrosPedidos
 ): Promise<ListarVehiculosResponse[]> => {
   const body: FiltrosConUsuario = { usuario, filtros };
-  const response = await axios.post<ListarVehiculosResponse[]>(
+  const { data } = await axios.post<ListarVehiculosResponse[]>(
     `${API_BASE}/pedidos/`,
     body
   );
-  return response.data;
+  return data;
 };
 
-
-// 3) Autorizar pedidos por consecutivo_vehiculo
+// 3) Autorizar por consecutivo_vehiculo
 export const autorizarPorConsecutivoVehiculo = async (
   consecutivos: string[],
   usuario: string,
   observacionesAprobador?: string
-): Promise<{ mensaje: string }> => {
-  const data: any = { consecutivos, usuario };
-  if (observacionesAprobador) data.observaciones_aprobador = observacionesAprobador;
-  const response = await axios.put<{ mensaje: string }>(
+): Promise<AutorizarResponse> => {
+  const payload: Record<string, any> = { consecutivos, usuario };
+  if (observacionesAprobador) payload.observaciones_aprobador = observacionesAprobador;
+
+  const { data } = await axios.put<AutorizarResponse>(
     `${API_BASE}/pedidos/autorizar-por-consecutivo-vehiculo`,
-    data
+    payload
   );
-  return response.data;
+  return data;
 };
 
-// 4) Eliminar pedidos por consecutivo_vehiculo
+// 4) Eliminar por consecutivo_vehiculo
 export const eliminarPedidosPorConsecutivoVehiculo = async (
   consecutivoVehiculo: string,
   usuario: string
 ): Promise<{ mensaje: string }> => {
-  const response = await axios.delete<{ mensaje: string }>(
+  const { data } = await axios.delete<{ mensaje: string }>(
     `${API_BASE}/pedidos/eliminar-por-consecutivo-vehiculo`,
     { params: { consecutivo_vehiculo: consecutivoVehiculo, usuario } }
   );
-  return response.data;
+  return data;
 };
 
 // 5) Exportar autorizados a Excel
 export const exportarAutorizados = async (): Promise<Blob> => {
-  const response = await axios.get<Blob>(
-    `${API_BASE}/pedidos/exportar-autorizados`,
-    { responseType: 'blob' }
-  );
-  return response.data;
+  const { data } = await axios.get<Blob>(`${API_BASE}/pedidos/exportar-autorizados`, {
+    responseType: 'blob',
+  });
+  return data;
 };
 
 // 6) Cargar números de pedido masivo
@@ -230,12 +253,13 @@ export const cargarNumerosPedido = async (
   const formData = new FormData();
   formData.append('usuario', usuario);
   formData.append('archivo', archivo);
-  const response = await axios.post<{ mensaje: string; vehiculos_completados: string[] }>(
+
+  const { data } = await axios.post<{ mensaje: string; vehiculos_completados: string[] }>(
     `${API_BASE}/pedidos/cargar-numeros-pedido`,
     formData,
     { headers: { 'Content-Type': 'multipart/form-data' } }
   );
-  return response.data;
+  return data;
 };
 
 // 7) Exportar completados a Excel
@@ -246,20 +270,15 @@ export const exportarCompletados = async (
   regionales?: string[]
 ): Promise<Blob> => {
   const params: any = { usuario, fecha_inicial: fechaInicial, fecha_final: fechaFinal };
-  if (regionales && regionales.length) {
-    params.regionales = regionales;
-  }
+  if (regionales?.length) params.regionales = regionales;
 
-  const response = await axios.get<Blob>(
-    `${API_BASE}/pedidos/exportar-completados`,
-    {
-      params,
-      // Serializa arrays así: ?regionales=FUNZA&regionales=GIRARDOTA
-      paramsSerializer: p => qs.stringify(p, { arrayFormat: 'repeat' }),
-      responseType: 'blob',
-    }
-  );
-  return response.data;
+  const { data } = await axios.get<Blob>(`${API_BASE}/pedidos/exportar-completados`, {
+    params,
+    // ?regionales=FUNZA&regionales=GIRARDOTA
+    paramsSerializer: (p) => qs.stringify(p, { arrayFormat: 'repeat' }),
+    responseType: 'blob',
+  });
+  return data;
 };
 
 // 8) Listar sólo vehículos completados
@@ -271,12 +290,13 @@ export const listarVehiculosCompletados = async (
 ): Promise<ListarCompletadosResponse[]> => {
   const params = { fecha_inicial: fechaInicial, fecha_final: fechaFinal };
   const body: FiltrosConUsuario = { usuario, filtros };
-  const response = await axios.post<ListarCompletadosResponse[]>(
+
+  const { data } = await axios.post<ListarCompletadosResponse[]>(
     `${API_BASE}/pedidos/listar-vehiculo-completados`,
     body,
     { params }
   );
-  return response.data;
+  return data;
 };
 
 // 9) Ajustar totales por vehículo y recalcular estado
@@ -285,24 +305,54 @@ export const ajustarTotalesVehiculo = async (
   ajustes: AjusteVehiculo[]
 ): Promise<AjustarTotalesVehiculoResponse> => {
   const body: AjustesVehiculosPayload = { usuario, ajustes };
-  const response = await axios.put<AjustarTotalesVehiculoResponse>(
+  const { data } = await axios.put<AjustarTotalesVehiculoResponse>(
     `${API_BASE}/pedidos/ajustar-totales-vehiculo`,
     body
   );
-  return response.data;
+  return data;
 };
 
-
+// 10) Confirmar PREAUTORIZADOS -> AUTORIZADO
 export async function confirmarPreautorizados(
   consecutivos: string[],
   usuario: string,
   observaciones_aprobador?: string
-): Promise<any> {
+): Promise<ConfirmarPreautResponse> {
   const url = `${API_BASE}/pedidos/confirmar-preautorizados`;
-  const payload: any = { consecutivos, usuario };
+  const payload: Record<string, any> = { consecutivos, usuario };
   if (typeof observaciones_aprobador === 'string') {
     payload.observaciones_aprobador = observaciones_aprobador;
   }
-  const { data } = await axios.put(url, payload);
+  const { data } = await axios.put<ConfirmarPreautResponse>(url, payload);
   return data;
+}
+
+// 11) Fusionar vehículos
+export type FusionVehiculosPayload = {
+  usuario: string;
+  consecutivos: string[]; // 2+ consecutivo_vehiculo
+  nuevo_destino: string;
+  tipo_vehiculo_sicetac: string;
+  total_flete_solicitado: number;
+  total_cargue_descargue: number;
+  total_punto_adicional: number;
+  total_desvio_vehiculo: number;
+  observacion_fusion?: string;
+};
+
+export async function fusionarVehiculos(
+  payload: FusionVehiculosPayload
+): Promise<FusionarVehiculosResponse> {
+  try {
+    const { data } = await axios.post<FusionarVehiculosResponse>(
+      `${API_BASE}/pedidos/fusionar-vehiculos`,
+      payload,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    return data;
+  } catch (e: any) {
+    // Log útil para diagnosticar respuestas de FastAPI
+    console.error('fusionarVehiculos error', e?.response?.status, e?.response?.data, e);
+    throw e; // El componente mostrará e.response.data.detail si existe
+  }
 }

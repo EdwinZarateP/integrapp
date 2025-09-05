@@ -172,7 +172,7 @@
 }
 
 .TablaPedidos-row--expanded {
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) ;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .TablaPedidos-row--expanded td {
@@ -180,13 +180,13 @@
 }
 
 /* 9. Columnas en negrita */
-.TablaPedidos-table th:nth-child(13),
-.TablaPedidos-table th:nth-child(18) {
+.TablaPedidos-table th:nth-child(14),
+.TablaPedidos-table th:nth-child(19) {
   font-weight: 700;
 }
 
-.TablaPedidos-table td:nth-child(13),
-.TablaPedidos-table td:nth-child(18) {
+.TablaPedidos-table td:nth-child(14),
+.TablaPedidos-table td:nth-child(19) {
   font-weight: 700;
 }
 
@@ -242,7 +242,7 @@
 }
 
 .TablaPedidos-btn-eliminar {
-  background-color: red;
+  background-color: #dc3545;
   color: white;
   width: 90px;
 }
@@ -253,11 +253,25 @@
   width: 80px;
 }
 
-/* 👇 NUEVO: botón confirmar (PREAUTORIZADO -> AUTORIZADO) */
+/* Confirmar (PREAUTORIZADO -> AUTORIZADO) */
 .TablaPedidos-btn-confirmar {
   background-color: #198754;
   color: white;
-  /* min-width: 180px; */
+  cursor: pointer;
+}
+
+/* NUEVO: Fusionar seleccionados */
+.TablaPedidos-btn-fusionar {
+  background-color: #6f42c1; /* morado */
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.TablaPedidos-btn-fusionar[disabled],
+.TablaPedidos-btn-confirmar[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Doble clic */
@@ -313,7 +327,7 @@
 }
 
 /* ============================================
-   MODAL EDITAR
+   MODAL EDITAR / FUSIÓN (mismo estilo)
    ============================================ */
 .TablaPedidos-modal-editar {
   position: fixed;
@@ -394,7 +408,7 @@
 .TablaPedidos-btn-guardar[disabled] { opacity: 0.7; cursor: not-allowed; }
 
 /* ============================================
-   NUEVO: Selección y barra de acciones masivas
+   Selección y barra de acciones masivas
    ============================================ */
 .TablaPedidos-col-select {
   width: 50px;
@@ -417,20 +431,28 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   padding: 8px 12px;
   gap: 12px;
+}
+
+.TablaPedidos-bulkbar-actions{
+  display: flex;
+  gap: 10px;
 }
 
 .TablaPedidos-bulkbar-left { display: flex; align-items: center; gap: 12px; }
 .TablaPedidos-bulkbar-count { font-weight: 600; color: #0d1048; }
 
-.TablaPedidos-bulkbar .TablaPedidos-btn-confirmar {
+.TablaPedidos-bulkbar .TablaPedidos-btn-confirmar,
+.TablaPedidos-bulkbar .TablaPedidos-btn-fusionar {
   padding: 10px 14px;
   border-radius: 8px;
   font-weight: 600;
 }
 
-.TablaPedidos-btn-confirmar[disabled] {
-  opacity: 0.6;
-  cursor: not-allowed;
+
+/* Asegura que SweetAlert2 quede por encima de tu modal (1100) */
+.swal2-container {
+  z-index: 20000 !important;
 }

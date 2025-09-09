@@ -18,7 +18,7 @@ const formatoMoneda = (v: number) =>
 
 const regionesDisponibles = [
   'FUNZA',
-  'KABI',
+  'CELTA',
   'GIRARDOTA',
   'BUCARAMANGA',
   'CALI',
@@ -36,14 +36,14 @@ const TablaPedidosCompletados: React.FC = () => {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const [regionalFiltro, setRegionalFiltro] = useState<string>(
-    ['ADMIN', 'GERENTE', 'ANALISTA'].includes(perfil) ? 'TODOS' : usuarioRegional
+    ['ADMIN', 'CONTROL', 'ANALISTA'].includes(perfil) ? 'TODOS' : usuarioRegional
   );
   const [fechaInicial, setFechaInicial] = useState<string>(today);
   const [fechaFinal, setFechaFinal] = useState<string>(today);
 
   const buildFiltros = () => {
     const filtros: any = {};
-    if (['ADMIN', 'GERENTE', 'ANALISTA'].includes(perfil)) {
+    if (['ADMIN', 'CONTROL', 'ANALISTA'].includes(perfil)) {
       if (regionalFiltro !== 'TODOS') filtros.regionales = [regionalFiltro];
     } else {
       filtros.regionales = [usuarioRegional];
@@ -145,7 +145,7 @@ const TablaPedidosCompletados: React.FC = () => {
     <div className="TablaPedidosCompletados-contenedor">
       {/* Filtros */}
       <div className="TablaPedidosCompletados-filtros">
-        {['ADMIN', 'GERENTE', 'ANALISTA'].includes(perfil) && (
+        {['ADMIN', 'CONTROL', 'ANALISTA'].includes(perfil) && (
           <select
             value={regionalFiltro}
             onChange={e => setRegionalFiltro(e.target.value)}

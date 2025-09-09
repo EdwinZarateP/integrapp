@@ -141,7 +141,7 @@ export interface AjusteResultado {
   nuevo_estado:
     | 'PREAUTORIZADO'
     | 'REQUIERE AUTORIZACION COORDINADOR'
-    | 'REQUIERE AUTORIZACION GERENTE';
+    | 'REQUIERE AUTORIZACION CONTROL';
 }
 
 export interface AjustarTotalesVehiculoResponse {

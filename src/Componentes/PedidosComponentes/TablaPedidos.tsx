@@ -26,16 +26,16 @@ const formatoMoneda = (v: unknown) => {
 const ESTADO_PREAUT = 'PREAUTORIZADO';
 const ESTADO_AUT = 'AUTORIZADO';
 const ESTADO_REQ_COORD = 'REQUIERE AUTORIZACION COORDINADOR';
-const ESTADO_REQ_GEREN = 'REQUIERE AUTORIZACION GERENTE';
+const ESTADO_REQ_GEREN = 'REQUIERE AUTORIZACION CONTROL';
 const ESTADO_COMPLETADO = 'COMPLETADO';
 
 const estadosDisponibles = [ESTADO_PREAUT, ESTADO_AUT, ESTADO_REQ_COORD, ESTADO_REQ_GEREN, ESTADO_COMPLETADO];
-const regionesDisponibles = ['FUNZA', 'KABI', 'GIRARDOTA', 'BUCARAMANGA', 'CALI', 'BARRANQUILLA'];
+const regionesDisponibles = ['FUNZA', 'CELTA', 'GIRARDOTA', 'BUCARAMANGA', 'CALI', 'BARRANQUILLA'];
 
-const perfilesConEdicion = ['ADMIN', 'DESPACHADOR', 'OPERADOR'] as const;
+const perfilesConEdicion = ['ADMIN', 'DESPACHADOR',"ANALISTA", 'OPERADOR'] as const;
 const opcionesTipoSicetac = ['CARRY', 'NHR', 'TURBO', 'NIES', 'SENCILLO', 'PATINETA', 'TRACTOMULA'];
 
-type Perfil = 'ADMIN' | 'COORDINADOR' | 'ANALISTA' | 'DESPACHADOR' | 'OPERADOR' | 'GERENTE' | string;
+type Perfil = 'ADMIN' | 'COORDINADOR' | 'ANALISTA' | 'DESPACHADOR' | 'OPERADOR' | 'CONTROL' | string;
 
 type EditFormState = {
   consecutivo_vehiculo: string;
@@ -69,22 +69,22 @@ const esFusionable = (g: any) => {
 };
 
 // 🔎 Utilidades de autorización
-function requeridoPorEstados(estados: string[]): 'COORDINADOR' | 'GERENTE' | null {
+function requeridoPorEstados(estados: string[]): 'COORDINADOR' | 'CONTROL' | null {
   if (!Array.isArray(estados) || estados.length === 0) return null;
   const upper = estados.map(e => (e || '').toUpperCase());
   const pideCoord = upper.includes(ESTADO_REQ_COORD);
   const pideGeren = upper.includes(ESTADO_REQ_GEREN);
-  if (pideGeren) return 'GERENTE';
+  if (pideGeren) return 'CONTROL';
   if (pideCoord) return 'COORDINADOR';
   return null;
 }
 
-function perfilPuedeAutorizar(perfil: Perfil, requerido: 'COORDINADOR' | 'GERENTE' | null): boolean {
+function perfilPuedeAutorizar(perfil: Perfil, requerido: 'COORDINADOR' | 'CONTROL' | null): boolean {
   const p = (perfil || '').toUpperCase();
   if (!requerido) return false;
   if (p === 'ADMIN') return true;
-  if (requerido === 'GERENTE') return p === 'GERENTE';
-  if (requerido === 'COORDINADOR') return p === 'COORDINADOR' || p === 'GERENTE';
+  if (requerido === 'CONTROL') return p === 'CONTROL';
+  if (requerido === 'COORDINADOR') return p === 'COORDINADOR' || p === 'CONTROL';
   return false;
 }
 
@@ -138,25 +138,38 @@ const TablaPedidos: React.FC = () => {
   }, []);
 
   const obtenerPedidos = async () => {
-    setCargando(true);
-    const filtros: any = {
-      estados: filtroEstado === 'TODOS' ? estadosDisponibles : [filtroEstado],
-    };
-    if (['ADMIN', 'COORDINADOR', 'ANALISTA', 'GERENTE'].includes(perfil)) {
-      if (filtroRegional !== 'TODOS') filtros.regionales = [filtroRegional];
-    } else {
-      filtros.regionales = [regionalUsuario];
-    }
-    try {
-      const res = await listarPedidosVehiculos(usuario, filtros);
-      setPedidos(res);
-      setSeleccionados(new Set()); // limpiar selección al refrescar
-    } catch (e: any) {
-      Swal.fire('Error', e.response?.data?.detail || e.message, 'error');
-    } finally {
-      setCargando(false);
-    }
-  };
+  setCargando(true);
+
+  const esAdminType = ['ADMIN', 'COORDINADOR', 'ANALISTA', 'CONTROL'].includes(perfil);
+  const filtros: any = {};
+
+  // No enviar estados cuando es "TODOS"
+  if (filtroEstado !== 'TODOS') filtros.estados = [filtroEstado];
+
+  // Siempre enviar regionales (lista completa si es "TODOS")
+  filtros.regionales = esAdminType
+    ? (filtroRegional === 'TODOS' ? regionesDisponibles : [filtroRegional])
+    : [regionalUsuario];
+
+  try {
+    const res: any = await listarPedidosVehiculos(usuario, filtros);
+
+    // 🔹 Normaliza si viene como AxiosResponse o como arreglo directo
+    const lista = Array.isArray(res)
+      ? res
+      : Array.isArray(res?.data)
+        ? res.data
+        : [];
+
+    setPedidos(lista);
+    setSeleccionados(new Set());
+  } catch (e: any) {
+    Swal.fire('Error', e.response?.data?.detail || e.message, 'error');
+  } finally {
+    setCargando(false);
+  }
+};
+
 
   useEffect(() => {
     obtenerPedidos();
@@ -171,7 +184,7 @@ const TablaPedidos: React.FC = () => {
 
   // --------- Acciones por fila ---------
   const manejarAutorizar = async (grupo: any) => {
-    // REQUIERE AUTORIZACION [COORD/GERENTE] -> AUTORIZADO (según perfil)
+    // REQUIERE AUTORIZACION [COORD/CONTROL] -> AUTORIZADO (según perfil)
     const requerido = requeridoPorEstados(grupo.estados || []);
     if (!perfilPuedeAutorizar(perfil, requerido)) {
       Swal.fire('Sin permiso', `Este vehículo requiere ${requerido}. Tu perfil: ${perfil}`, 'warning');
@@ -510,7 +523,7 @@ const TablaPedidos: React.FC = () => {
       {/* Filtros para pantalla grande */}
       {esPantallaGrande && (
         <div className="TablaPedidos-filtros">
-          {['ADMIN', 'COORDINADOR', 'ANALISTA', 'GERENTE'].includes(perfil) && (
+          {['ADMIN', 'COORDINADOR', 'ANALISTA', 'CONTROL'].includes(perfil) && (
             <select value={filtroRegional} onChange={e => setFiltroRegional(e.target.value)}>
               <option value="TODOS">Todas regionales</option>
               {regionesDisponibles.map(r => <option key={r} value={r}>{r}</option>)}
@@ -538,7 +551,7 @@ const TablaPedidos: React.FC = () => {
       {mostrarModalFiltros && !esPantallaGrande && (
         <div className="TablaPedidos-modal-filtros">
           <div className="TablaPedidos-modal-contenido">
-            {['ADMIN', 'COORDINADOR', 'ANALISTA', 'GERENTE'].includes(perfil) && (
+            {['ADMIN', 'COORDINADOR', 'ANALISTA', 'CONTROL'].includes(perfil) && (
               <select value={filtroRegional} onChange={e => setFiltroRegional(e.target.value)}>
                 <option value="TODOS">Todas regionales</option>
                 {regionesDisponibles.map(r => <option key={r} value={r}>{r}</option>)}
@@ -683,7 +696,7 @@ const TablaPedidos: React.FC = () => {
                       </td>
 
                       <td>
-                        {/* REQUIERE AUTORIZACION [COORD/GERENTE] -> AUTORIZAR */}
+                        {/* REQUIERE AUTORIZACION [COORD/CONTROL] -> AUTORIZAR */}
                         {filaRequiereAuth && puedeAutorizar && (
                           <button
                             className="TablaPedidos-btn-autorizar"

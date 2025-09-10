@@ -70,8 +70,7 @@
 .Pedidos-cuerpo {
   flex: 1 1 auto;
   overflow-y: auto;
-  
-  /* deja espacio para zona de botones + toggle */
+
 }
 
 /* Zona de botones: drawer siempre */

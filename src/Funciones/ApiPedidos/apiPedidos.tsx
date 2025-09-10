@@ -81,6 +81,7 @@ export interface ListarVehiculosResponse {
   total_cargue_descargue_teorico: number;
   total_desvio_vehiculo: number;
   diferencia_flete: number;
+  Observaciones_ajustes:string;
   pedidos: Pedido[];
 }
 
@@ -106,6 +107,7 @@ export interface ListarCompletadosResponse {
   total_cargue_descargue_teorico: number;
   total_desvio_vehiculo: number;
   diferencia_flete: number;
+  Observaciones_ajustes?: string;
   pedidos: Pedido[];
 }
 
@@ -356,3 +358,49 @@ export async function fusionarVehiculos(
     throw e; // El componente mostrará e.response.data.detail si existe
   }
 }
+
+
+// === Tipos del payload que espera el backend ===
+export type OverridesVehiculo = {
+  total_flete_solicitado?: number;
+  total_cargue_descargue?: number;
+  total_punto_adicional?: number;
+  total_desvio_vehiculo?: number;
+};
+
+export type GrupoDivision = {
+  destinatarios?: string[];              // usamos esto en el front
+  consecutivos_integrapp?: string[];     // opcional si quisieras dividir por CI
+  overrides?: OverridesVehiculo;         // opcional
+};
+
+export type DividirHastaTresPayload = {
+  usuario: string;
+  consecutivo_origen: string;
+  destino_unico: string;
+  campo_destinatario?: string;           // ej: 'ubicacion_descargue' (default backend: 'destinatario')
+  observacion_division?: string;
+  grupo_A?: { overrides?: OverridesVehiculo }; // opcional
+  grupo_B?: GrupoDivision;               // if vacío, no se crea -B
+  grupo_C?: GrupoDivision;               // if vacío, no se crea -C
+};
+
+// justo debajo de FusionarVehiculosResponse, por ejemplo
+export type DividirVehiculoResponse = { mensaje: string } & Record<string, any>;
+
+export async function dividirVehiculo(
+  payload: DividirHastaTresPayload
+): Promise<DividirVehiculoResponse> {
+  try {
+    const { data } = await axios.post<DividirVehiculoResponse>(
+      `${API_BASE}/pedidos/dividir-vehiculo`,
+      payload,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    return data;
+  } catch (e: any) {
+    console.error('dividirVehiculo error', e?.response?.status, e?.response?.data, e);
+    throw e;
+  }
+}
+

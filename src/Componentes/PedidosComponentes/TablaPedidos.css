@@ -1,15 +1,19 @@
 /* ============================================
-   TablaPedidos.css - Versión Pro
+   TablaPedidos.css — Versión Pro
    Layout general, tabla, modales, fusión y división
-   Incluye chips mejorados para B y C
    ============================================ */
 
-/* ===== Variables base ===== */
+/* ============================================
+   0) Variables
+   ============================================ */
 :root{
   --verde: #1e7e34;
   --verde-osc: #156327;
   --azul: #0d6efd;
   --morado: #6f42c1;
+  --rojo: #dc3545;
+  --amarillo: #ffc107;
+
   --gris-900:#212529;
   --gris-800:#343a40;
   --gris-700:#495057;
@@ -19,8 +23,7 @@
   --gris-300:#dee2e6;
   --gris-200:#e9ecef;
   --gris-100:#f8f9fa;
-  --rojo: #dc3545;
-  --amarillo: #ffc107;
+
   --warning-bg:#fff3cd;
   --error-bg:#fff3f3;
 
@@ -34,27 +37,28 @@
   --c-purple-50: #f3e8ff;
 }
 
-/* 1) Contenedor principal */
+/* ============================================
+   1) Contenedor principal y filtros
+   ============================================ */
 .TablaPedidos-contenedor {
-  /* margin: 20px; */
   padding-left: 10px;
   padding-right: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 15px rgba(0,0,0,.08);
   border-radius: 12px;
-  background-color: #fff;
+  background: #fff;
   position: relative;
   display: flex;
   flex-direction: column;
   height: 90vh;
 }
 
-/* 2) Filtros */
+/* Filtros (desktop) */
 .TablaPedidos-filtros {
   display: flex;
   gap: 12px;
   padding: 12px;
-  color: white;
+  color: #fff;
   border-radius: 12px 12px 0 0;
   flex-wrap: wrap;
   position: sticky;
@@ -62,60 +66,53 @@
   z-index: 30;
   background: linear-gradient(90deg, var(--gris-700), var(--gris-600));
 }
-
 .TablaPedidos-filtros select {
   width: 180px;
   padding: 8px 10px;
-  color: white;
+  color: #fff;
   border-radius: 8px;
   cursor: pointer;
-  background-color: #888a8e;
+  background: #888a8e;
   border: 1px solid transparent;
   outline: none;
 }
-
 .TablaPedidos-filtros button {
-  background-color: #888a8e;
+  background: #888a8e;
   min-width: 90px;
   border-radius: 8px;
-  color: white;
+  color: #fff;
   cursor: pointer;
   border: none;
   padding: 8px 14px;
   font-weight: 600;
 }
+.TablaPedidos-filtros button:hover { filter: brightness(1.05); }
 
-.TablaPedidos-filtros button:hover{
-  filter: brightness(1.05);
-}
-
-/* 3) Filtros móvil */
+/* Filtros (móvil) */
 .TablaPedidos-btn-filtros-mobile {
   display: none;
   margin: 10px auto 0;
   padding: 10px 20px;
-  background-color: #888a8e;
-  color: white;
+  background: #888a8e;
+  color: #fff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 15px;
-  font-weight: bold;
+  font-weight: 700;
   z-index: 10;
 }
-
 .TablaPedidos-modal-filtros {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.45);
+  background: rgba(0,0,0,.45);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
-
 .TablaPedidos-modal-contenido {
-  background-color: white;
+  background: #fff;
   padding: 20px;
   border-radius: 12px;
   width: 90%;
@@ -124,39 +121,30 @@
   flex-direction: column;
   gap: 15px;
 }
-
 .TablaPedidos-modal-contenido select {
   padding: 10px;
   border: 1px solid var(--gris-400);
   border-radius: 8px;
   font-size: 15px;
 }
-
 .TablaPedidos-modal-botones {
   display: flex;
   gap: 10px;
 }
-
 .TablaPedidos-modal-botones button {
   flex: 1;
   padding: 10px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 700;
 }
+.TablaPedidos-modal-botones button:first-child { background: var(--verde); color: #fff; }
+.TablaPedidos-modal-botones button:last-child { background: var(--rojo); color: #fff; }
 
-.TablaPedidos-modal-botones button:first-child {
-  background-color: var(--verde);
-  color: white;
-}
-
-.TablaPedidos-modal-botones button:last-child {
-  background-color: var(--rojo);
-  color: white;
-}
-
-/* 4) Contenedor tabla */
+/* ============================================
+   2) Tabla
+   ============================================ */
 .TablaPedidos-tabla-container {
   flex: 1;
   overflow: auto;
@@ -164,7 +152,7 @@
   border-radius: 0 0 12px 12px;
 }
 
-/* 5) Tabla base */
+/* Base */
 .TablaPedidos-table {
   width: 100%;
   border-collapse: separate;
@@ -173,94 +161,69 @@
   position: relative;
 }
 
-/* 6) Cabecera fija */
-.TablaPedidos-table-titulos {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
-
+/* Cabecera */
+.TablaPedidos-table-titulos { position: sticky; top: 0; z-index: 20; }
 .TablaPedidos-table th {
-  background-color: var(--verde);
-  color: white;
+  background: var(--verde);
+  color: #fff;
   padding: 14px 10px;
   text-align: left;
   font-weight: 700;
   position: sticky;
   top: 0;
   z-index: 20;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-  font-size: 0.9rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,.08);
+  font-size: .9rem;
 }
 
-/* 7) Filas */
+/* Celdas */
 .TablaPedidos-table td {
   padding: 12px 10px;
   border-bottom: 1px solid var(--gris-300);
   vertical-align: middle;
-  background-color: #fff;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  background: #fff;
+  transition: background-color .2s ease, box-shadow .2s ease;
 }
+.TablaPedidos-table tbody td { font-size: .9rem; }
 
-.TablaPedidos-table tbody td {
-  font-size: 0.9rem;
-}
+/* Estados de fila */
+.TablaPedidos-row--requires-auth td { background: #ffe8e8; }
+.TablaPedidos-row--expanded { box-shadow: inset 0 0 0 9999px #faf3cd; }
 
-/* 8) Estados fila */
-.TablaPedidos-row--requires-auth td {
-  background-color: #ffe8e8;
-}
-
-.TablaPedidos-row--expanded {
-  box-shadow: inset 0 0 0 9999px #faf3cd;
-}
-
-/* 9) Columnas destacadas */
+/* Columnas destacadas (Total Teórico y Total Solicitado) */
 .TablaPedidos-table th:nth-child(14),
-.TablaPedidos-table th:nth-child(19) {
-  font-weight: 800;
-}
-
+.TablaPedidos-table th:nth-child(19) { font-weight: 800; }
 .TablaPedidos-table td:nth-child(14),
-.TablaPedidos-table td:nth-child(19) {
-  font-weight: 700;
-}
+.TablaPedidos-table td:nth-child(19) { font-weight: 700; }
 
-/* 10) Detalles */
-.TablaPedidos-details {
-  background-color: #f9f9f9;
-}
-
+/* Subtabla (detalle) */
+.TablaPedidos-details { background: #f9f9f9; }
 .TablaPedidos-details td {
   padding: 0 !important;
-  background-color: #f5f9ff;
+  background: #f5f9ff;
 }
-
-/* 11) Subtabla */
 .TablaPedidos-subtable {
   width: calc(100% - 50px);
   border-collapse: separate;
   border-spacing: 0 6px;
   margin: 15px 0 15px 50px;
-  background-color: white;
+  background: #fff;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
 }
-
 .TablaPedidos-subtable th {
-  background-color: #0d1048;
+  background: #0d1048;
   color: #fff;
   padding: 8px 10px;
 }
-
 .TablaPedidos-subtable td {
   background: #fff;
   padding: 8px 10px;
   border-bottom: 1px dashed var(--gris-300);
 }
 
-/* 12) Botones base */
+/* Botones dentro de la tabla */
 .TablaPedidos-table button {
   padding: 8px 14px;
   margin: 4px;
@@ -268,70 +231,27 @@
   border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
-  transition: transform 0.05s ease, filter 0.2s ease, box-shadow 0.2s ease;
+  transition: transform .05s ease, filter .2s ease, box-shadow .2s ease;
   white-space: nowrap;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 4px rgba(0,0,0,.08);
 }
-
-.TablaPedidos-table button:active{
-  transform: translateY(1px);
-}
+.TablaPedidos-table button:active { transform: translateY(1px); }
 
 /* Acciones por fila */
-.TablaPedidos-btn-autorizar {
-  background-color: var(--verde);
-  color: white;
-  width: 100px;
-}
-
-.TablaPedidos-btn-eliminar {
-  background-color: var(--rojo);
-  color: white;
-  width: 100px;
-}
-
-.TablaPedidos-btn-editar {
-  background-color: var(--azul);
-  color: white;
-  width: 100px;
-}
-
-/* Confirmar (PREAUTORIZADO -> AUTORIZADO) */
-.TablaPedidos-btn-confirmar {
-  background-color: #198754;
-  color: white;
-  cursor: pointer;
-  width: 100px;
-}
-
-/* Fusionar seleccionados */
-.TablaPedidos-btn-fusionar {
-  background-color: var(--morado);
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* Dividir vehículo */
-.TablaPedidos-btn-dividir {
-  background-color: #ff7f50;
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  width: 100px;
-}
-
+.TablaPedidos-btn-autorizar { background: var(--verde); color: #fff; width: 100px; }
+.TablaPedidos-btn-eliminar  { background: var(--rojo); color: #fff; width: 100px; }
+.TablaPedidos-btn-editar    { background: var(--azul); color: #fff; width: 100px; }
+.TablaPedidos-btn-confirmar { background: #198754; color: #fff; width: 100px; }
+.TablaPedidos-btn-fusionar  { background: var(--morado); color: #fff; font-weight: 700; }
+.TablaPedidos-btn-dividir   { background: #ff7f50; color: #fff; font-weight: 700; width: 100px; }
 .TablaPedidos-btn-fusionar[disabled],
 .TablaPedidos-btn-confirmar[disabled],
-.TablaPedidos-btn-dividir[disabled] {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+.TablaPedidos-btn-dividir[disabled] { opacity: .6; cursor: not-allowed; }
 
 /* Doble clic para editar */
 .TablaPedidos-cell-consecutivo {
@@ -340,160 +260,105 @@
   color: var(--azul);
 }
 
-/* 13) Responsive */
-@media (max-width: 1200px) {
-  .TablaPedidos-table th,
-  .TablaPedidos-table td {
-    padding: 10px 8px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 900px) {
-  .TablaPedidos-contenedor { height: 90vh; }
-  .TablaPedidos-filtros { display: none; }
-  .TablaPedidos-btn-filtros-mobile { display: block; }
-  .TablaPedidos-tabla-container { overflow: auto; }
-  .TablaPedidos-table { min-width: 1200px; }
-  .TablaPedidos-subtable { min-width: 1000px; }
-}
-
-@media (min-width: 901px) {
-  .TablaPedidos-btn-filtros-mobile { display: none; }
-}
-
-/* 14) Scroll */
-.TablaPedidos-tabla-container::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
-}
-.TablaPedidos-tabla-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-.TablaPedidos-tabla-container::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 10px;
-  border: 2px solid #f1f1f1;
-}
-
-/* 15) Utilidades */
-/* .TablaPedidos-cell--error {
-  color: var(--rojo);
-  font-weight: bold;
-  background-color: var(--error-bg);
-  border-radius: 6px;
-  padding: 4px 8px;
-  display: inline-block;
-} */
 
 /* ============================================
-   MODAL EDITAR / FUSIÓN
+   3) Modales (Editar / Fusión)
    ============================================ */
 .TablaPedidos-modal-editar {
   position: fixed;
   inset: 0;
-  background-color: rgba(13, 16, 72, 0.45);
+  background: rgba(13,16,72,.45);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1100;
 }
-
 .TablaPedidos-modal-editar-contenido{
   background:#fff;
   width:85%;
-  max-height:90vh;        /* mejor que height:% para modales */
+  max-height:90vh;
   border-radius:14px;
   padding:18px 20px;
   box-shadow:0 8px 30px rgba(0,0,0,.2);
   display:flex;
   flex-direction:column;
   gap:14px;
-  overflow-y:auto;        /* ← scroll vertical interno */
-  -webkit-overflow-scrolling:touch; /* scroll suave en iOS */
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
-
-
 .TablaPedidos-modal-editar-header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 10px;
 }
-
 .TablaPedidos-modal-editar-header h3 { margin: 0; font-size: 1.15rem; }
 .TablaPedidos-modal-editar-consec { font-weight: 700; color: var(--azul); }
 
 .TablaPedidos-modal-editar-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0,1fr));
   gap: 12px;
 }
-
 .TablaPedidos-form-grupo { display: flex; flex-direction: column; gap: 6px; }
-.TablaPedidos-form-grupo label { font-weight: 600; font-size: 0.9rem; color: var(--gris-800); }
-
+.TablaPedidos-form-grupo label { font-weight: 600; font-size: .9rem; color: var(--gris-800); }
 .TablaPedidos-form-grupo input,
 .TablaPedidos-form-grupo select,
-.TablaPedidos-form-grupo textarea {
+.TablaPedidos-form-grupo textarea{
   border: 1px solid var(--gris-400);
   border-radius: 10px;
   padding: 9px 12px;
-  font-size: 0.95rem;
+  font-size: .95rem;
   outline: none;
 }
-
 .TablaPedidos-form-grupo input:focus,
 .TablaPedidos-form-grupo select:focus,
-.TablaPedidos-form-grupo textarea:focus {
+.TablaPedidos-form-grupo textarea:focus{
   border-color: var(--azul);
   box-shadow: 0 0 0 3px rgba(13,110,253,.12);
 }
-
 .TablaPedidos-form-grupo--full { grid-column: 1 / -1; }
 
-.TablaPedidos-modal-editar-actions {
+.TablaPedidos-modal-editar-actions{
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 4px;
 }
-
-.TablaPedidos-btn-cancelar {
-  background-color: var(--gris-600);
+.TablaPedidos-btn-cancelar{
+  background: var(--gris-600);
   color: #fff;
   border: none;
   border-radius: 10px;
   padding: 9px 14px;
   cursor: pointer;
 }
-
-.TablaPedidos-btn-guardar {
-  background-color: #198754;
+.TablaPedidos-btn-guardar{
+  background: #198754;
   color: #fff;
   border: none;
   border-radius: 10px;
   padding: 9px 14px;
   cursor: pointer;
 }
+.TablaPedidos-btn-guardar[disabled]{ opacity: .7; cursor: not-allowed; }
 
-.TablaPedidos-btn-guardar[disabled] { opacity: 0.7; cursor: not-allowed; }
+/* SweetAlert2 por encima del modal */
+.swal2-container { z-index: 20000 !important; }
 
 /* ============================================
-   Selección y barra de acciones masivas
+   4) Selección masiva (bulk bar)
    ============================================ */
 .TablaPedidos-col-select { width: 50px; }
-
-.TablaPedidos-checkbox {
+.TablaPedidos-checkbox{
   display: inline-flex;
   align-items: center;
   gap: 8px;
   user-select: none;
 }
-.TablaPedidos-checkbox--disabled { opacity: 0.5; pointer-events: none; }
+.TablaPedidos-checkbox--disabled{ opacity: .5; pointer-events: none; }
 
-.TablaPedidos-bulkbar {
+.TablaPedidos-bulkbar{
   position: sticky;
   top: 0;
   z-index: 25;
@@ -506,43 +371,45 @@
   padding: 8px 12px;
   gap: 12px;
 }
-
+.TablaPedidos-bulkbar-left{ display: flex; align-items: center; gap: 12px; }
 .TablaPedidos-bulkbar-actions{ display: flex; gap: 10px; }
-
-.TablaPedidos-bulkbar-left { display: flex; align-items: center; gap: 12px; }
-.TablaPedidos-bulkbar-count { font-weight: 700; color: #0d1048; }
-
+.TablaPedidos-bulkbar-count{ font-weight: 700; color: #0d1048; }
 .TablaPedidos-bulkbar .TablaPedidos-btn-confirmar,
 .TablaPedidos-bulkbar .TablaPedidos-btn-fusionar,
-.TablaPedidos-bulkbar .TablaPedidos-btn-dividir {
+.TablaPedidos-bulkbar .TablaPedidos-btn-dividir{
   padding: 10px 14px;
   border-radius: 10px;
   font-weight: 700;
-
+  cursor: pointer;
 }
 
-/* Asegura que SweetAlert2 quede por encima de tu modal (1100) */
-.swal2-container { z-index: 20000 !important; }
-
-/* =====================================================
-   MODAL DIVISIÓN DE VEHÍCULO
-   ===================================================== */
-.TablaPedidos-modal-dividir {
+/* ============================================
+   5) Modal División (destinatarios + split)
+   ============================================ */
+/* contenedor general del modal dividir ya usa .TablaPedidos-modal-editar */
+.TablaPedidos-modal-dividir { /* por compatibilidad si lo usas aparte */
   position: fixed;
   inset: 0;
-  background-color: rgba(0,0,0,.45);
+  background: rgba(0,0,0,.45);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1150;
 }
 
-.TablaPedidos-modal-editar-contenido .TablaPedidos-tip {
+.TablaPedidos-modal-editar-contenido .TablaPedidos-tip{
   margin-top: 6px;
   color: var(--gris-700);
 }
 
-/* Listado de destinatarios (versión usada en tu JSX actual) */
+/* Grid del bloque de destinatarios (tu JSX actual) */
+.TablaPedidos-modal-dividir-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* Lista de destinatarios */
 .TablaPedidos-dest-item{
   display: flex;
   align-items: center;
@@ -556,7 +423,7 @@
   box-shadow: 0 1px 3px rgba(0,0,0,.04);
 }
 .TablaPedidos-dest-nombre{
-  font-size: 0.92rem;
+  font-size: .92rem;
   font-weight: 600;
   color: var(--gris-800);
   max-width: 520px;
@@ -564,12 +431,9 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.TablaPedidos-dest-actions{
-  display: inline-flex;
-  gap: 8px;
-}
+.TablaPedidos-dest-actions{ display: inline-flex; gap: 8px; }
 
-/* ===== Chips/Botones B y C (mejorados) ===== */
+/* Chips B / C */
 .TablaPedidos-chip{
   --fill: #e9ecef;
   --fill-hover: #e2e6ea;
@@ -591,16 +455,10 @@
   user-select: none;
   outline: none;
 }
+.TablaPedidos-chip:hover{ background: var(--fill-hover); }
+.TablaPedidos-chip:active{ transform: translateY(1px); }
 
-.TablaPedidos-chip:hover{
-  background: var(--fill-hover);
-}
-
-.TablaPedidos-chip:active{
-  transform: translateY(1px);
-}
-
-/* B (primer botón dentro de acciones) */
+/* B */
 .TablaPedidos-dest-actions .TablaPedidos-chip:first-child{
   --fill: var(--b-teal-50);
   --fill-hover: #d7fcf7;
@@ -617,7 +475,7 @@
   box-shadow: 0 0 0 3px rgba(44,122,123,.25);
 }
 
-/* C (segundo botón dentro de acciones) */
+/* C */
 .TablaPedidos-dest-actions .TablaPedidos-chip:last-child{
   --fill: var(--c-purple-50);
   --fill-hover: #ece0ff;
@@ -634,14 +492,14 @@
   box-shadow: 0 0 0 3px rgba(124,58,237,.25);
 }
 
-/* Estado disabled (por regla de "ya está en B") */
+/* Chip disabled */
 .TablaPedidos-chip:disabled{
   opacity: .55;
   cursor: not-allowed;
   filter: grayscale(.2);
 }
 
-/* Contador/resumen bajo la lista */
+/* Resumen A/B/C */
 .TablaPedidos-dest-resumen{
   display: flex;
   gap: 12px;
@@ -657,46 +515,50 @@
   font-weight: 700;
 }
 
-/* ====== (Alternativa avanzada de chips - por si cambias JSX en el futuro) ======
-   Si más adelante usas .chip-dest / .chip-btn en vez de .TablaPedidos-chip,
-   estos estilos darán el mismo look pro.
-*/
-.chip-dest{
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+/* Split por kilos (Opción 2) */
+.TablaPedidos-fieldset-split{
   border: 1px solid var(--gris-300);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 10px 0;
   background: #fff;
-  border-radius: 999px;
-  padding: 6px 8px;
-  box-shadow: 0 1px 2px rgba(0,0,0,.05);
-  font-size: 13px;
-  user-select: none;
 }
-.chip-dest-text{
-  max-width: 270px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.chip-dest--B{ border-color: var(--b-teal); background: var(--b-teal-50); }
-.chip-dest--C{ border-color: var(--c-purple); background: var(--c-purple-50); }
-.chip-btn{
-  border: none;
-  border-radius: 999px;
-  padding: 4px 8px;
-  cursor: pointer;
-  font-size: 12px;
+.TablaPedidos-fieldset-split > legend{
+  padding: 0 8px;
   font-weight: 800;
-  line-height: 1;
+  color: var(--gris-800);
 }
-.chip-btn--B{ background: var(--b-teal); color: #fff; }
-.chip-btn--C{ background: var(--c-purple); color: #fff; }
-.chip-btn--X{ background: #e0e0e0; color: #333; }
+.TablaPedidos-split-grid{
+  display: grid;
+  grid-template-columns: 1.2fr .8fr .6fr;
+  gap: 10px;
+  align-items: end;
+}
+.TablaPedidos-split-grid small{
+  display: block;
+  font-size: 12px;
+  color: var(--gris-700);
+  margin-bottom: 4px;
+}
+.TablaPedidos-split-grid select,
+.TablaPedidos-split-grid input{
+  width: 100%;
+  border: 1px solid var(--gris-400);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: .95rem;
+  outline: none;
+}
+.TablaPedidos-split-grid select:focus,
+.TablaPedidos-split-grid input:focus{
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px rgba(13,110,253,.12);
+}
+.TablaPedidos-split-grid input[type="number"]{ text-align: right; }
 
-/* =====================================================
-   Tooltips simples (opcional)
-   ===================================================== */
+/* ============================================
+   6) Tooltips simples (opcional)
+   ============================================ */
 [data-tip]{ position: relative; }
 [data-tip]::after{
   content: attr(data-tip);
@@ -719,9 +581,9 @@
   transform: translate(-50%, -10px);
 }
 
-/* =====================================================
-   Helpers
-   ===================================================== */
+/* ============================================
+   7) Helpers y estados hover
+   ============================================ */
 .hidden{ display:none !important; }
 .inline-flex{ display:inline-flex; align-items:center; gap:6px; }
 .text-right{ text-align:right; }
@@ -731,13 +593,45 @@
 .mt-10{ margin-top: 10px; }
 .mb-6{ margin-bottom: 6px; }
 
-/* Pequeños estados hover para acciones principales */
 .TablaPedidos-btn-autorizar:hover,
 .TablaPedidos-btn-editar:hover,
 .TablaPedidos-btn-eliminar:hover,
 .TablaPedidos-btn-confirmar:hover,
 .TablaPedidos-btn-fusionar:hover,
-.TablaPedidos-btn-dividir:hover{
-  filter: brightness(1.05);
-  
+.TablaPedidos-btn-dividir:hover{ filter: brightness(1.05); }
+
+/* ============================================
+   8) Scrollbars (contenedor tabla)
+   ============================================ */
+.TablaPedidos-tabla-container::-webkit-scrollbar { height: 10px; width: 10px; }
+.TablaPedidos-tabla-container::-webkit-scrollbar-track {
+  background: #f1f1f1; border-radius: 10px;
+}
+.TablaPedidos-tabla-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1; border-radius: 10px; border: 2px solid #f1f1f1;
+}
+
+/* ============================================
+   9) Responsive
+   ============================================ */
+@media (max-width: 1200px){
+  .TablaPedidos-table th,
+  .TablaPedidos-table td{
+    padding: 10px 8px;
+    font-size: 14px;
+  }
+}
+@media (max-width: 900px){
+  .TablaPedidos-contenedor { height: 90vh; }
+  .TablaPedidos-filtros { display: none; }
+  .TablaPedidos-btn-filtros-mobile { display: block; }
+  .TablaPedidos-tabla-container { overflow: auto; }
+  .TablaPedidos-table { min-width: 1200px; }
+  .TablaPedidos-subtable { min-width: 1000px; }
+
+  /* Split en 1 columna en móvil */
+  .TablaPedidos-split-grid{ grid-template-columns: 1fr; }
+}
+@media (min-width: 901px){
+  .TablaPedidos-btn-filtros-mobile { display: none; }
 }

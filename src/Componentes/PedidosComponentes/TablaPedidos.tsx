@@ -220,6 +220,11 @@ const TablaPedidos: React.FC = () => {
   const [divisionDestB, setDivisionDestB] = useState<Set<string>>(new Set());
   const [divisionDestC, setDivisionDestC] = useState<Set<string>>(new Set());
 
+  // split por kilos (Opción 2)
+  type SplitState = { docId?: string; ci: string; kg: string; cajas?: string };
+  const [splitB, setSplitB] = useState<SplitState>({ ci: '', kg: '', cajas: '' });
+  const [splitC, setSplitC] = useState<SplitState>({ ci: '', kg: '', cajas: '' });
+
   // selección global
   const [seleccionados, setSeleccionados] = useState<Set<string>>(new Set());
 
@@ -577,6 +582,37 @@ const TablaPedidos: React.FC = () => {
     return Array.from(vals);
   }, [divisionVehiculo]);
 
+  // Reemplaza "consecutivosDoc" por esto:
+  type DocSplitOpt = {
+    id: string;           // _id del doc (o p.id si ya lo traes así)
+    ci: string;
+    kgRunt: number;       // num_kilos_sicetac (fallback a num_kilos)
+    kgFis: number;        // num_kilos (solo informativo)
+    cajas: number;
+    label: string;        // texto visible en el select
+  };
+
+  // ⚠️ Ajusta la propiedad que trae el ID: p._id, p.id, etc.
+  const docsParaSplit: DocSplitOpt[] = useMemo(() => {
+    const src = (divisionVehiculo?.pedidos as any[]) ?? [];
+    return src.map((p) => {
+      const id = String(p._id ?? p.id);  // usa la que tengas
+      const ci = String(p.consecutivo_integrapp ?? '');
+      const kgRunt = Number(p.num_kilos_sicetac ?? p.num_kilos ?? 0);
+      const kgFis  = Number(p.num_kilos ?? 0);
+      const cajas  = Number(p.num_cajas ?? 0);
+      return {
+        id,
+        ci,
+        kgRunt,
+        kgFis,
+        cajas,
+        label: `${ci} · ${kgRunt} kg RUNT · ${cajas} cajas`
+      };
+    });
+  }, [divisionVehiculo]);
+
+
   const moverADest = useCallback((dest: string, grupo: 'B' | 'C') => {
     const d = dest.trim();
     if (!d) return;
@@ -649,41 +685,92 @@ const TablaPedidos: React.FC = () => {
     setDivisionVehiculo(null);
     setDivisionGuardando(false);
     limpiarSeleccionDivision();
+    setSplitB({ ci: '', kg: '', cajas: '' });
+    setSplitC({ ci: '', kg: '', cajas: '' });
   }, [limpiarSeleccionDivision]);
 
   const guardarDivision = useCallback(async () => {
     if (!divisionVehiculo) return;
 
-    const totalDest = destinatariosUnicos.length;
     const arrB = Array.from(divisionDestB);
     const arrC = Array.from(divisionDestC);
+
+    const validSplitB = !!(splitB.ci && Number(splitB.kg) > 0);
+    const validSplitC = !!(splitC.ci && Number(splitC.kg) > 0);
 
     if (!divisionDestino.trim()) {
       Swal.fire('Atención', 'Debes indicar el destino único', 'warning');
       return;
     }
-    if (arrB.length === 0 && arrC.length === 0) {
-      Swal.fire('Atención', 'No hay nada para dividir; asigna destinatarios a B o C', 'warning');
+
+    // Caso "nada para dividir"
+    if (arrB.length === 0 && arrC.length === 0 && !validSplitB && !validSplitC) {
+      Swal.fire('Atención', 'No hay nada para dividir; asigna destinatarios o configura un split por kilos', 'warning');
       return;
     }
-    if (arrC.length > 0 && arrB.length === 0) {
+
+    // Regla "no C sin B": aplica si no hay nada en B (ni destinatarios ni split) y sí hay algo en C
+    if (!arrB.length && !validSplitB && (arrC.length || validSplitC)) {
       Swal.fire('Atención', 'No puedes crear C sin B', 'warning');
       return;
     }
-    if (arrB.length + arrC.length >= totalDest) {
+
+    // Regla "A no vacío": si usas solo destinatarios, asegúrate de que quede alguno en A;
+    // si usas split por kilos, el back ya valida que el remanente > 0 en el doc partido.
+    const totalDest = destinatariosUnicos.length;
+    if ((arrB.length + arrC.length) >= totalDest && !validSplitB && !validSplitC) {
       Swal.fire('Atención', 'El grupo A no puede quedar vacío (deja al menos un destinatario sin mover)', 'warning');
       return;
     }
 
+    // Validaciones soft para split: que los kilos no superen a los del doc
+    // helper
+    const getDoc = (id?: string) => docsParaSplit.find(d => d.id === id);
+
+    if (validSplitB) {
+      const doc = getDoc(splitB.docId);
+      const kgNum = Number(splitB.kg);
+      if (!doc) return Swal.fire('Atención', 'Debes seleccionar el documento origen para B', 'warning');
+      if (kgNum >= doc.kgRunt) {
+        return Swal.fire('Atención', `Kilos a mover a B (${kgNum}) no pueden ser ≥ a los kg RUNT del doc (${doc.kgRunt})`, 'warning');
+      }
+    }
+    if (validSplitC) {
+      const doc = getDoc(splitC.docId);
+      const kgNum = Number(splitC.kg);
+      if (!doc) return Swal.fire('Atención', 'Debes seleccionar el documento origen para C', 'warning');
+      if (kgNum >= doc.kgRunt) {
+        return Swal.fire('Atención', `Kilos a mover a C (${kgNum}) no pueden ser ≥ a los kg RUNT del doc (${doc.kgRunt})`, 'warning');
+      }
+    }
+
+    // Arma payload: puedes mandar destinatarios y/o split en cada grupo
     const payload: DividirHastaTresPayload = {
       usuario,
       consecutivo_origen: divisionVehiculo.consecutivo_vehiculo,
       destino_unico: divisionDestino.trim().toUpperCase(),
-      campo_destinatario: 'ubicacion_descargue', // 👈 fijo
       observacion_division: divisionObs?.trim() || undefined,
-      grupo_B: arrB.length ? { destinatarios: arrB } : undefined,
-      grupo_C: arrC.length ? { destinatarios: arrC } : undefined,
+      campo_destinatario: (arrB.length || arrC.length) ? 'ubicacion_descargue' : undefined,
+      grupo_B: (arrB.length || validSplitB) ? {
+        destinatarios: arrB.length ? arrB : undefined,
+        split: validSplitB ? {
+          consecutivo_integrapp: splitB.ci,
+          kilos: Number(splitB.kg),
+          cajas: splitB.cajas ? Number(splitB.cajas) : undefined,
+          doc_id: splitB.docId,             // 👈 NUEVO
+        } : undefined
+      } : undefined,
+      grupo_C: (arrC.length || validSplitC) ? {
+        destinatarios: arrC.length ? arrC : undefined,
+        split: validSplitC ? {
+          consecutivo_integrapp: splitC.ci,
+          kilos: Number(splitC.kg),
+          cajas: splitC.cajas ? Number(splitC.cajas) : undefined,
+          doc_id: splitC.docId,             // 👈 NUEVO
+        } : undefined
+      } : undefined,
     };
+
 
     setDivisionGuardando(true);
     try {
@@ -696,7 +783,19 @@ const TablaPedidos: React.FC = () => {
       const d = e?.response?.data?.detail ?? e?.response?.data ?? e?.message ?? 'Error desconocido';
       Swal.fire('Error al dividir', typeof d === 'string' ? d : JSON.stringify(d, null, 2), 'error');
     }
-  }, [divisionVehiculo, destinatariosUnicos.length, divisionDestB, divisionDestC, divisionDestino, divisionObs, usuario, cerrarModalDividir, obtenerPedidos]);
+  }, [
+    divisionVehiculo,
+    divisionDestino,
+    divisionObs,
+    destinatariosUnicos.length,
+    divisionDestB,
+    divisionDestC,
+    splitB,
+    splitC,
+    usuario,
+    cerrarModalDividir,
+    obtenerPedidos
+  ]);
 
   /***************
    * Derivados UI
@@ -1181,9 +1280,12 @@ const TablaPedidos: React.FC = () => {
           <div className="TablaPedidos-modal-editar-contenido">
             <div className="TablaPedidos-modal-editar-header">
               <h3>Dividir vehículo</h3>
-              <span className="TablaPedidos-modal-editar-consec">{divisionVehiculo.consecutivo_vehiculo}</span>
+              <span className="TablaPedidos-modal-editar-consec">
+                {divisionVehiculo.consecutivo_vehiculo}
+              </span>
             </div>
 
+            {/* Destino único */}
             <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full">
               <label>Destino único (para A/B/C)</label>
               <input
@@ -1193,12 +1295,15 @@ const TablaPedidos: React.FC = () => {
               />
             </div>
 
+            {/* ===== Opción 1: mover por destinatarios ===== */}
             <div className="TablaPedidos-modal-editar-grid TablaPedidos-modal-dividir-grid">
               <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full">
-                <label>Destinatarios del vehículo</label>
+                <label>Destinatarios del vehículo (Opción 1)</label>
                 <div className="TablaPedidos-lista-destinatarios">
                   {destinatariosUnicos.length === 0 ? (
-                    <div style={{ opacity: 0.7 }}>No hay destinatarios encontrados para el campo seleccionado</div>
+                    <div style={{ opacity: 0.7 }}>
+                      No hay destinatarios encontrados para el campo seleccionado
+                    </div>
                   ) : (
                     destinatariosUnicos.map((dest) => {
                       const enB = divisionDestB.has(dest);
@@ -1212,14 +1317,18 @@ const TablaPedidos: React.FC = () => {
                             <button
                               type="button"
                               className={classNames('TablaPedidos-chip', enB && 'is-active')}
-                              onClick={() => (enB ? quitarDeGrupo(dest, 'B') : moverADest(dest, 'B'))}
+                              onClick={() =>
+                                enB ? quitarDeGrupo(dest, 'B') : moverADest(dest, 'B')
+                              }
                             >
                               {enB ? 'Quitar de B' : '→ B'}
                             </button>
                             <button
                               type="button"
                               className={classNames('TablaPedidos-chip', enC && 'is-active')}
-                              onClick={() => (enC ? quitarDeGrupo(dest, 'C') : moverADest(dest, 'C'))}
+                              onClick={() =>
+                                enC ? quitarDeGrupo(dest, 'C') : moverADest(dest, 'C')
+                              }
                               disabled={divisionDestB.has(dest)}
                               title={divisionDestB.has(dest) ? 'Ya está en B' : undefined}
                             >
@@ -1233,36 +1342,153 @@ const TablaPedidos: React.FC = () => {
                 </div>
                 <div className="TablaPedidos-dest-resumen">
                   <span>
-                    A (queda): {Math.max(destinatariosUnicos.length - divisionDestB.size - divisionDestC.size, 0)}
+                    A (queda):{' '}
+                    {Math.max(
+                      destinatariosUnicos.length - divisionDestB.size - divisionDestC.size,
+                      0
+                    )}
                   </span>
                   <span>B: {divisionDestB.size}</span>
                   <span>C: {divisionDestC.size}</span>
                 </div>
               </div>
+            </div>
 
-              <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full">
-                <label>Observación de división (opcional)</label>
-                <textarea rows={3} value={divisionObs} onChange={(e) => setDivisionObs(e.target.value)} placeholder="Motivo / comentario…" />
+            {/* ===== Opción 2: partir un documento por kilos ===== */}
+            <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full" style={{ marginTop: 16 }}>
+              <label>Opción 2: Partir un documento por kilos</label>
+
+              {/* Split hacia B */}
+              <fieldset className="TablaPedidos-fieldset-split">
+                <legend>Mandar a B</legend>
+                <div className="TablaPedidos-split-grid">
+                  <div>
+                    <small>Consecutivo Integrapp (doc origen)</small>
+                    <select
+                      value={splitB.docId ?? ''}
+                      onChange={(e) => {
+                        const id = e.target.value;
+                        const doc = docsParaSplit.find(d => d.id === id);
+                        setSplitB(s => ({ ...s, docId: id || undefined, ci: doc?.ci || '' }));
+                      }}
+                    >
+                      <option value="">— Selecciona —</option>
+                      {docsParaSplit.map((d) => (
+                        <option key={d.id} value={d.id}>{d.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <small>Kilos a mover a B</small>
+                    <input
+                      type="number"
+                      min={1}
+                      step="0.01"
+                      value={splitB.kg}
+                      onChange={(e) => setSplitB((s) => ({ ...s, kg: e.target.value }))}
+                      placeholder="Ej: 2000"
+                    />
+                  </div>
+                  <div>
+                    <small>Cajas (opcional)</small>
+                    <input
+                      type="number"
+                      min={0}
+                      step="1"
+                      value={splitB.cajas ?? ''}
+                      onChange={(e) => setSplitB((s) => ({ ...s, cajas: e.target.value }))}
+                      placeholder="Auto proporcional si vacío"
+                    />
+                  </div>
+                </div>
+              </fieldset>
+
+              {/* Split hacia C */}
+              <fieldset className="TablaPedidos-fieldset-split">
+                <legend>Mandar a C</legend>
+                <div className="TablaPedidos-split-grid">
+                  <div>
+                    <small>Consecutivo Integrapp (doc origen)</small>
+                    <select
+                      value={splitC.docId ?? ''}
+                      onChange={(e) => {
+                        const id = e.target.value;
+                        const doc = docsParaSplit.find(d => d.id === id);
+                        setSplitC(s => ({ ...s, docId: id || undefined, ci: doc?.ci || '' }));
+                      }}
+                    >
+                      <option value="">— Selecciona —</option>
+                      {docsParaSplit.map((d) => (
+                        <option key={d.id} value={d.id}>{d.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <small>Kilos a mover a C</small>
+                    <input
+                      type="number"
+                      min={1}
+                      step="0.01"
+                      value={splitC.kg}
+                      onChange={(e) => setSplitC((s) => ({ ...s, kg: e.target.value }))}
+                      placeholder="Ej: 800"
+                    />
+                  </div>
+                  <div>
+                    <small>Cajas (opcional)</small>
+                    <input
+                      type="number"
+                      min={0}
+                      step="1"
+                      value={splitC.cajas ?? ''}
+                      onChange={(e) => setSplitC((s) => ({ ...s, cajas: e.target.value }))}
+                      placeholder="Auto proporcional si vacío"
+                    />
+                  </div>
+                </div>
+              </fieldset>
+
+              <div className="TablaPedidos-tip">
+                <small>
+                  Puedes combinar ambas opciones: mover algunos destinatarios a B/C <i>y además</i> partir un documento por kilos.
+                </small>
               </div>
             </div>
 
+            {/* Observación */}
+            <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full">
+              <label>Observación de división (opcional)</label>
+              <textarea
+                rows={3}
+                value={divisionObs}
+                onChange={(e) => setDivisionObs(e.target.value)}
+                placeholder="Motivo / comentario…"
+              />
+            </div>
+
+            {/* Acciones */}
             <div className="TablaPedidos-modal-editar-actions">
               <button className="TablaPedidos-btn-cancelar" onClick={cerrarModalDividir}>
                 Cancelar
               </button>
-              <button className="TablaPedidos-btn-guardar" onClick={guardarDivision} disabled={divisionGuardando}>
+              <button
+                className="TablaPedidos-btn-guardar"
+                onClick={guardarDivision}
+                disabled={divisionGuardando}
+              >
                 {divisionGuardando ? 'Dividiendo…' : 'Dividir'}
               </button>
             </div>
 
             <div className="TablaPedidos-tip">
               <small>
-                Reglas: no puedes crear C sin B; al menos un destinatario debe quedar en A; un mismo destinatario no puede ir en B y C.
+                Reglas: no puedes crear C sin B; A no puede quedar vacío; un mismo destinatario no puede ir en B y C.
               </small>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 };

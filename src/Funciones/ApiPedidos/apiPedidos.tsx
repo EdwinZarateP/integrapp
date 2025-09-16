@@ -369,21 +369,21 @@ export type OverridesVehiculo = {
 };
 
 export type GrupoDivision = {
-  destinatarios?: string[];              // usamos esto en el front
-  consecutivos_integrapp?: string[];     // opcional si quisieras dividir por CI
-  overrides?: OverridesVehiculo;         // opcional
+  destinatarios?: string[];
+  split?: SplitConfig; // ahora acepta doc_id
 };
 
 export type DividirHastaTresPayload = {
   usuario: string;
   consecutivo_origen: string;
   destino_unico: string;
-  campo_destinatario?: string;           // ej: 'ubicacion_descargue' (default backend: 'destinatario')
   observacion_division?: string;
-  grupo_A?: { overrides?: OverridesVehiculo }; // opcional
-  grupo_B?: GrupoDivision;               // if vacío, no se crea -B
-  grupo_C?: GrupoDivision;               // if vacío, no se crea -C
+  /** Campo por el cual se agrupan/mueven destinatarios cuando se usa Opción 1 */
+  campo_destinatario?: 'ubicacion_descargue' | 'destino_real' | string;
+  grupo_B?: GrupoDivision;
+  grupo_C?: GrupoDivision;
 };
+
 
 // justo debajo de FusionarVehiculosResponse, por ejemplo
 export type DividirVehiculoResponse = { mensaje: string } & Record<string, any>;
@@ -403,4 +403,15 @@ export async function dividirVehiculo(
     throw e;
   }
 }
+
+// NUEVO
+export type SplitConfig = {
+  consecutivo_integrapp: string;
+  kilos: number;
+  cajas?: number;
+  /** ID único del documento (pedido) a partir — requerido si el CI no es único */
+  doc_id?: string;     // 👈 nuevo
+};
+
+
 

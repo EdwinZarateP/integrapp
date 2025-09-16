@@ -9,12 +9,21 @@ import {
 } from '../../Funciones/ApiPedidos/apiPedidos';
 import './TablaPedidosCompletados.css';
 
-const formatoMoneda = (v: number) =>
-  v.toLocaleString('es-CO', {
+const formatoMoneda = (v?: number | string | null) => {
+  const n = Number(v ?? 0);            // convierte strings y maneja null/undefined
+  if (!Number.isFinite(n)) return '—'; // fallback si viene algo raro
+  return n.toLocaleString('es-CO', {
     style: 'currency',
     currency: 'COP',
     minimumFractionDigits: 0
   });
+};
+
+// (opcional) helper para números "crudos" que muestras sin $:
+const numeroSeguro = (v?: number | string | null) => {
+  const n = Number(v ?? 0);
+  return Number.isFinite(n) ? n : 0;
+};
 
 const regionesDisponibles = [
   'FUNZA',
@@ -225,8 +234,8 @@ const TablaPedidosCompletados: React.FC = () => {
                       <td>{g.destino}</td>
                       <td>{g.estados.join(', ')}</td>
                       <td>{g.total_puntos_vehiculo}</td>
-                      <td>{g.total_kilos_vehiculo}</td>
-                      <td>{g.total_kilos_vehiculo_sicetac}</td>
+                      <td>{numeroSeguro(g.total_kilos_vehiculo)}</td>
+                      <td>{numeroSeguro(g.total_kilos_vehiculo_sicetac)}</td>
                       <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td>
                       <td>{formatoMoneda(g.total_cargue_descargue_teorico)}</td>
                       <td>{formatoMoneda(g.total_punto_adicional_teorico)}</td>
@@ -236,13 +245,10 @@ const TablaPedidosCompletados: React.FC = () => {
                       <td>{formatoMoneda(g.total_punto_adicional)}</td>
                       <td>{formatoMoneda(g.total_desvio_vehiculo)}</td>
                       <td>{formatoMoneda(g.costo_real_vehiculo)}</td>
-                      <td
-                        className={
-                          g.diferencia_flete > 0 ? 'TablaPedidosCompletados-cell--error' : ''
-                        }
-                      >
+                      <td className={Number(g.diferencia_flete) > 0 ? 'TablaPedidosCompletados-cell--error' : ''}>
                         {formatoMoneda(g.diferencia_flete)}
                       </td>
+
                     </tr>
 
                     {expanded.has(g.consecutivo_vehiculo) && (

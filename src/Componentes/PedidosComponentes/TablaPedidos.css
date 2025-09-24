@@ -202,6 +202,17 @@
   padding: 0 !important;
   background: #f5f9ff;
 }
+
+/* Fila amarilla cuando Total Solicitado = 0 */
+.TablaPedidos-row--total-solicitado-cero td {
+  background: grey !important; /* usa tu #fff3cd */
+}
+
+/* Si una fila requiere autorización Y además el total es 0, que gane el rosado */
+.TablaPedidos-row--requires-auth.TablaPedidos-row--total-solicitado-cero td {
+  background: #ffe8e8 !important;
+}
+
 .TablaPedidos-subtable {
   width: calc(100% - 50px);
   border-collapse: separate;
@@ -311,13 +322,28 @@
   font-size: .95rem;
   outline: none;
 }
+
+/* .TablaPedidos-form-grupo label:nth-child(1) {
+  font-size: 2rem;
+} */
+
 .TablaPedidos-form-grupo input:focus,
 .TablaPedidos-form-grupo select:focus,
 .TablaPedidos-form-grupo textarea:focus{
   border-color: var(--azul);
   box-shadow: 0 0 0 3px rgba(13,110,253,.12);
 }
-.TablaPedidos-form-grupo--full { grid-column: 1 / -1; }
+
+.TablaPedidos-form-grupo--full {
+  grid-column: 1 / -1; 
+}
+
+.TablaPedidos-divisionGrupo{
+  padding-top: 30px;
+  border-top: 3px dashed rgb(41, 41, 41);
+}
+
+
 
 .TablaPedidos-modal-editar-actions{
   display: flex;

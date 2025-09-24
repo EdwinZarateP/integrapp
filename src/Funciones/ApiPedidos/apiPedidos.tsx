@@ -239,13 +239,31 @@ export const eliminarPedidosPorConsecutivoVehiculo = async (
   return data;
 };
 
+
 // 5) Exportar autorizados a Excel
-export const exportarAutorizados = async (): Promise<Blob> => {
-  const { data } = await axios.get<Blob>(`${API_BASE}/pedidos/exportar-autorizados`, {
-    responseType: 'blob',
+export const exportarAutorizados = async (): Promise<{ blob: Blob; filename?: string }> => {
+  const res = await fetch(`${API_BASE}/pedidos/exportar-autorizados`, {
+    credentials: 'include', // si usas cookies
   });
-  return data;
+
+  if (!res.ok) {
+    // intenta leer texto/JSON de error para mostrarlo arriba
+    const msg = await res.text().catch(() => '');
+    throw new Error(`Error ${res.status}: ${msg || res.statusText}`);
+  }
+
+  const blob = await res.blob();
+
+  // nombre de archivo desde el header
+  const cd = res.headers.get('content-disposition') || '';
+  // filename* (RFC5987) o filename
+  const m = /filename\*?=(?:UTF-8''|")?([^";]+)(?:")?/i.exec(cd);
+  const filename = m ? decodeURIComponent(m[1]) : undefined;
+
+  return { blob, filename };
 };
+
+
 
 // 6) Cargar números de pedido masivo
 export const cargarNumerosPedido = async (

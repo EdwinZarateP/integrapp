@@ -9,7 +9,7 @@ const ExportarAutorizados: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const perfil = Cookies.get('perfilPedidosCookie');
+    const perfil = (Cookies.get('perfilPedidosCookie') || '').toUpperCase();
     if (perfil === 'ADMIN' || perfil === 'ANALISTA') {
       setVisible(true);
     }
@@ -18,25 +18,40 @@ const ExportarAutorizados: React.FC = () => {
   const manejarExportacion = async () => {
     setLoading(true);
     try {
-      const blob = await exportarAutorizados();
+      const { blob, filename } = await exportarAutorizados();
+
+      // ✅ Validación: debe ser un Blob
+      if (!(blob instanceof Blob)) {
+        throw new Error(`La respuesta no es un archivo descargable (tipo: ${typeof blob}).`);
+      }
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'pedidos_autorizados.xlsx';
+      a.download =
+        filename ??
+        `pedidos_autorizados_${new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14)}.xlsx`;
+
+      document.body.appendChild(a); // compat Safari/iOS
       a.click();
-      window.URL.revokeObjectURL(url);
+      a.remove();
+      setTimeout(() => window.URL.revokeObjectURL(url), 0);
     } catch (err: any) {
       console.error('Error exportando:', err);
-      let mensaje = 'Error desconocido';
-      const response = err?.response;
 
-      if (response?.data instanceof Blob) {
+      // === Manejo de errores con Swal ===
+      let mensaje = 'Error desconocido';
+      if (err?.response?.data instanceof Blob) {
         try {
-          const texto = await response.data.text();
-          const json = JSON.parse(texto);
-          mensaje = json?.detail || json?.mensaje || JSON.stringify(json);
+          const texto = await err.response.data.text();
+          try {
+            const json = JSON.parse(texto);
+            mensaje = json?.detail || json?.mensaje || texto;
+          } catch {
+            mensaje = texto || mensaje;
+          }
         } catch {
-          mensaje = await response.data.text();
+          mensaje = 'Ocurrió un error al procesar la respuesta del servidor.';
         }
       } else if (typeof err?.message === 'string') {
         mensaje = err.message;
@@ -56,6 +71,7 @@ const ExportarAutorizados: React.FC = () => {
         className="ExportarAutorizados-boton"
         onClick={manejarExportacion}
         disabled={loading}
+        aria-busy={loading}
       >
         {loading ? (
           <>
@@ -66,7 +82,6 @@ const ExportarAutorizados: React.FC = () => {
           'Exportar pedidos autorizados'
         )}
       </button>
-
     </div>
   );
 };

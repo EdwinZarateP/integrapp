@@ -957,19 +957,22 @@ const TablaPedidos: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {pedidos.map((g) => {
+              {pedidos.map((g) => {                
                 const estados: string[] = Array.isArray(g.estados) ? g.estados : [];
                 const seleccionado = seleccionados.has(g.consecutivo_vehiculo);
                 const requiere = requeridoPorEstados(estados);
                 const puedeAutorizar = perfilPuedeAutorizar(perfil, requiere);
-                const filaRequiereAuth = estados.includes(ESTADO_REQ_COORD) || estados.includes(ESTADO_REQ_GEREN);
+                const filaRequiereAuth = estados.includes(ESTADO_REQ_COORD) || estados.includes(ESTADO_REQ_GEREN);                
+                const totalSolicitadoEsCero = Number(g.costo_real_vehiculo ?? 0) === 0;
+
 
                 return (
                   <React.Fragment key={g.consecutivo_vehiculo}>
                     <tr
                       className={classNames(
                         expandido.has(g.consecutivo_vehiculo) && 'TablaPedidos-row--expanded',
-                        filaRequiereAuth && 'TablaPedidos-row--requires-auth'
+                        filaRequiereAuth && 'TablaPedidos-row--requires-auth',
+                        totalSolicitadoEsCero && 'TablaPedidos-row--total-solicitado-cero' // 👈 AÑADIDO
                       )}
                     >
                       <td className="TablaPedidos-col-select">
@@ -1355,7 +1358,7 @@ const TablaPedidos: React.FC = () => {
             </div>
 
             {/* ===== Opción 2: partir un documento por kilos ===== */}
-            <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full" style={{ marginTop: 16 }}>
+            <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full TablaPedidos-divisionGrupo" style={{ marginTop: 16 }}>
               <label>Opción 2: Partir un documento por kilos</label>
 
               {/* Split hacia B */}

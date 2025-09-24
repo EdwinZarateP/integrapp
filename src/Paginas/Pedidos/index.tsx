@@ -6,9 +6,11 @@ import CargarPedidos from '../../Componentes/PedidosComponentes/CargarPedidos';
 import TablaPedidos from '../../Componentes/PedidosComponentes/TablaPedidos';
 import ExportarAutorizados from '../../Componentes/PedidosComponentes/ExportarAutorizados';
 import ImportarPedidosVulcano from '../../Componentes/PedidosComponentes/importarPedidosVulcano';
+import Cookies from 'js-cookie';
 import './estilos.css';
 
 const Pedidos: React.FC = () => {
+  const perfil = (Cookies.get('perfilPedidosCookie') || '');
   const navigate = useNavigate();
   const [vista, setVista] = useState<'gestion' | 'completados'>('gestion');
   const [botonesAbiertos, setBotonesAbiertos] = useState(false);
@@ -31,8 +33,9 @@ const Pedidos: React.FC = () => {
       <div className="Pedidos-header">
         <select className="Pedidos-select" value={vista} onChange={handleVistaChange}>
           <option value="gestion">Gestión de Pedidos</option>
-          <option value="completados">Pedidos completados</option>
+          <option value="completados">Pedidos completados</option>          
         </select>
+        <p>{perfil}</p>
         <button className="Pedidos-botonCerrar" onClick={cerrarSesion}>
           <FaSignOutAlt className="Pedidos-iconoCerrar" />
         </button>

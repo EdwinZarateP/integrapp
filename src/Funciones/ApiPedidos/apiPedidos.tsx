@@ -121,6 +121,8 @@ export interface AjusteVehiculo {
   Observaciones_ajustes?: string;
   total_cargue_descargue?: number;
   total_flete_solicitado?: number;
+  nuevo_destino?: string;
+  destino_desde_real?: string;
 }
 
 export interface AjustesVehiculosPayload {

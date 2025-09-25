@@ -32,6 +32,7 @@ type EditFormState = {
   total_cargue_descargue: string;
   total_flete_solicitado: string;
   Observaciones_ajustes: string;
+  destino_desde_real: string;
 };
 
 type FusionFormState = {
@@ -180,6 +181,7 @@ const TablaPedidos: React.FC = () => {
   const [filtroEstado, setFiltroEstado] = useState<string>('TODOS');
   const [filtroRegional, setFiltroRegional] = useState<string>('TODOS');
   const [mostrarModalFiltros, setMostrarModalFiltros] = useState(false);
+  const [destinosRealesVehiculo, setDestinosRealesVehiculo] = useState<string[]>([]);
   const [esPantallaGrande, setEsPantallaGrande] = useState(
     typeof window !== 'undefined' ? window.innerWidth >= 900 : true
   );
@@ -195,7 +197,8 @@ const TablaPedidos: React.FC = () => {
     total_punto_adicional: '',
     total_cargue_descargue: '',
     total_flete_solicitado: '',
-    Observaciones_ajustes: ''
+    Observaciones_ajustes: '',
+    destino_desde_real: '',
   });
 
   // fusión
@@ -342,6 +345,17 @@ const TablaPedidos: React.FC = () => {
 
   const abrirModalEditar = useCallback((g: VehiculoGroup) => {
     if (!perfilesConEdicion.includes(perfil as any)) return;
+
+    // ← dedup de destinos reales (normalizados)
+    const opciones = Array.from(
+      new Set(
+        (g.pedidos as any[] || [])
+          .map(p => String(p?.destino_real || '').trim().toUpperCase())
+          .filter(Boolean)
+      )
+    );
+    setDestinosRealesVehiculo(opciones);
+
     setEditForm({
       consecutivo_vehiculo: g.consecutivo_vehiculo,
       tipo_vehiculo_sicetac: (g.tipo_vehiculo_sicetac || g.tipo_vehiculo || '').split('_')[0],
@@ -351,9 +365,11 @@ const TablaPedidos: React.FC = () => {
       total_cargue_descargue: String(g.total_cargue_descargue ?? ''),
       total_flete_solicitado: String(g.total_flete_solicitado ?? ''),
       Observaciones_ajustes: g.Observaciones_ajustes ?? '',
+      destino_desde_real: (g.destino || '').toString().toUpperCase(),
     });
     setMostrarModalEditar(true);
   }, [perfil]);
+
 
   const cerrarModalEditar = useCallback(() => {
     setMostrarModalEditar(false);
@@ -396,7 +412,11 @@ const TablaPedidos: React.FC = () => {
       total_cargue_descargue: parseNumberLoose(editForm.total_cargue_descargue),
       total_flete_solicitado: flete,
       Observaciones_ajustes: editForm.Observaciones_ajustes?.trim() || undefined,
+      ...(editForm.destino_desde_real
+      ? { destino_desde_real: editForm.destino_desde_real }
+      : {})
     };
+
 
     setGuardandoEdicion(true);
     try {
@@ -673,12 +693,21 @@ const TablaPedidos: React.FC = () => {
       Swal.fire('Estado inválido', 'Solo se pueden dividir vehículos en PREAUTORIZADO o REQUIERE AUTORIZACION', 'warning');
       return;
     }
+
+    // >>> poblar también aquí
+    const opciones = Array.from(new Set(
+      ((g.pedidos as any[]) ?? [])
+        .map(p => String(p?.destino_real || '').trim().toUpperCase())
+        .filter(Boolean)
+    ));
+    setDestinosRealesVehiculo(opciones);
     setDivisionVehiculo(g);
     setDivisionDestino((g?.destino || '').toString().toUpperCase());
     setDivisionObs('');
     limpiarSeleccionDivision();
     setMostrarModalDividir(true);
   }, [perfil, limpiarSeleccionDivision]);
+
 
   const cerrarModalDividir = useCallback(() => {
     setMostrarModalDividir(false);
@@ -1087,6 +1116,25 @@ const TablaPedidos: React.FC = () => {
               />
             </div>
 
+            {/* ===== Destino final (elige una opción) ===== */}
+            <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full">
+              <label>Destino final (elige una opción)</label>
+              <select
+                name="destino_desde_real"
+                value={editForm.destino_desde_real}
+                onChange={(e) =>
+                  setEditForm((prev) => ({ ...prev, destino_desde_real: e.target.value.toUpperCase() }))
+                }
+              >
+                <option value="">— Selecciona destino real —</option>
+                {destinosRealesVehiculo.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
+
+
+
             <div className="TablaPedidos-modal-editar-grid">
               <div className="TablaPedidos-form-grupo">
                 <label>Tipo vehículo (RUNT)</label>
@@ -1289,14 +1337,14 @@ const TablaPedidos: React.FC = () => {
             </div>
 
             {/* Destino único */}
-            <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full">
+            {/* <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full">
               <label>Destino único (para A/B/C)</label>
               <input
                 value={divisionDestino}
                 onChange={(e) => setDivisionDestino(e.target.value.toUpperCase())}
                 placeholder="Ej: MEDELLIN"
               />
-            </div>
+            </div> */}
 
             {/* ===== Opción 1: mover por destinatarios ===== */}
             <div className="TablaPedidos-modal-editar-grid TablaPedidos-modal-dividir-grid">

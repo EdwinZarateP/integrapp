@@ -972,17 +972,18 @@ const TablaPedidos: React.FC = () => {
                 <th>Puntos</th>
                 <th>Kg Reales</th>
                 <th>Kg Runt</th>
-                <th>Flete Teórico</th>
-                <th>Car/desc Teórico</th>
-                <th>Pto Adic Teórico</th>
-                <th>Total Teórico</th>
                 <th>Flete Solicitado</th>
                 <th>Car/desc Solicitado</th>
                 <th>Pto Adic Solicitado</th>
                 <th>Desvío</th>
-                <th>Total Solicitado</th>
-                <th>Diferencia</th>
                 <th>Observaciones</th>
+                <th>Total Solicitado</th>
+                <th>Diferencia</th>                
+                <th>Flete Teórico</th>
+                <th>Car/desc Teórico</th>
+                <th>Pto Adic Teórico</th>
+                <th>Total Teórico</th>
+                
               </tr>
             </thead>
             <tbody>
@@ -1063,17 +1064,17 @@ const TablaPedidos: React.FC = () => {
                       <td>{g.total_puntos_vehiculo}</td>
                       <td>{g.total_kilos_vehiculo}</td>
                       <td>{g.total_kilos_vehiculo_sicetac}</td>
-                      <CellMoney value={g.valor_flete_sistema} />
-                      <CellMoney value={g.total_cargue_descargue_teorico} />
-                      <CellMoney value={g.total_punto_adicional_teorico} />
-                      <CellMoney value={g.costo_teorico_vehiculo} />
                       <CellMoney value={g.total_flete_solicitado} />
                       <CellMoney value={g.total_cargue_descargue} />
                       <CellMoney value={g.total_punto_adicional} />
                       <CellMoney value={g.total_desvio_vehiculo || 0} />
-                      <CellMoney value={g.costo_real_vehiculo} />
-                      <CellMoney value={g.diferencia_flete} highlightPositive />
                       <td>{g.Observaciones_ajustes}</td>
+                      <CellMoney value={g.costo_real_vehiculo} />
+                      <CellMoney value={g.diferencia_flete} highlightPositive />                      
+                      <CellMoney value={g.valor_flete_sistema} />
+                      <CellMoney value={g.total_cargue_descargue_teorico} />
+                      <CellMoney value={g.total_punto_adicional_teorico} />
+                      <CellMoney value={g.costo_teorico_vehiculo} />                      
                     </tr>
 
                     {expandido.has(g.consecutivo_vehiculo) && (

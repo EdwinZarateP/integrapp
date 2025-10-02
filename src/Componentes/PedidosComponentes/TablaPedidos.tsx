@@ -58,6 +58,22 @@ const estadosDisponibles = [ESTADO_PREAUT, ESTADO_AUT, ESTADO_REQ_COORD, ESTADO_
 const regionesDisponibles = ['FUNZA', 'CELTA', 'GIRARDOTA', 'BUCARAMANGA', 'CALI', 'BARRANQUILLA'];
 
 const perfilesConEdicion = ['ADMIN', 'DESPACHADOR', 'ANALISTA', 'OPERADOR'] as const;
+const opcionesObservacionesAjuste = [
+  'tarifa sicetac',
+  'desvio ruta por cierre',
+  'volumen de entregas',
+  'dificultad consecucion de vehiculo',
+  'sin novedad',
+] as const;
+
+const opcionesObservacionesAjusteDivision = [
+  'destino no admite tipo vehiculo sobredimensionado',
+  'cross docking',
+  'se deben hacer entregas parciales',
+  'dificultad consecucion de vehiculo',
+  'sin novedad',
+] as const;
+
 
 /***********************************
  * Helpers puros
@@ -1224,14 +1240,20 @@ const TablaPedidos: React.FC = () => {
 
               <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full">
                 <label>Observaciones del ajuste</label>
-                <textarea
+                <select
                   name="Observaciones_ajustes"
-                  rows={3}
                   value={editForm.Observaciones_ajustes}
                   onChange={onChangeEdit}
-                  placeholder="Opcional: explica el motivo del ajuste"
-                />
+                >
+                  <option value="">— Sin valor —</option>
+                  {opcionesObservacionesAjuste.map(op => (
+                    <option key={op} value={op}>
+                      {op}
+                    </option>
+                  ))}
+                </select>
               </div>
+
             </div>
 
             <div className="TablaPedidos-modal-editar-actions">
@@ -1531,13 +1553,19 @@ const TablaPedidos: React.FC = () => {
             {/* Observación */}
             <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full">
               <label>Observación de división (opcional)</label>
-              <textarea
-                rows={3}
+              <select
                 value={divisionObs}
                 onChange={(e) => setDivisionObs(e.target.value)}
-                placeholder="Motivo / comentario…"
-              />
+              >
+                <option value="">— Sin valor —</option>
+                {opcionesObservacionesAjusteDivision.map(op => (
+                  <option key={op} value={op}>
+                    {op}
+                  </option>
+                ))}
+              </select>
             </div>
+
 
             {/* Acciones */}
             <div className="TablaPedidos-modal-editar-actions">

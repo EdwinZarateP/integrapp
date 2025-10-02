@@ -376,10 +376,28 @@ const TablaPedidos: React.FC = () => {
     setGuardandoEdicion(false);
   }, []);
 
-  const onChangeEdit = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setEditForm((prev) => ({ ...prev, [name]: value }));
-  }, []);
+  const onChangeEdit = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+
+      // Si es un input numérico, conviértelo a número y evita negativos
+      if (e.target.type === "number") {
+        const parsed = Number(value);
+        setEditForm((prev) => ({
+          ...prev,
+          [name]: parsed < 0 ? 0 : parsed, // 👈 fuerza a 0 si es negativo
+        }));
+      } else {
+        // Para texto, selects, textarea...
+        setEditForm((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+    },
+    []
+  );
+
 
   const guardarEdicion = useCallback(async () => {
     if (!editForm.consecutivo_vehiculo) {
@@ -1166,10 +1184,11 @@ const TablaPedidos: React.FC = () => {
               </div>
 
               <div className="TablaPedidos-form-grupo">
-                <label>Total desvío</label>
+                <label>Total desvío transp</label>
                 <input
                   type="number"
                   step="1"
+                  min={0}
                   name="total_desvio_vehiculo"
                   value={editForm.total_desvio_vehiculo}
                   onChange={onChangeEdit}
@@ -1178,10 +1197,11 @@ const TablaPedidos: React.FC = () => {
               </div>
 
               <div className="TablaPedidos-form-grupo">
-                <label>Total punto adicional</label>
+                <label>Total punto adicional transp</label>
                 <input
                   type="number"
                   step="1"
+                  min={0}
                   name="total_punto_adicional"
                   value={editForm.total_punto_adicional}
                   onChange={onChangeEdit}
@@ -1190,10 +1210,11 @@ const TablaPedidos: React.FC = () => {
               </div>
 
               <div className="TablaPedidos-form-grupo">
-                <label>Car/desc</label>
+                <label>Desc transp</label>
                 <input
                   type="number"
                   step="1"
+                  min={0}
                   name="total_cargue_descargue"
                   value={editForm.total_cargue_descargue}
                   onChange={onChangeEdit}

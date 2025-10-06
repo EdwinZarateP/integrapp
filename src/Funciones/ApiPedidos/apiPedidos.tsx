@@ -123,6 +123,7 @@ export interface AjusteVehiculo {
   total_flete_solicitado?: number;
   nuevo_destino?: string;
   destino_desde_real?: string;
+
 }
 
 export interface AjustesVehiculosPayload {
@@ -151,7 +152,7 @@ export interface AjusteResultado {
 export interface AjustarTotalesVehiculoResponse {
   mensaje: string;
   resultados: AjusteResultado[];
-  errores?: string[]; // presente si hubo algunos consecutivos con problemas
+  errores?: string[]; 
 }
 
 // ---- Respuestas de endpoints con `mensaje` (para evitar `{}`) ----

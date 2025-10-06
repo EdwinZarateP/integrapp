@@ -154,15 +154,19 @@
    9. Columnas Específicas en Negrita
    -------------------------------------------- */
 /* Encabezados de “Total Teórico” (columna 12) y “Total Solicitado” (columna 17) */
-.TablaPedidosCompletados-table th:nth-child(11),
-.TablaPedidosCompletados-table th:nth-child(16) {
+.TablaPedidosCompletados-table th:nth-child(12),
+.TablaPedidosCompletados-table th:nth-child(17) {
   font-weight: 700;
+  color: white;
+  background-color: #1e7e34;
 }
 
 /* Celdas de “Total Teórico” y “Total Solicitado” */
-.TablaPedidosCompletados-table td:nth-child(11),
-.TablaPedidosCompletados-table td:nth-child(16) {
+.TablaPedidosCompletados-table td:nth-child(12),
+.TablaPedidosCompletados-table td:nth-child(17) {
   font-weight: 700;
+  color: white;
+  background-color: #1e7e34;
 }
 
 .TablaPedidosCompletados-row--expanded {

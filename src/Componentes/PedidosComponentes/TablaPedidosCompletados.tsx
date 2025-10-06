@@ -196,22 +196,22 @@ const TablaPedidosCompletados: React.FC = () => {
                   <th></th>
                   <th>Vehículo</th>
                   <th>Tipo</th>
-                  <th>Destino Final</th>
-                  <th>Estados</th>
+                  <th>Destino Final</th>                  
                   <th>Puntos</th>
                   <th>Kg Reales</th>
-                  <th>Kg Sicetac</th>
-                  <th>Flete Teorico</th>
-                  <th>Car/desc Teorico Teorico</th>
-                  <th>Pto Adic Teórico</th>                
-                  <th>Total Teórico</th>   
+                  <th>Kg Sicetac</th>                  
                   <th>Flete Solicitado</th>
                   <th>Car/desc Solicitado</th>
                   <th>Pto Adic Solicitado</th>
                   <th>Desvío</th>   
                   <th>Total Solicitado</th>                             
                   <th>Diferencia</th>
+                  <th>Flete Teorico</th>
+                  <th>Car/desc Teorico Teorico</th>
+                  <th>Pto Adic Teórico</th>                
+                  <th>Total Teórico</th>  
                   <th>Observaciones</th>
+                  <th>Estados</th>
                 </tr>
               </thead>
               <tbody>
@@ -232,14 +232,10 @@ const TablaPedidosCompletados: React.FC = () => {
                       <td>{g.consecutivo_vehiculo}</td>                      
                       <td>{(g.tipo_vehiculo_sicetac || '').split('_')[0]}</td>
                       <td>{g.destino}</td>
-                      <td>{g.estados.join(', ')}</td>
+                      
                       <td>{g.total_puntos_vehiculo}</td>
                       <td>{numeroSeguro(g.total_kilos_vehiculo)}</td>
-                      <td>{numeroSeguro(g.total_kilos_vehiculo_sicetac)}</td>
-                      <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td>
-                      <td>{formatoMoneda(g.total_cargue_descargue_teorico)}</td>
-                      <td>{formatoMoneda(g.total_punto_adicional_teorico)}</td>
-                      <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td>
+                      <td>{numeroSeguro(g.total_kilos_vehiculo_sicetac)}</td>                      
                       <td>{formatoMoneda(g.total_flete_solicitado)}</td>
                       <td>{formatoMoneda(g.total_cargue_descargue)}</td>
                       <td>{formatoMoneda(g.total_punto_adicional)}</td>
@@ -248,6 +244,11 @@ const TablaPedidosCompletados: React.FC = () => {
                       <td className={Number(g.diferencia_flete) > 0 ? 'TablaPedidosCompletados-cell--error' : ''}>
                         {formatoMoneda(g.diferencia_flete)}
                       </td>
+                      <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td>
+                      <td>{formatoMoneda(g.total_cargue_descargue_teorico)}</td>
+                      <td>{formatoMoneda(g.total_punto_adicional_teorico)}</td>
+                      <td>{formatoMoneda(g.costo_teorico_vehiculo)}</td>
+                      <td>{g.estados.join(', ')}</td>
 
                     </tr>
 

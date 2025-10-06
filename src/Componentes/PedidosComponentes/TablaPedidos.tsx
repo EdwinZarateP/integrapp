@@ -47,6 +47,8 @@ type FusionFormState = {
 
 
 const opcionesTipoSicetac = ['CARRY', 'NHR', 'TURBO', 'NIES', 'SENCILLO', 'PATINETA', 'TRACTOMULA'];
+const EXTRA_DESTINOS = ['GIRARDOTA', 'YUMBO', 'BUCARAMANGA', 'BARRANQUILLA'];
+
 
 const ESTADO_PREAUT = 'PREAUTORIZADO';
 const ESTADO_AUT = 'AUTORIZADO';
@@ -62,7 +64,9 @@ const opcionesObservacionesAjuste = [
   'tarifa sicetac',
   'desvio ruta por cierre',
   'volumen de entregas',
-  'dificultad consecucion de vehiculo',
+  'vehiculo contratado por dia',
+  'dificultad consecucion de vehiculos',
+  'se envia a bodega para cross docking',
   'sin novedad',
 ] as const;
 
@@ -70,7 +74,7 @@ const opcionesObservacionesAjusteDivision = [
   'destino no admite tipo vehiculo sobredimensionado',
   'cross docking',
   'se deben hacer entregas parciales',
-  'dificultad consecucion de vehiculo',
+  'dificultad consecucion de vehiculos',
   'sin novedad',
 ] as const;
 
@@ -216,6 +220,7 @@ const TablaPedidos: React.FC = () => {
     Observaciones_ajustes: '',
     destino_desde_real: '',
   });
+  const [destinoSeleccion, setDestinoSeleccion] = useState<string>('');
 
   // fusión
   const [mostrarModalFusion, setMostrarModalFusion] = useState(false);
@@ -298,7 +303,7 @@ const TablaPedidos: React.FC = () => {
       return;
     }
 
-    const { value: obs } = await Swal.fire({
+    const res = await Swal.fire({
       title: `Autorizar vehículo (${requerido})`,
       input: 'textarea',
       inputLabel: 'Observaciones del aprobador (opcional)',
@@ -308,8 +313,11 @@ const TablaPedidos: React.FC = () => {
       cancelButtonText: 'Cancelar',
     });
 
+    if (!res.isConfirmed) return;                 // 👈 cortar si canceló
+    const obs = res.value ?? undefined;
+
     try {
-      await autorizarPorConsecutivoVehiculo([grupo.consecutivo_vehiculo], usuario, obs ?? undefined);
+      await autorizarPorConsecutivoVehiculo([grupo.consecutivo_vehiculo], usuario, obs);
       Swal.fire('Listo', 'Vehículo autorizado', 'success');
       void obtenerPedidos();
     } catch (e: any) {
@@ -318,8 +326,9 @@ const TablaPedidos: React.FC = () => {
     }
   }, [perfil, usuario, obtenerPedidos]);
 
+
   const manejarConfirmarPreautorizado = useCallback(async (consec: string) => {
-    const { value: obs } = await Swal.fire({
+    const res = await Swal.fire({
       title: 'Confirmar PREAUTORIZADO',
       input: 'textarea',
       inputLabel: 'Observaciones del aprobador (opcional)',
@@ -328,8 +337,12 @@ const TablaPedidos: React.FC = () => {
       confirmButtonText: 'Confirmar',
       cancelButtonText: 'Cancelar',
     });
+
+    if (!res.isConfirmed) return;                 // 👈 aquí también
+    const obs = res.value ?? undefined;
+
     try {
-      await confirmarPreautorizados([consec], usuario, obs ?? undefined);
+      await confirmarPreautorizados([consec], usuario, obs);
       Swal.fire('Listo', 'Vehículo confirmado a AUTORIZADO', 'success');
       void obtenerPedidos();
     } catch (e: any) {
@@ -337,6 +350,7 @@ const TablaPedidos: React.FC = () => {
       Swal.fire('Error', typeof d === 'string' ? d : JSON.stringify(d, null, 2), 'error');
     }
   }, [usuario, obtenerPedidos]);
+
 
   const manejarEliminar = useCallback(async (consec: string) => {
     const { isConfirmed } = await Swal.fire({
@@ -362,7 +376,6 @@ const TablaPedidos: React.FC = () => {
   const abrirModalEditar = useCallback((g: VehiculoGroup) => {
     if (!perfilesConEdicion.includes(perfil as any)) return;
 
-    // ← dedup de destinos reales (normalizados)
     const opciones = Array.from(
       new Set(
         (g.pedidos as any[] || [])
@@ -383,9 +396,16 @@ const TablaPedidos: React.FC = () => {
       Observaciones_ajustes: g.Observaciones_ajustes ?? '',
       destino_desde_real: (g.destino || '').toString().toUpperCase(),
     });
+
+    // si el destino actual existe dentro de los reales, lo dejamos preseleccionado
+    setDestinoSeleccion(
+      opciones.includes(String(g.destino || '').toUpperCase())
+        ? `REAL:${String(g.destino || '').toUpperCase()}`
+        : ''
+    );
+
     setMostrarModalEditar(true);
   }, [perfil]);
-
 
   const cerrarModalEditar = useCallback(() => {
     setMostrarModalEditar(false);
@@ -437,6 +457,17 @@ const TablaPedidos: React.FC = () => {
       return;
     }
 
+    // <<<<< NUEVO: derivar campos de destino según selección >>>>>
+    let destino_desde_real: string | undefined;
+    let nuevo_destino: string | undefined;
+
+    if (destinoSeleccion.startsWith('REAL:')) {
+      destino_desde_real = destinoSeleccion.replace(/^REAL:/, '').trim().toUpperCase();
+    } else if (destinoSeleccion.startsWith('EXTRA:')) {
+      nuevo_destino = destinoSeleccion.replace(/^EXTRA:/, '').trim().toUpperCase();
+    }
+    // <<<<< /NUEVO >>>>>
+
     const ajuste: AjusteVehiculo = {
       consecutivo_vehiculo: editForm.consecutivo_vehiculo,
       tipo_vehiculo_sicetac: editForm.tipo_vehiculo_sicetac || undefined,
@@ -446,11 +477,9 @@ const TablaPedidos: React.FC = () => {
       total_cargue_descargue: parseNumberLoose(editForm.total_cargue_descargue),
       total_flete_solicitado: flete,
       Observaciones_ajustes: editForm.Observaciones_ajustes?.trim() || undefined,
-      ...(editForm.destino_desde_real
-      ? { destino_desde_real: editForm.destino_desde_real }
-      : {})
+      ...(destino_desde_real ? { destino_desde_real } : {}),
+      ...(nuevo_destino ? { nuevo_destino } : {}),
     };
-
 
     setGuardandoEdicion(true);
     try {
@@ -462,7 +491,8 @@ const TablaPedidos: React.FC = () => {
       setGuardandoEdicion(false);
       Swal.fire('Error', e?.response?.data?.detail || e?.message || 'No se pudo ajustar', 'error');
     }
-  }, [editForm, usuario, obtenerPedidos, cerrarModalEditar]);
+  }, [destinoSeleccion, editForm, usuario, obtenerPedidos, cerrarModalEditar]);
+
 
   /***************
    * Selección
@@ -493,17 +523,15 @@ const TablaPedidos: React.FC = () => {
 
   const manejarConfirmacionMasiva = useCallback(async () => {
     const seleccionPreaut = pedidos
-      .filter(
-        (g) => seleccionados.has(g.consecutivo_vehiculo) && Array.isArray(g.estados) && g.estados.includes(ESTADO_PREAUT)
-      )
-      .map((g) => g.consecutivo_vehiculo);
+      .filter(g => seleccionados.has(g.consecutivo_vehiculo) && g.estados?.includes(ESTADO_PREAUT))
+      .map(g => g.consecutivo_vehiculo);
 
     if (!seleccionPreaut.length) {
       Swal.fire('Atención', 'Selecciona al menos un vehículo en estado PREAUTORIZADO', 'warning');
       return;
     }
 
-    const { value: obs } = await Swal.fire({
+    const res = await Swal.fire({
       title: `Confirmar ${seleccionPreaut.length} vehículo(s) preautorizado(s)`,
       input: 'textarea',
       inputLabel: 'Observaciones del aprobador (opcional)',
@@ -512,10 +540,13 @@ const TablaPedidos: React.FC = () => {
       confirmButtonText: 'Confirmar',
       cancelButtonText: 'Cancelar',
     });
+
+    if (!res.isConfirmed) return;                 // 👈 cortar si canceló
+    const obs = res.value ?? undefined;
+
     try {
-      const res = await confirmarPreautorizados(seleccionPreaut, usuario, obs ?? undefined);
-      const msg = typeof res?.mensaje === 'string' ? res.mensaje : `Confirmados: ${seleccionPreaut.length}`;
-      Swal.fire('Éxito', msg, 'success');
+      const r = await confirmarPreautorizados(seleccionPreaut, usuario, obs);
+      Swal.fire('Éxito', r?.mensaje || `Confirmados: ${seleccionPreaut.length}`, 'success');
       setSeleccionados(new Set());
       void obtenerPedidos();
     } catch (e: any) {
@@ -523,6 +554,7 @@ const TablaPedidos: React.FC = () => {
       Swal.fire('Error', typeof d === 'string' ? d : JSON.stringify(d, null, 2), 'error');
     }
   }, [pedidos, seleccionados, usuario, obtenerPedidos]);
+
 
   /***************
    * Fusión
@@ -1153,20 +1185,36 @@ const TablaPedidos: React.FC = () => {
 
             {/* ===== Destino final (elige una opción) ===== */}
             <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full">
-              <label>Destino final (elige una opción)</label>
+              <label>
+                Destino final (elige una opción)
+                <small style={{ display: 'block', opacity: 0.7 }}>
+                  Si eliges una ciudad estándar, se agregará una línea adicional con esa ciudad.
+                </small>
+              </label>
               <select
-                name="destino_desde_real"
-                value={editForm.destino_desde_real}
-                onChange={(e) =>
-                  setEditForm((prev) => ({ ...prev, destino_desde_real: e.target.value.toUpperCase() }))
-                }
+                value={destinoSeleccion}
+                onChange={(e) => setDestinoSeleccion(e.target.value)}
               >
-                <option value="">— Selecciona destino real —</option>
-                {destinosRealesVehiculo.map((d) => (
-                  <option key={d} value={d}>{d}</option>
-                ))}
+                <option value="">— Selecciona destino —</option>
+
+                {/* Destinos reales del vehículo */}
+                <optgroup label="Destinos reales del vehículo">
+                  {destinosRealesVehiculo.map((d) => (
+                    <option key={d} value={`REAL:${d}`}>{d}</option>
+                  ))}
+                </optgroup>
+
+                {/* Ciudades estándar extra (solo si no están ya en los reales) */}
+                <optgroup label="Agregar ciudad estándar">
+                  {EXTRA_DESTINOS
+                    .filter((d) => !destinosRealesVehiculo.includes(d))
+                    .map((d) => (
+                      <option key={d} value={`EXTRA:${d}`}>{d}</option>
+                    ))}
+                </optgroup>
               </select>
             </div>
+
 
 
 
@@ -1280,10 +1328,7 @@ const TablaPedidos: React.FC = () => {
             </div>
 
             <div className="TablaPedidos-modal-editar-grid">
-              <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full">
-                <label>Nuevo destino</label>
-                <input name="nuevo_destino" value={fusionForm.nuevo_destino} onChange={onChangeFusion} placeholder="Ej: BOGOTA" />
-              </div>
+              
 
               <div className="TablaPedidos-form-grupo">
                 <label>Tipo vehículo (SICETAC)</label>

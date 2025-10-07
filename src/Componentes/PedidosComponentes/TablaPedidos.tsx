@@ -414,22 +414,23 @@ const TablaPedidos: React.FC = () => {
 
   const onChangeEdit = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
+      const { name, value } = e.target as HTMLInputElement;
 
-      // Si es un input numérico, conviértelo a número y evita negativos
-      if (e.target.type === "number") {
-        const parsed = Number(value);
-        setEditForm((prev) => ({
-          ...prev,
-          [name]: parsed < 0 ? 0 : parsed, // 👈 fuerza a 0 si es negativo
-        }));
-      } else {
-        // Para texto, selects, textarea...
-        setEditForm((prev) => ({
-          ...prev,
-          [name]: value,
-        }));
+      // Permite estados intermedios en numéricos ('' o '-') sin rebotar a 0
+      if ((e.target as HTMLInputElement).type === 'number') {
+        if (value === '' || value === '-') {
+          setEditForm(prev => ({ ...prev, [name]: value }));
+          return;
+        }
+        // Solo si es un número válido (incluye decimales), lo guardamos como string igual
+        if (!Number.isNaN(Number(value))) {
+          setEditForm(prev => ({ ...prev, [name]: value }));
+        }
+        return;
       }
+
+      // Texto / select / textarea
+      setEditForm(prev => ({ ...prev, [name]: value }));
     },
     []
   );
@@ -481,15 +482,26 @@ const TablaPedidos: React.FC = () => {
       ...(nuevo_destino ? { nuevo_destino } : {}),
     };
 
-    setGuardandoEdicion(true);
+    // dentro de guardarEdicion()
+  setGuardandoEdicion(true);
     try {
-      await ajustarTotalesVehiculo(usuario, [ajuste]);
-      Swal.fire('Listo', 'Ajuste aplicado y estado recalculado', 'success');
+      const resp = await ajustarTotalesVehiculo(usuario, [ajuste]);
+
+      // 👇 chequeos explícitos
+      if (Array.isArray(resp?.errores) && resp.errores.length) {
+        throw new Error(resp.errores.join('\n'));
+      }
+      if (!Array.isArray(resp?.resultados) || resp.resultados.length === 0) {
+        throw new Error('No se ajustó ningún vehículo. Revisa el consecutivo_vehiculo y los campos numéricos.');
+      }
+
+      Swal.fire('Listo', resp?.mensaje || 'Ajuste aplicado y estado recalculado', 'success');
       cerrarModalEditar();
       void obtenerPedidos();
     } catch (e: any) {
       setGuardandoEdicion(false);
-      Swal.fire('Error', e?.response?.data?.detail || e?.message || 'No se pudo ajustar', 'error');
+      const msg = e?.response?.data?.detail || e?.message || 'No se pudo ajustar';
+      Swal.fire('Error', String(msg), 'error');
     }
   }, [destinoSeleccion, editForm, usuario, obtenerPedidos, cerrarModalEditar]);
 

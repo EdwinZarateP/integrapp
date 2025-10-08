@@ -66,7 +66,11 @@ const opcionesObservacionesAjuste = [
   'volumen de entregas',
   'vehiculo contratado por dia',
   'dificultad consecucion de vehiculos',
+  'por festivo, dificultad consecucion de vehiculos',
   'se envia a bodega para cross docking',
+  'lleva paqueteo',
+  'Flete errado de base',
+  'si aplica descargue',
   'sin novedad',
 ] as const;
 

@@ -1,0 +1,240 @@
+/* =========================================
+   Recuperar contraseña – estilos profesionales
+   Archivo: src/Paginas/estilos.css
+   ========================================= */
+
+/* --------- Design tokens --------- */
+:root {
+  --rec-bg: #f6f7f9;
+  --rec-card: #ffffff;
+  --rec-text: #1f2328;
+  --rec-muted: #6b7280;
+  --rec-border: #e5e7eb;
+
+  --rec-focus: #111827;          /* negro/gris oscuro */
+  --rec-ring: rgba(17, 24, 39, .08);
+
+  --rec-success: #007c2e;
+  --rec-success-bg: #e8f6ee;
+
+  --rec-error: #b00020;
+  --rec-error-bg: #fdecec;
+
+  --rec-shadow: 0 12px 30px rgba(0,0,0,.08);
+  --rec-radius: 16px;
+  --rec-radius-sm: 10px;
+}
+
+/* --------- Layout --------- */
+.Recuperar-contenedor {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background:
+    radial-gradient(1000px 600px at 10% -20%, rgba(17,24,39,.05), transparent 60%),
+    radial-gradient(800px 500px at 120% 10%, rgba(17,24,39,.06), transparent 50%),
+    var(--rec-bg);
+  color: var(--rec-text);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.Recuperar-contenedor h2 {
+  color: var(--rec-text);
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* --------- Card / formulario --------- */
+.Recuperar-formulario {
+  width: 100%;
+  max-width: 460px;
+  background: var(--rec-card);
+  border: 1px solid var(--rec-border);
+  border-radius: var(--rec-radius);
+  box-shadow: var(--rec-shadow);
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.Recuperar-inputGroup {
+  display: grid;
+  gap: .5rem;
+}
+
+.Recuperar-inputGroup label {
+  font-size: .95rem;
+  color: var(--rec-muted);
+  font-weight: 500;
+}
+
+/* --------- Inputs --------- */
+.Recuperar-inputGroup input,
+.Recuperar-inputPassword input {
+  width: 100%;
+  padding: .75rem .9rem;
+  border: 1px solid var(--rec-border);
+  border-radius: var(--rec-radius-sm);
+  font-size: .95rem;
+  transition: border-color .18s ease, box-shadow .18s ease;
+  background: #fff;
+  color: var(--rec-text);
+}
+
+.Recuperar-inputGroup input::placeholder,
+.Recuperar-inputPassword input::placeholder {
+  color: #9aa0a6;
+}
+
+/* Focus accesible */
+.Recuperar-inputGroup input:focus,
+.Recuperar-inputPassword input:focus {
+  outline: none;
+  border-color: var(--rec-focus);
+  box-shadow: 0 0 0 4px var(--rec-ring);
+}
+
+/* Contenedor input + “ojo” */
+.Recuperar-inputPassword {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.Recuperar-inputPassword input {
+  padding-right: 42px; /* espacio para el ojo */
+}
+
+/* Botón ojo */
+.Recuperar-eyeBtn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 6px;
+  border-radius: 8px;
+  transition: background-color .15s ease, transform .06s ease, opacity .15s ease;
+  color: var(--rec-text);
+}
+
+.Recuperar-eyeBtn:hover {
+  background: rgba(0,0,0,.06);
+}
+
+.Recuperar-eyeBtn:active {
+  transform: translateY(-50%) scale(0.98);
+}
+
+/* Accesibilidad de foco para el ojo */
+.Recuperar-eyeBtn:focus-visible {
+  outline: 2px solid var(--rec-focus);
+  outline-offset: 2px;
+}
+
+/* Disabled (cuando el formulario está enviando) */
+.Recuperar-eyeBtn:disabled {
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+.Recuperar-acciones {
+  display: flex;
+  justify-content: center;
+  margin-top: .25rem;
+}
+
+/* --------- Mensajes --------- */
+.Recuperar-mensaje,
+.Recuperar-error {
+  padding: .8rem;
+  border-radius: 10px;
+  font-size: .9rem;
+  text-align: center;
+  border-left: 4px solid;
+  animation: rec-fade-in .25s ease;
+}
+
+.Recuperar-mensaje {
+  color: var(--rec-success);
+  background: var(--rec-success-bg);
+  border-left-color: var(--rec-success);
+}
+
+.Recuperar-error {
+  color: var(--rec-error);
+  background: var(--rec-error-bg);
+  border-left-color: var(--rec-error);
+}
+
+/* --------- Pie --------- */
+.Recuperar-pie {
+  margin-top: 1rem;
+  font-size: .85rem;
+  color: var(--rec-muted);
+  text-align: center;
+  max-width: 380px;
+}
+
+.Recuperar-pie small { line-height: 1.4; }
+
+/* Botón nativo oculto (fallback) */
+.Recuperar-submitOculto { display: none; }
+
+/* --------- Animaciones --------- */
+@keyframes rec-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Reduce motion (accesibilidad) */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* --------- Responsive --------- */
+@media (max-width: 480px) {
+  .Recuperar-formulario { padding: 1.5rem; }
+  .Recuperar-contenedor h2 { font-size: 1.6rem; }
+}
+
+/* --------- Integración con tu botón (opcional) ---------
+   Si tu BotonSencillo usa .boton.negro, afinamos estilos aquí.
+   Elimina esta sección si ya lo tienes en otro CSS.
+--------------------------------------------------------- */
+.boton.negro {
+  background: #111827;
+  color: #fff;
+  border-radius: 12px;
+  padding: 12px 18px;
+  border: none;
+  font-weight: 600;
+  letter-spacing: .2px;
+  transition: transform .08s ease, box-shadow .2s ease, background .2s ease;
+  box-shadow: 0 6px 16px rgba(17,24,39,.15);
+}
+
+.boton.negro:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(17,24,39,.18);
+}
+
+.boton.negro:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 16px rgba(17,24,39,.12);
+}
+
+/* Cuando el formulario esté enviando */
+form[novalidate] .boton.negro[disabled],
+.Recuperar-formulario .boton.negro:disabled {
+  opacity: .85;
+  cursor: progress;
+}

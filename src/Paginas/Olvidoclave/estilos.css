@@ -1,70 +1,208 @@
+/* ================================
+   Olvidoclave – estilos profesionales
+   Archivo: src/Paginas/estilos.css
+   ================================ */
+
+/* --------- Design tokens --------- */
+:root {
+  --olvido-bg: #f6f7f9;
+  --olvido-card: #ffffff;
+  --olvido-text: #1f2328;
+  --olvido-muted: #6b7280;
+  --olvido-border: #e5e7eb;
+  --olvido-primary: #111827;     /* negro elegante */
+  --olvido-primary-contrast: #ffffff;
+  --olvido-success: #0f766e;
+  --olvido-success-bg: #e6f6f5;
+  --olvido-error: #b00020;
+  --olvido-error-bg: #fdecec;
+  --olvido-shadow: 0 12px 30px rgba(0,0,0,.08);
+  --olvido-radius: 16px;
+  --olvido-radius-sm: 10px;
+}
+
+/* --------- Layout --------- */
 .Olvidoclave-contenedor {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* justify-content: center; */
-    height: 100vh;
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background-color: aqua;
-  }
-  
-  .Olvidoclave-logo {
-    width: 120px;
-    margin-bottom: 20px;
-  }
-  
-  .Olvidoclave-titulo {
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    font-size: 1rem;
-    margin-bottom: 20px;
-    justify-content: center;
-  }
-  
-  .Olvidoclave-titulo :nth-child(2) {
-    color:rgb(141, 199, 63);
-  }
-  
-  .Olvidoclave-formulario {
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .Olvidoclave-contenedorInput {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .Olvidoclave-inputWrapper {
-    display: flex;
-    align-items: center;
-    position: relative;
-  }
-  
-  .input {
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    flex-grow: 1;
-  }
-  
-/*  
-  .boton {
-    padding: 10px;
-    margin-top: 35px;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #000;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  } */
-  
-  
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 40px 20px;
+  background:
+    radial-gradient(1000px 600px at 10% -20%, rgba(17,24,39,.05), transparent 60%),
+    radial-gradient(800px 500px at 120% 10%, rgba(17,24,39,.06), transparent 50%),
+    var(--olvido-bg);
+  color: var(--olvido-text);
+}
+
+.Olvidoclave-formulario {
+  width: 100%;
+  max-width: 460px;
+  background: var(--olvido-card);
+  border: 1px solid var(--olvido-border);
+  border-radius: var(--olvido-radius);
+  box-shadow: var(--olvido-shadow);
+  padding: 28px;
+  backdrop-filter: blur(2px);
+}
+
+/* --------- Header / logo --------- */
+.Olvidoclave-logo {
+  width: 120px;
+  /* height: 72px; */
+  object-fit: contain;
+  margin-bottom: 14px;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.08));
+}
+
+.Olvidoclave-titulo {
+  display: flex;
+  /* gap: 6px; */
+  align-items: baseline;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.Olvidoclave-titulo h1 {
+  font-size: 28px;
+  line-height: 1.1;
+  margin: 0;
+  letter-spacing: .5px;
+  color: var(--olvido-primary);
+}
+
+.Olvidoclave-titulo h1:nth-child(2) {
+  color: #00945a;
+}
+
+
+/* --------- Inputs --------- */
+.Olvidoclave-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.Olvidoclave-contenedorInput {
+  display: grid;
+  gap: 6px;
+}
+
+.Olvidoclave-etiqueta {
+  font-size: 14px;
+  color: var(--olvido-muted);
+}
+
+.Olvidoclave-input {
+  width: 100%;
+  appearance: none;
+  border: 1px solid var(--olvido-border);
+  background: #fff;
+  border-radius: var(--olvido-radius-sm);
+  padding: 12px 14px;
+  font-size: 15px;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.Olvidoclave-input::placeholder {
+  color: #9aa0a6;
+}
+
+.Olvidoclave-input:focus {
+  outline: none;
+  border-color: #9ca3af;
+  box-shadow: 0 0 0 4px rgba(17,24,39,.06);
+}
+
+/* Disabled (cuando fieldset está disabled) */
+.Olvidoclave-fieldset:disabled .Olvidoclave-input {
+  opacity: .75;
+  cursor: not-allowed;
+}
+
+/* --------- Mensajes --------- */
+.Olvidoclave-mensaje,
+.Olvidoclave-error {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.35;
+  border-left: 4px solid;
+  animation: olvido-fade-in .25s ease;
+}
+
+.Olvidoclave-mensaje {
+  color: var(--olvido-success);
+  background: var(--olvido-success-bg);
+  border-left-color: var(--olvido-success);
+}
+
+.Olvidoclave-error {
+  color: var(--olvido-error);
+  background: var(--olvido-error-bg);
+  border-left-color: var(--olvido-error);
+}
+
+/* --------- Acciones --------- */
+.Olvidoclave-acciones {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* Si BotonSencillo usa clase .boton y .negro, refina aquí */
+.boton.negro {
+  background: var(--olvido-primary);
+  color: var(--olvido-primary-contrast);
+  border-radius: 12px;
+  padding: 12px 18px;
+  border: none;
+  font-weight: 600;
+  letter-spacing: .2px;
+  transition: transform .08s ease, box-shadow .2s ease, background .2s ease;
+  box-shadow: 0 6px 16px rgba(17,24,39,.15);
+}
+
+.boton.negro:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(17,24,39,.18);
+}
+
+.boton.negro:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 16px rgba(17,24,39,.12);
+}
+
+.Olvidoclave-fieldset:disabled .boton.negro {
+  opacity: .85;
+  cursor: progress;
+}
+
+/* --------- Extras --------- */
+.Olvidoclave-submitOculto { display: none; }
+
+.Olvidoclave-pie {
+  max-width: 520px;
+  text-align: center;
+  margin-top: 16px;
+  color: var(--olvido-muted);
+  font-size: 13px;
+}
+
+/* Estado “cargando” opcional para el contenedor */
+.Olvidoclave-cargando {
+  cursor: progress;
+}
+
+/* --------- Animaciones --------- */
+@keyframes olvido-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --------- Responsive --------- */
+@media (max-width: 480px) {
+  .Olvidoclave-formulario { padding: 22px; }
+  .Olvidoclave-titulo h1 { font-size: 24px; }
+}

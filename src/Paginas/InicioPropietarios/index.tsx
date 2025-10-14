@@ -41,7 +41,9 @@ const InicioPropietarios: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("https://integrappi-dvmh.onrender.com/usuarios/token", {
+      
+      // const response = await fetch("https://integrappi-dvmh.onrender.com/usuarios/token", {
+      const response = await fetch("http://127.0.0.1:8000/usuarios/token", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -150,6 +152,12 @@ const InicioPropietarios: React.FC = () => {
           <div className="InicioPropietarios-pieDePagina">
             <Link to="/Registro" className="InicioPropietarios-enlace">
               Registrarse
+            </Link>
+          </div>
+
+          <div className="InicioPropietarios-pieDePagina">
+            <Link to="/olvidoclave" className="InicioPropietarios-enlace">
+              Olvidé la clave
             </Link>
           </div>
         </>

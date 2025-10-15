@@ -4,7 +4,7 @@ export const autenticarApi = async () => {
   const url = "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/auth/loginDbCustomer";
   const data = {
     username: "134APIINTEGRA",
-    idname: "eyJpdiI6InZTN1BBeFF6UEhCSno5VUp0bjRWSFE9PSIsInZhbHVlIjoiMmdjY0g3VlpwZDZNbmdQU2JRTlg4bWRmeXlsQzY4TExLSGJYTVpTcitrOD0iLCJtYWMiOiIyNGM0ZjcyODYyZGY3MDdkZWY4M2EzNzI0YzNjMmIzNjgxZTQ2ODVlYzA2MWY2YWViNTRlYjhjMDE5NDY4ZWEzIiwidGFnIjoiIn0",
+    idname: "eyJpdiI6Inl1cHZlZWFOQnc4TFB1a1hkS1VMWGc9PSIsInZhbHVlIjoia1JDRWduZ3FFZmZvRmZYUkJ3Q1JpT2RSU1htRHZkRzhQSkg0ekE5S2xwcz0iLCJtYWMiOiJjNjQxZjdlNDVlMzcwZTEzYzY4Mzc1MGYwNjI3MWQyOTI2ZTAzY2NhZDk1YjQ3MDgwYjg3ODEzODEyYzY3NzI5IiwidGFnIjoiIn0=",
     agency: "001",
     proyect: "1",
     isGroup: 0

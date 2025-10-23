@@ -123,6 +123,7 @@ export interface AjusteVehiculo {
   total_flete_solicitado?: number;
   nuevo_destino?: string;
   destino_desde_real?: string;
+  usr_solicita_ajuste?: string;
 
 }
 
@@ -435,4 +436,14 @@ export type SplitConfig = {
 };
 
 
+export type UsuarioLite = { id: string; nombre: string; usuario: string };
+
+export async function listarDespachadores(): Promise<UsuarioLite[]> {
+  const r = await fetch(`${API_BASE}/baseusuarios/despachadores`, {
+    headers: { 'accept': 'application/json' },
+    credentials: 'include',
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
 

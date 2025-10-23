@@ -8,6 +8,7 @@ import HashLoader from "react-spinners/HashLoader";
 import "./estilos.css";
 
 const InicioPropietarios: React.FC = () => {
+  const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
   const almacenVariables = useContext(ContextoApp);
   const [passwordVisible, setVisibilidadPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -43,7 +44,7 @@ const InicioPropietarios: React.FC = () => {
     try {
       
       // const response = await fetch("https://integrappi-dvmh.onrender.com/usuarios/token", {
-      const response = await fetch("http://127.0.0.1:8000/usuarios/token", {
+      const response = await fetch(`${API_BASE}/usuarios/token`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

@@ -13,7 +13,9 @@ import {
   AjusteVehiculo,
   DividirHastaTresPayload,
   ListarVehiculosResponse as VehiculoGroup,
-  Pedido
+  Pedido,
+  listarDespachadores,
+  UsuarioLite
 } from '../../Funciones/ApiPedidos/apiPedidos';
 import './TablaPedidos.css';
 
@@ -33,6 +35,7 @@ type EditFormState = {
   total_flete_solicitado: string;
   Observaciones_ajustes: string;
   destino_desde_real: string;
+  usr_solicita_ajuste: string;
 };
 
 type FusionFormState = {
@@ -213,6 +216,7 @@ const TablaPedidos: React.FC = () => {
   // edición
   const [mostrarModalEditar, setMostrarModalEditar] = useState(false);
   const [guardandoEdicion, setGuardandoEdicion] = useState(false);
+  const [despachadores, setDespachadores] = useState<UsuarioLite[]>([]);
   const [editForm, setEditForm] = useState<EditFormState>({
     consecutivo_vehiculo: '',
     tipo_vehiculo_sicetac: '',
@@ -223,6 +227,7 @@ const TablaPedidos: React.FC = () => {
     total_flete_solicitado: '',
     Observaciones_ajustes: '',
     destino_desde_real: '',
+    usr_solicita_ajuste: (Cookies.get('usuarioPedidosCookie') || '').toUpperCase(),
   });
   const [destinoSeleccion, setDestinoSeleccion] = useState<string>('');
 
@@ -295,6 +300,45 @@ const TablaPedidos: React.FC = () => {
       return copia;
     });
   }, []);
+
+  useEffect(() => {
+    if (!mostrarModalEditar) return;
+
+    (async () => {
+      try {
+        const data = await listarDespachadores();
+
+        const yo = (usuario || '').toUpperCase();
+        const seleccionado = (editForm.usr_solicita_ajuste || '').toUpperCase();
+
+        // normaliza y garantiza que estén las opciones necesarias
+        const byUsuario = new Map<string, UsuarioLite>();
+        for (const d of data) byUsuario.set(d.usuario.toUpperCase(), d);
+
+        if (yo && !byUsuario.has(yo)) {
+          byUsuario.set(yo, { id: 'self', nombre: '(TÚ)', usuario: yo });
+        }
+        if (seleccionado && !byUsuario.has(seleccionado)) {
+          // etiqueta neutra si no está en el catálogo
+          byUsuario.set(seleccionado, { id: 'sel', nombre: '(OTRO)', usuario: seleccionado });
+        }
+
+        setDespachadores(Array.from(byUsuario.values()));
+      } catch {
+        // fallback mínimo: al menos el usuario logueado y el seleccionado actual
+        const yo = (usuario || '').toUpperCase();
+        const seleccionado = (editForm.usr_solicita_ajuste || '').toUpperCase();
+        const base: UsuarioLite[] = [];
+        if (yo) base.push({ id: 'self', nombre: '(TÚ)', usuario: yo });
+        if (seleccionado && seleccionado !== yo) {
+          base.push({ id: 'sel', nombre: '(OTRO)', usuario: seleccionado });
+        }
+        setDespachadores(base);
+      }
+    })();
+    // 👇 importante: depende del valor seleccionado para que el combo no quede vacío
+  }, [mostrarModalEditar, usuario, editForm.usr_solicita_ajuste]);
+
 
   /***************
    * Acciones fila
@@ -399,6 +443,11 @@ const TablaPedidos: React.FC = () => {
       total_flete_solicitado: String(g.total_flete_solicitado ?? ''),
       Observaciones_ajustes: g.Observaciones_ajustes ?? '',
       destino_desde_real: (g.destino || '').toString().toUpperCase(),
+      usr_solicita_ajuste:
+        (g as any).usr_solicita_ajuste?.toString().toUpperCase()
+        || ((g.pedidos as any[])?.map(p => p?.usr_solicita_ajuste).find(Boolean)?.toString().toUpperCase())
+        || (usuario || '').toUpperCase(),
+
     });
 
     // si el destino actual existe dentro de los reales, lo dejamos preseleccionado
@@ -449,6 +498,12 @@ const TablaPedidos: React.FC = () => {
       Swal.fire('Atención', 'Selecciona un tipo de vehículo (SICETAC)', 'warning');
       return;
     }
+    
+    // 👉 OBSERVACIÓN OBLIGATORIA
+    if (!editForm.Observaciones_ajustes || !editForm.Observaciones_ajustes.trim()) {
+      Swal.fire('Atención', 'Debes seleccionar una "Observación del ajuste".', 'warning');
+      return;
+    }
 
     const flete = parseNumberLoose(editForm.total_flete_solicitado);
     const kilos = parseNumberLoose(editForm.total_kilos_vehiculo_sicetac);
@@ -484,6 +539,8 @@ const TablaPedidos: React.FC = () => {
       Observaciones_ajustes: editForm.Observaciones_ajustes?.trim() || undefined,
       ...(destino_desde_real ? { destino_desde_real } : {}),
       ...(nuevo_destino ? { nuevo_destino } : {}),
+      usr_solicita_ajuste: (editForm.usr_solicita_ajuste || usuario || '').toUpperCase()
+
     };
 
     // dentro de guardarEdicion()
@@ -1231,9 +1288,6 @@ const TablaPedidos: React.FC = () => {
               </select>
             </div>
 
-
-
-
             <div className="TablaPedidos-modal-editar-grid">
               <div className="TablaPedidos-form-grupo">
                 <label>Tipo vehículo (RUNT)</label>
@@ -1302,6 +1356,24 @@ const TablaPedidos: React.FC = () => {
                 />
               </div>
 
+              <div className="TablaPedidos-form-grupo">
+                <label>Despachador</label>
+                <select
+                  name="usr_solicita_ajuste"
+                  value={editForm.usr_solicita_ajuste}
+                  onChange={onChangeEdit}
+                >
+                  {despachadores.map(d => {
+                    const label = `${d.usuario}-${d.nombre}`.toUpperCase();
+                    return (
+                      <option key={`${d.id}-${d.usuario}`} value={d.usuario}>
+                        {label}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+
               <div className="TablaPedidos-form-grupo TablaPedidos-form-grupo--full">
                 <label>Observaciones del ajuste</label>
                 <select
@@ -1324,7 +1396,7 @@ const TablaPedidos: React.FC = () => {
               <button className="TablaPedidos-btn-cancelar" onClick={cerrarModalEditar}>
                 Cancelar
               </button>
-              <button className="TablaPedidos-btn-guardar" onClick={guardarEdicion} disabled={guardandoEdicion}>
+              <button className="TablaPedidos-btn-guardar" onClick={guardarEdicion}  disabled={guardandoEdicion || !editForm.Observaciones_ajustes?.trim()}>
                 {guardandoEdicion ? 'Guardando…' : 'Guardar cambios'}
               </button>
             </div>

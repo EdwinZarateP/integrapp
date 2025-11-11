@@ -19,6 +19,7 @@ import { ProveedorVariables } from '../../Contexto/index';
 import Pedidos from '../Pedidos/index';
 import PedidosCompletados from '../PedidosCompletados/index';
 import LoginUsuario from '../LoginUsuarios/index'
+import DescargableBotRecolecciones from '../descargables/index'
 import Indicadores from '../Indicadores/index'
 import "./estilos.css";
 
@@ -48,6 +49,7 @@ const App: React.FC = () => {
         <Route path="/PedidosCompletados" element={<PedidosCompletados />} />
         <Route path="/LoginUsuario" element={<LoginUsuario/>} />
         <Route path="/indicadores" element={<Indicadores/>} />
+        <Route path="/descargables" element={<DescargableBotRecolecciones/>} />
         <Route path="*" element={<NoEncontrado />} />
       </Routes>
     </Router>

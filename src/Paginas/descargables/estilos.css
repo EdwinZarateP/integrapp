@@ -1,0 +1,97 @@
+.DescargableBotRecolecciones {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f5f7f6 0%, #eaf1ec 100%);
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.DescargableBotRecolecciones-card {
+  background-color: #ffffff;
+  max-width: 380px;
+  width: 100%;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.DescargableBotRecolecciones-logo {
+  width: 100px;
+  height: auto;
+  margin: 0 auto 1rem;
+  display: block;
+}
+
+.DescargableBotRecolecciones-title {
+  font-size: 1.8rem;
+  color: #154217;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.DescargableBotRecolecciones-text {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 1.8rem;
+  line-height: 1.6;
+}
+
+.DescargableBotRecolecciones-button {
+  display: inline-block;
+  background-color: #154217;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.15s ease;
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.DescargableBotRecolecciones-button:hover {
+  background-color: #237227;
+  transform: translateY(-2px);
+}
+
+.DescargableBotRecolecciones-button:active {
+  background-color: #1a5b1c;
+  transform: translateY(0);
+}
+
+.DescargableBotRecolecciones-note {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media screen and (max-width: 480px) {
+  .DescargableBotRecolecciones-card {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .DescargableBotRecolecciones-logo {
+    width: 80px;
+  }
+
+  .DescargableBotRecolecciones-title {
+    font-size: 1.6rem;
+  }
+
+  .DescargableBotRecolecciones-text {
+    font-size: 0.95rem;
+  }
+
+  .DescargableBotRecolecciones-button {
+    font-size: 0.95rem;
+  }
+}

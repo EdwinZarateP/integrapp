@@ -12,6 +12,7 @@ import { ContextoApp } from "../../Contexto/index";
 import { obtenerVehiculoPorPlaca } from '../../Funciones/ObtenerInfoPlaca';
 import { endpoints, tiposMapping } from '../../Funciones/documentConstants';
 
+
 import './estilos.css';
 
 // Interfaces para documentos y secciones
@@ -304,22 +305,103 @@ const CreacionVehiculo: React.FC = () => {
     }
   };
 
-  /***********************
-   * Función para enviar o finalizar el registro del vehículo
-   * El botón "Finalizar Registro" se habilita solo si el avance global es 100%.
-   ***********************/
-  const enviarVehiculo = () => {
-    if (getOverallDocumentProgress(secciones) < 100) {
-      Swal.fire("Atención", "Debe cargar todos los documentos para finalizar el registro.", "warning");
+const enviarVehiculo = async () => {
+  try {
+    if (!idUsuario) {
+      Swal.fire("Error", "No se encontró el tenedor (cédula).", "error");
       return;
     }
-    Swal.fire({
-      title: "🚧 En construcción",
-      text: "Estamos trabajando en construir este botón",
-      icon: "info",
-      confirmButtonText: "Ok",
-    });
-  };
+
+    // 1. VALIDAR PROGRESO
+    const progreso = getOverallDocumentProgress(secciones);
+    if (progreso < 100) {
+      Swal.fire(
+        "Documentos incompletos",
+        "Aún faltan documentos por cargar.",
+        "warning"
+      );
+      return; // detiene el flujo si faltan documentos
+    }
+
+    // 2. VERIFICAR BIOMETRÍA
+    const verificarBiometria = async (tenedor: string): Promise<boolean> => {
+    try {
+      const respuesta = await fetch("http://localhost:8000/verificacion/verificar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tenedor }),  
+      });
+          const data = await respuesta.json();
+
+          if (!data.existe) {
+            Swal.fire(
+              "Pendientes Huellas Digitales",
+              "El usuario no ha registrado las huellas digitales, por favor acercarse a uno de los CEDIS para proceder",
+              "info"
+            );
+            return false;
+          }
+
+          if (!data.data.imagen_url || data.data.imagen_url.length === 0) {
+            Swal.fire(
+              "Advertencia",
+              "⚠ El usuario existe pero NO tiene huellas registradas.",
+              "warning"
+            );
+            return false;
+          }
+
+          // Usuario tiene huellas
+          return true;
+
+        } catch (error) {
+          console.error(error);
+          Swal.fire("Error", "Error al verificar biometría", "error");
+          return false;
+        }
+      };
+
+    const tieneBiometria = await verificarBiometria(idUsuario);
+    if (!tieneBiometria) return; // detiene flujo si no tiene biometría
+
+    // 3. ACTUALIZAR ESTADO A REVISIÓN
+    const formData = new FormData();
+    formData.append("placa", selectedPlate ?? "");
+    formData.append("nuevo_estado", "revision");
+    formData.append("usuario_id", idUsuario);
+
+    const response = await fetch(
+      "http://localhost:8000/vehiculos/actualizar-estado",
+      {
+        method: "PUT",
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error backend:", errorText);
+      Swal.fire(
+        "Error",
+        "Hubo un problema al pasar el vehículo a revisión.",
+        "error"
+      );
+      return;
+    }
+
+    // 4. ÉXITO
+    Swal.fire(
+      "Vehículo en revisión",
+      "El usuario tiene biometría registrada y el vehículo fue enviado a revisión correctamente.",
+      "success"
+    );
+
+  } catch (error) {
+    console.error("Error en enviarVehiculo:", error);
+    Swal.fire("Error", "Ocurrió un problema inesperado.", "error");
+  }
+};
+
 
   /***********************
    * Render principal del componente
@@ -467,12 +549,12 @@ const CreacionVehiculo: React.FC = () => {
                 </section>
               );
             })}
-          </div>
           <div className="CreacionVehiculo-Botones-navegacion">
-            <button onClick={goToPrevStep}>Atrás</button>
-            <button onClick={enviarVehiculo} disabled={getOverallDocumentProgress(secciones) < 100}>
-              Finalizar Registro
-            </button>
+          <button onClick={goToPrevStep}>Atrás</button>
+          <button onClick={enviarVehiculo}>
+           Finalizar Registro
+         </button>
+         </div>
           </div>
         </div>
       )}

@@ -77,10 +77,10 @@
   color: #fff;
   border: none;
   border-radius: 4px;
-  padding: 8px 16px;
+  padding: 18px 16px;
   cursor: pointer;
   transition: background 0.3s ease;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .CreacionVehiculo-Botones-navegacion button:hover {

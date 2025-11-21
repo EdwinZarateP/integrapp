@@ -111,6 +111,7 @@ const CreacionVehiculo: React.FC = () => {
   const [newPlate, setNewPlate] = useState<string>("");
   const [vehicles, setVehicles] = useState<string[]>([]);
   const [selectedPlate, setSelectedPlate] = useState<string | null>(null);
+  const [cedulaConductor, setCedulaConductor] = useState<string>("");
 
   /***********************
    * Estado para controlar la validez del formulario (Paso 2)
@@ -307,8 +308,12 @@ const CreacionVehiculo: React.FC = () => {
 
 const enviarVehiculo = async () => {
   try {
-    if (!idUsuario) {
-      Swal.fire("Error", "No se encontró el tenedor (cédula).", "error");
+    if (!cedulaConductor) {
+      Swal.fire(
+        "Error",
+        "No se encontró la cédula del conductor. Verifique el Paso 2.",
+        "error"
+      );
       return;
     }
 
@@ -324,45 +329,49 @@ const enviarVehiculo = async () => {
     }
 
     // 2. VERIFICAR BIOMETRÍA
-    const verificarBiometria = async (tenedor: string): Promise<boolean> => {
-    try {
-      const respuesta = await fetch("http://localhost:8000/verificacion/verificar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenedor }),  
-      });
-          const data = await respuesta.json();
-
-          if (!data.existe) {
-            Swal.fire(
-              "Pendientes Huellas Digitales",
-              "El usuario no ha registrado las huellas digitales, por favor acercarse a uno de los CEDIS para proceder",
-              "info"
-            );
-            return false;
+    const verificarBiometria = async (documento: string): Promise<boolean> => {
+      try {
+        const respuesta = await fetch(
+          "https://integrappi-dvmh.onrender.com/verificacion/verificar",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            // Si tu backend espera "tenedor", aquí le mandas la cédula del conductor
+            body: JSON.stringify({ tenedor: documento }),
           }
+        );
 
-          if (!data.data.imagen_url || data.data.imagen_url.length === 0) {
-            Swal.fire(
-              "Advertencia",
-              "⚠ El usuario existe pero NO tiene huellas registradas.",
-              "warning"
-            );
-            return false;
-          }
+        const data = await respuesta.json();
 
-          // Usuario tiene huellas
-          return true;
-
-        } catch (error) {
-          console.error(error);
-          Swal.fire("Error", "Error al verificar biometría", "error");
+        if (!data.existe) {
+          Swal.fire(
+            "Pendientes Huellas Digitales",
+            "El CONDUCTOR no ha registrado las huellas digitales, por favor acercarse a uno de los CEDIS para proceder.",
+            "info"
+          );
           return false;
         }
-      };
 
-    const tieneBiometria = await verificarBiometria(idUsuario);
+        if (!data.data.imagen_url || data.data.imagen_url.length === 0) {
+          Swal.fire(
+            "Advertencia",
+            "⚠ El conductor existe pero NO tiene huellas registradas.",
+            "warning"
+          );
+          return false;
+        }
+
+        return true; // ✅ Conductor tiene huellas
+      } catch (error) {
+        console.error(error);
+        Swal.fire("Error", "Error al verificar biometría del conductor", "error");
+        return false;
+      }
+    };
+
+    const tieneBiometria = await verificarBiometria(cedulaConductor);
     if (!tieneBiometria) return; // detiene flujo si no tiene biometría
+
 
     // 3. ACTUALIZAR ESTADO A REVISIÓN
     const formData = new FormData();
@@ -371,7 +380,7 @@ const enviarVehiculo = async () => {
     formData.append("usuario_id", idUsuario);
 
     const response = await fetch(
-      "http://localhost:8000/vehiculos/actualizar-estado",
+      "https://integrappi-dvmh.onrender.com/vehiculos/actualizar-estado",
       {
         method: "PUT",
         body: formData,
@@ -480,7 +489,12 @@ const enviarVehiculo = async () => {
       {currentStep === 2 && selectedPlate && (
         <div className="CreacionVehiculo-Paso-contenido">
           <h3>Diligencia datos para {selectedPlate}</h3>
-          <Datos placa={selectedPlate} onValidChange={setDatosValidos} />
+          <Datos
+            placa={selectedPlate}
+            onValidChange={setDatosValidos}
+            onCedulaConductorChange={setCedulaConductor} // 👈 aquí sube la cédula
+          />
+
           <div className="CreacionVehiculo-Botones-navegacion">
             <button onClick={goToPrevStep}>Atrás</button>
             <button onClick={goToNextStep} disabled={!datosValidos}>

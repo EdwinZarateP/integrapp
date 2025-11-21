@@ -85,13 +85,15 @@ const FormSection: React.FC<FormSectionProps> = ({ title, fields, formData, hand
 // Interfaz de las props del componente Datos
 interface DatosProps {
   placa: string;
-  onValidChange?: (isValid: boolean) => void;  // Prop para notificar si el formulario es válido
+  onValidChange?: (isValid: boolean) => void; 
+  onCedulaConductorChange?: (cedula: string) => void; 
 }
 
-const Datos: React.FC<DatosProps> = ({ placa, onValidChange }) => {
+const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorChange  }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [tenedorSame, setTenedorSame] = useState<boolean>(false);
+
 
   // Definición de campos obligatorios
   const requiredFields = [
@@ -131,7 +133,12 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange }) => {
     if (onValidChange) {
       onValidChange(isFormValid());
     }
-  }, [formData]);
+
+    // 👉 Enviar la cédula del conductor hacia arriba
+    if (onCedulaConductorChange) {
+      onCedulaConductorChange(formData["condCedulaCiudadania"] || "");
+    }
+  }, [formData, onValidChange, onCedulaConductorChange]);
 
   // Carga inicial de datos del vehículo mediante la placa
   useEffect(() => {

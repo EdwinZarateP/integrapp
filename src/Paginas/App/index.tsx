@@ -8,6 +8,7 @@ import SalaEspera from '../SalaEspera/index';
 import Novedad from '../Novedad/index';
 import FormularioHojavida from '../FormularioHojavida/index';
 import Api2 from '../Api/autenticar';
+import RevisionVehiculos from '../revision/index';
 import Olvidoclave from '../Olvidoclave/index';
 import Recuperar from '../RecuperarClave/index';
 import PaginaIntegra from '../PaginaIntegra/index';
@@ -42,6 +43,7 @@ const App: React.FC = () => {
         <Route path="/SalaEspera" element={<SalaEspera />} />
         <Route path="/FormularioHojavida" element={<FormularioHojavida />} />        
         <Route path="/Api2" element={<Api2 />} />
+        <Route path="/revision" element={<RevisionVehiculos/>} />
         <Route path="/PortalClientes" element={<PortalClientes />} />
         <Route path="/PortalVentas" element={<PortalVentas />} />
         <Route path="/CertificadoLaboralP" element={<CertificadoLaboralP />} />

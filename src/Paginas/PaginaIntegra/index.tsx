@@ -134,6 +134,7 @@ const PaginaIntegra: React.FC = () => {
           { icon: <IoIosPeople />, text: "Portal Clientes", onClick: () => navigate("/PortalClientes") },
           { icon: <FaTruck />, text: "Portal Transportadores", onClick: () => navigate("/InicioPropietarios") },
           { icon: <LiaPeopleCarrySolid />, text: "Portal ventas", onClick: () => navigate("/PortalVentas") },
+          { icon: <FaBars />, text: "Revisión Vehiculos", onClick: () => navigate("/revision") },
           { icon: <FaPeopleRoof />, text: "Portal empleados", onClick: () => navigate("/CertificadoLaboralP") },        
           { icon: <GiRadioTower />, text: "Torre de control", onClick: () => navigate("/LoginUsuario") },  
         ].map((opcion, index) => (

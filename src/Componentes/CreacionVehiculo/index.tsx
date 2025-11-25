@@ -206,13 +206,19 @@ const CreacionVehiculo: React.FC = () => {
     } catch (error) {
       console.error("Error al obtener vehículos:", error);
     }
-  };
+  } catch (error) {
+    console.error("Error al obtener vehículos:", error);
+    Swal.fire("Error", "No se pudo obtener la lista de vehículos.", "error");
+  }
+};
+
 
 
 
   useEffect(() => {
-    fetchVehicles();
-  }, []);
+  if (!idUsuario) return;
+  fetchVehicles();
+}, [idUsuario]);
 
   /***********************
    * Lógica para obtener documentos al seleccionar una placa

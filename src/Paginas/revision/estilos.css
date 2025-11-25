@@ -1,0 +1,217 @@
+.revision-container {
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f6fa;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  box-sizing: border-box;
+}
+
+/* ------------------------ LOGIN ------------------------ */
+.login-card {
+  position: absolute;
+  top: 50%;                 
+  left: 50%;                
+  transform: translate(-50%, -50%); 
+  background: rgba(119, 152, 107, 0.273);
+  padding: 60px;
+  width: 100%;
+  max-width: 460px;
+  height: 45vh;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(16, 24, 40, 0.06);
+  text-align: center;
+}
+
+
+.titulo-login {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #0f172a;
+}
+
+.subtitulo-login {
+  font-size: 14px;
+  margin-bottom: 18px;
+  color: #475569;
+}
+
+.login-input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border: 1px solid #e6e9ef;
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+}
+
+.login-input:focus {
+  border-color: #7c93ff;
+  box-shadow: 0 0 0 4px rgba(124, 147, 255, 0.08);
+}
+
+/* botones */
+.btn-principal,
+.btn-enviar {
+  width: 100%;
+  padding: 12px 14px;
+  background: #0d3b06;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+  margin-top: 6px;
+}
+
+.btn-principal:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-principal:hover,
+.btn-enviar:hover {
+  transform: translateY(-2px);
+  background: #0c862e;
+}
+
+.error-text {
+  margin-top: 12px;
+  color: #d0342c;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ------------------------ LISTA VEHÍCULOS ------------------------ */
+.vehiculos-list {
+  width: 100%;
+  max-width: 1000px;
+}
+
+.lista-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.titulo-lista {
+  font-size: 24px;
+  margin: 0;
+  font-weight: 700;
+  color: #000000;
+}
+
+.lista-acciones {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-secundario {
+  padding: 8px 12px;
+  background:#0d3b06;
+  border: 1px solid #0c862e;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+    color: #ffffff;
+}
+.btn-secundario:hover {
+  background: #128936;
+}
+
+/* detalles/accordion */
+.vehiculo-item {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.04);
+  overflow: hidden;
+}
+
+.vehiculo-item summary {
+  list-style: none;
+  outline: none;
+}
+
+.placa-titulo {
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #1a6e1e;
+  background-color: #f5f6fa;
+  border-color: #1a4209;
+}
+
+/* detalles internos */
+.vehiculo-detalle {
+  margin-top: 12px;
+  background: #fbfdff;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #17510e;
+}
+
+.detalle-fila {
+  margin-bottom: 10px;
+  font-size: 14px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.detalle-key {
+  min-width: 170px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.detalle-value {
+  color: #111827;
+  word-break: break-word;
+}
+
+/* documentos / links */
+.lista-links {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.link-documento {
+  color: #236a15;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ------------------------ OBSERVACIONES ------------------------ */
+.observaciones-box {
+  margin-top: 20px;
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.04);
+}
+
+.observaciones-input {
+  width: 100%;
+  height: 120px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #1a4209;
+  resize: vertical;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.sin-result {
+  text-align: center;
+  color: #64748b;
+  padding: 18px 0;
+}

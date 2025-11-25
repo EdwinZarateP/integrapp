@@ -93,6 +93,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [tenedorSame, setTenedorSame] = useState<boolean>(false);
+  // const [cedulaConductor, setCedulaConductor] = useState<string>("");
 
 
   // Definición de campos obligatorios

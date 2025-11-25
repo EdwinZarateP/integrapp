@@ -78,7 +78,7 @@ const ExtraccionPagos = () => {
       filter: [
         { campo: "Fecha", operador: "YEAR>", valor: "2024" },
         { campo: "Tenedor", operador: "=", valor: codigoTenedor },
-        { campo: "Pago saldo", operador: "=", valor: "Aplicado" },
+        // { campo: "Pago saldo", operador: "=", valor: "No Aplicado" },
       ],
     };
     // console.log("🔷 Payload de consulta de pagos:", queryPayload);

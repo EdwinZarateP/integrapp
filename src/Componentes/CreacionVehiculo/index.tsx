@@ -170,38 +170,49 @@ const CreacionVehiculo: React.FC = () => {
     }
   };
 
-const fetchVehicles = async () => {
-  try {
-    const response = await fetch(
-      `http://127.0.0.1:8000/vehiculos/obtener-vehiculos?id_usuario=${idUsuario}`
-    );
+  const fetchVehicles = async () => {
+    try {
+      const response = await fetch(
+        `https://integrappi-dvmh.onrender.com/vehiculos/obtener-vehiculos?id_usuario=${idUsuario}&estadoIntegra=creado`
+      );
 
-    if (!response.ok) throw new Error("Error en la respuesta del servidor");
-
-    const data = await response.json();
-
-    console.log("DATA VEHICULOS CRUDO →", data);
-
-    if (Array.isArray(data.vehicles)) {
-      const plates = data.vehicles
-        .filter((veh: any) => veh.estadoIntegra === "creado")
-        .map((veh: any) => veh.placa);
-
-      console.log("VEHICULOS FILTRADOS →", plates);
-
-      setVehicles(plates);
-
-      if (plates.length > 0 && !selectedPlate) {
-        setSelectedPlate(plates[0]);
+      if (response.status === 404) {
+        setVehicles([]);
+        setSelectedPlate(null);
+        return;
       }
-    } else {
-      setVehicles([]);
+
+      if (!response.ok) {
+        throw new Error("Error en la respuesta del servidor");
+      }
+
+      const data = await response.json();
+      console.log('Respuesta backend:', data);
+
+      // OJO: aquí va data.vehiculos
+      if (data.vehiculos && Array.isArray(data.vehiculos)) {
+        const plates = data.vehiculos.map((veh: any) => veh.placa);
+        setVehicles(plates);
+
+        if (plates.length > 0 && !selectedPlate) {
+          setSelectedPlate(plates[0]);
+        } else if (plates.length === 0) {
+          setSelectedPlate(null);
+        }
+      } else {
+        setVehicles([]);
+        setSelectedPlate(null);
+      }
+    } catch (error) {
+      console.error("Error al obtener vehículos:", error);
     }
   } catch (error) {
     console.error("Error al obtener vehículos:", error);
     Swal.fire("Error", "No se pudo obtener la lista de vehículos.", "error");
   }
 };
+
+
 
 
   useEffect(() => {

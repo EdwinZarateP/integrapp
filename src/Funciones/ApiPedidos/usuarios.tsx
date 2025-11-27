@@ -52,3 +52,15 @@ export const loginUsuario = async (
   });
   return res.data;
 };
+
+// 🔹 Login de Seguridad
+export const loginSeguridad = async (
+  usuario: string,
+  clave: string
+): Promise<LoginRespuesta> => {
+  const res = await axios.post<LoginRespuesta>(`${BASE_URL}/loginseguridad`, {
+    usuario,
+    clave,
+  });
+  return res.data;
+};

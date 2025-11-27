@@ -20,13 +20,13 @@ import { ProveedorVariables } from '../../Contexto/index';
 import Pedidos from '../Pedidos/index';
 import PedidosCompletados from '../PedidosCompletados/index';
 import LoginUsuario from '../LoginUsuarios/index'
+import LoginUsuariosSeguridad from '../LoginUsuariosSeguridad/index'
 import DescargableBotRecolecciones from '../descargables/index'
 import Indicadores from '../Indicadores/index'
 import "./estilos.css";
 
 const App: React.FC = () => {
   return (
-    // Encerramos todo en el ProveedorVariables para que puedan acceder a ellas
     <ProveedorVariables 
       hijo={
     <Router basename="/integrapp">
@@ -43,21 +43,22 @@ const App: React.FC = () => {
         <Route path="/SalaEspera" element={<SalaEspera />} />
         <Route path="/FormularioHojavida" element={<FormularioHojavida />} />        
         <Route path="/Api2" element={<Api2 />} />
-        <Route path="/revision" element={<RevisionVehiculos/>} />
+        <Route path="/revision" element={<RevisionVehiculos />} />
         <Route path="/PortalClientes" element={<PortalClientes />} />
         <Route path="/PortalVentas" element={<PortalVentas />} />
         <Route path="/CertificadoLaboralP" element={<CertificadoLaboralP />} />
         <Route path="/Pedidos" element={<Pedidos />} />
         <Route path="/PedidosCompletados" element={<PedidosCompletados />} />
-        <Route path="/LoginUsuario" element={<LoginUsuario/>} />
-        <Route path="/indicadores" element={<Indicadores/>} />
-        <Route path="/descargables" element={<DescargableBotRecolecciones/>} />
+        <Route path="/LoginUsuario" element={<LoginUsuario />} />
+        <Route path="/LoginUsuariosSeguridad" element={<LoginUsuariosSeguridad />} />
+        <Route path="/indicadores" element={<Indicadores />} />
+        <Route path="/descargables" element={<DescargableBotRecolecciones />} />
         <Route path="*" element={<NoEncontrado />} />
       </Routes>
     </Router>
     }
   />
   );
-}
+};
 
 export default App;

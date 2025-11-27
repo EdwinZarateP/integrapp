@@ -1,0 +1,113 @@
+/* ---------------------------
+   BARRA SUPERIOR PROFESIONAL
+   --------------------------- */
+.barra-superior {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+
+  /* Paleta verde oscuro profesional */
+  background: linear-gradient(90deg, #0b3d2e, #145a32);
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  z-index: 9999;
+
+  /* Elegante sombra inferior */
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+
+  animation: fadeInBarra 0.5s ease;
+}
+
+@keyframes fadeInBarra {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------------------------
+   SECCIÓN IZQUIERDA
+   --------------------------- */
+.barra-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.barra-logo {
+  width: 45px;
+  height: 55px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-top: -10px;
+}
+
+/* ---------------------------
+   TÍTULO MEJORADO
+   --------------------------- */
+.barra-titulo {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-top: -45px;
+  margin-bottom: 0px;
+  margin-left: 90px;
+  margin-right: 950px;
+
+  /* efecto sutil elegante */
+  text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------------------------
+   SECCIÓN DERECHA
+   --------------------------- */
+.barra-derecha {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.barra-usuario {
+  font-size: 17px;
+  font-weight: 700;
+  opacity: 0.95;
+  margin:  10px;
+  margin-left: 160px;
+}
+
+/* ---------------------------
+   BOTÓN CERRAR SESIÓN
+   --------------------------- */
+.barra-boton-salir {
+  padding: 9px 18px;
+  background-color: #aa1e1e;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.25);
+}
+
+.barra-boton-salir:hover {
+  background-color: #8f1717;
+  transform: translateY(-2px);
+  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.32);
+}
+
+.barra-boton-salir:active {
+  transform: translateY(0);
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.25);
+}

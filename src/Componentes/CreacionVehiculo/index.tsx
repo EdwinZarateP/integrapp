@@ -173,7 +173,7 @@ const CreacionVehiculo: React.FC = () => {
   const fetchVehicles = async () => {
     try {
       const response = await fetch(
-        `https://integrappi-dvmh.onrender.com/vehiculos/obtener-vehiculos?id_usuario=${idUsuario}&estadoIntegra=creado`
+        `https://integrappi-dvmh.onrender.com/vehiculos/obtener-vehiculos?id_usuario=${idUsuario}&estadoIntegra=creado`,
       );
 
       if (response.status === 404) {
@@ -390,10 +390,10 @@ const enviarVehiculo = async () => {
     if (!tieneBiometria) return; // detiene flujo si no tiene biometría
 
 
-    // 3. ACTUALIZAR ESTADO A REVISIÓN
+    // 3. ACTUALIZAR ESTADO A REGISTRO_INCOMPLETO
     const formData = new FormData();
     formData.append("placa", selectedPlate ?? "");
-    formData.append("nuevo_estado", "revision");
+    formData.append("nuevo_estado", "registro_incompleto");
     formData.append("usuario_id", idUsuario);
 
     const response = await fetch(

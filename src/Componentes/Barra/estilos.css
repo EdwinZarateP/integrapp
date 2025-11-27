@@ -9,7 +9,7 @@
   height: 70px;
 
   /* Paleta verde oscuro profesional */
-  background: linear-gradient(90deg, #0b3d2e, #145a32);
+  background: linear-gradient(90deg, #0b3d2eb6, #145a32);
   color: #ffffff;
 
   display: flex;
@@ -56,18 +56,45 @@
    TÍTULO MEJORADO
    --------------------------- */
 .barra-titulo {
-  font-size: 28px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: 1px;
   margin-top: -45px;
   margin-bottom: 0px;
-  margin-left: 90px;
+  margin-left: 80px;
   margin-right: 950px;
 
   /* efecto sutil elegante */
   text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.35);
 }
 
+.barra-subtitulo {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-top: -29px;
+  margin-bottom: 0px;
+  margin-left: 350px;
+  margin-right: 950px;
+  color: black;
+
+  /* efecto sutil elegante */
+  text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.barra-subsubtitulo {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-top: -30px;
+  margin-bottom: 0px;
+  margin-left: 430px;
+  margin-right: 950px;
+  color: rgb(136, 197, 71);
+
+  /* efecto sutil elegante */
+  text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.35);
+}
 /* ---------------------------
    SECCIÓN DERECHA
    --------------------------- */
@@ -82,32 +109,86 @@
   font-weight: 700;
   opacity: 0.95;
   margin:  10px;
-  margin-left: 160px;
+  margin-left: -120px;
 }
 
 /* ---------------------------
-   BOTÓN CERRAR SESIÓN
+   MENÚ HAMBURGUESA
    --------------------------- */
-.barra-boton-salir {
-  padding: 9px 18px;
-  background-color: #aa1e1e;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 15px;
-  font-weight: 700;
+.hamburguesa-container {
+  position: relative;
+  margin-left: 20px;
+}
+
+.hamburguesa {
+  width: 32px;
+  height: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.25);
 }
 
-.barra-boton-salir:hover {
-  background-color: #8f1717;
-  transform: translateY(-2px);
-  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.32);
+.hamburguesa span {
+  display: block;
+  height: 4px;
+  background: white;
+  border-radius: 3px;
+  transition: 0.3s ease;
 }
 
-.barra-boton-salir:active {
-  transform: translateY(0);
-  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.25);
+/* Animación al abrir */
+.hamburguesa.abierta span:nth-child(1) {
+  transform: translateY(10px) rotate(45deg);
 }
+
+.hamburguesa.abierta span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburguesa.abierta span:nth-child(3) {
+  transform: translateY(-10px) rotate(-45deg);
+}
+
+/* ---------------------------
+   MENÚ DESPLEGABLE
+   --------------------------- */
+.menu-desplegable {
+  position: absolute;
+  top: 35px;
+  right: 0;
+  background: #ffffff;
+  color: #000;
+  border-radius: 8px;
+  padding: 10px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  animation: fadeInMenu 0.25s ease;
+  z-index: 10000;
+}
+
+@keyframes fadeInMenu {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-desplegable button {
+  background: none;
+  border: none;
+  width: 150px;
+  padding: 10px;
+  text-align: left;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.menu-desplegable button:hover {
+  background: #f0f0f0;
+}
+

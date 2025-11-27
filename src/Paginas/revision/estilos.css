@@ -8,7 +8,7 @@ body {
 
 .contenedor-principal {
   max-width: 900px;
-  margin: 120px auto;
+  margin: -10px auto;
   padding: 20px 15px;
 }
 
@@ -32,15 +32,16 @@ body {
   max-width: 400px;
   padding: 10px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid #0b3d2e;
   font-size: 1rem;
-  background: #fff;
-  transition: border-color 0.2s;
+  background: #ffffff;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .select-vehiculo:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #145a32;
+  box-shadow: 0 0 5px rgba(20, 90, 50, 0.4);
 }
 
 /* TARJETAS / VEHÍCULOS (ACORDEÓN) */
@@ -50,7 +51,7 @@ body {
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   margin-top: 20px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #d6e0d8;
 }
 
 /* HEADER clicable del card (visible siempre) */
@@ -59,25 +60,28 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  background: #f9fafb;
+
+  background: #0b3d2e;              
+  color: white;
+  
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .vehiculo-header:hover {
-  background: #f3f4f6;
+  background: #145a32;              
 }
 
 .vehiculo-header h3 {
   margin: 0;
   font-size: 1.15rem;
   font-weight: 600;
-  color: #111827;
+  color: #ffffff;
 }
 
 .vehiculo-header .toggle-icon {
   font-size: 1.25rem;
-  color: #6b7280;
+  color: #ffffff;
   transition: transform 0.3s ease;
 }
 
@@ -91,7 +95,6 @@ body {
   font-size: 0.95rem;
   color: #444;
   line-height: 1.45;
-  /* Para animar altura si lo deseas: */
   transition: opacity 0.3s ease, max-height 0.4s ease;
 }
 
@@ -112,13 +115,14 @@ body {
 }
 
 .lista-documentos a {
-  color: #2563eb;
+  color: #145a32;
   text-decoration: none;
+  font-weight: 600;
   transition: color 0.2s;
 }
 
 .lista-documentos a:hover {
-  color: #1e40af;
+  color: #0b3d2e;
   text-decoration: underline;
 }
 
@@ -128,7 +132,7 @@ body {
 }
 
 .info-completa strong {
-  color: #111827;
+  color: #0b3d2e;
 }
 
 /* Botones y área de acciones */
@@ -152,11 +156,11 @@ body {
 }
 
 .btn-aprobar {
-  background: #059669;
+  background: #0b3d2e;
 }
 
 .btn-aprobar:hover {
-  background: #047857;
+  background: #145a32;
 }
 
 .textarea-observaciones {
@@ -170,14 +174,14 @@ body {
 }
 
 .btn-enviar {
-  background: #2563eb;
+  background: #145a32;
 }
 
 .btn-enviar:hover {
-  background: #1e40af;
+  background: #0b3d2e;
 }
 
-/* Responsive / adaptaciones posibles */
+/* Responsive */
 @media (max-width: 600px) {
   .select-vehiculo {
     max-width: 100%;
@@ -191,4 +195,92 @@ body {
   .vehiculo-header {
     padding: 12px 15px;
   }
+}
+
+/* Vehículos Aprobados */
+.vehiculos-aprobados-contenedor {
+  margin-top: -180px;
+  background: #0b3d2e;
+  border-radius: 8px;
+  padding: 10px 100px;
+  border: 1px solid #e5e7eb;
+  margin-left: 1150px;
+}
+
+.vehiculos-aprobados-contenedor h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin-left: -70px;
+}
+
+.vehiculos-aprobados-lista {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vehiculo-card.aprobado {
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  padding: 10px 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+/* ==============================
+   PANEL LATERAL (BOTONES ARRIBA IZQUIERDA)
+   ============================== */
+.layout-revision {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 100px; /* debajo de la barra superior */
+}
+
+/* Contenedor lateral izquierdo */
+.panel-lateral {
+  width: 260px;
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  position: sticky;
+  top: 90px;        /* que no se vaya al hacer scroll */
+  height: fit-content;
+}
+
+/* Botones menú de vista */
+.btn-menu {
+  background: #0b3d2e;        /* Verde oscuro */
+  color: #fff;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s, transform 0.1s;
+
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.25);
+}
+
+.btn-menu:hover {
+  background: #145a32;        /* Verde más claro */
+  transform: translateY(-2px);
+}
+
+/* Botón activo */
+.btn-menu.active {
+  background: #145a32;
+  border-left: 5px solid #89e28c; /* Indicador de selección */
+  padding-left: 10px;
+}
+
+/* Para que el contenido principal no se suba sobre los botones */
+.contenedor-principal {
+  flex: 1;
+  margin-left: 20px;
 }

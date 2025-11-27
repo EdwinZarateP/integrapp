@@ -55,7 +55,7 @@
 /* BOTÓN OJO */
 .LoginSeguridad-ojito {
   position: absolute;
-  top: 50%;
+  top: 35%;
   right: 10px;
   transform: translateY(-50%);
   background: none;

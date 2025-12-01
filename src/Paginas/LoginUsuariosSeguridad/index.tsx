@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import confetti from "canvas-confetti";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Asegúrate de importar esto
 
 import logo from "../../Imagenes/albatros.png";
 import "./estilos.css";
@@ -79,9 +79,7 @@ const LoginUsuariosSeguridad = () => {
   return (
     <div className="LoginSeguridad-contenedor">
       <img src={logo} alt="logo" className="LoginSeguridad-Logo" />
-
       <h2 className="LoginSeguridad-titulo">Ingreso Seguridad</h2>
-
       <form className="LoginSeguridad-formulario" onSubmit={manejarLogin}>
         <input
           type="text"

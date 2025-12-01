@@ -94,6 +94,20 @@ const getOverallDocumentProgress = (secciones: SeccionDocumentos[]) => {
 };
 
 const CreacionVehiculo: React.FC = () => {
+  
+  // =========================================================================
+  // ⚙️ CONFIGURACIÓN DE ENTORNOS (URLs)
+  // =========================================================================
+  
+  //  PARA PRUEBAS LOCALES (Descomentado actual)
+  const API_URL = "http://127.0.0.1:8000";
+
+  //  PARA PRODUCCIÓN EN RENDER (Comentado)
+  // const API_URL = "https://integrappi-dvmh.onrender.com";
+  
+  // =========================================================================
+
+
   /***********************
    * Contexto y cookies
    ***********************/
@@ -145,7 +159,8 @@ const CreacionVehiculo: React.FC = () => {
       const plateUpper = newPlate.trim().toUpperCase();
       formData.append("placa", plateUpper);
 
-      const response = await fetch("https://integrappi-dvmh.onrender.com/vehiculos/crear", {
+      // USO DE LA VARIABLE API_URL
+      const response = await fetch(`${API_URL}/vehiculos/crear`, {
         method: "POST",
         body: formData,
       });
@@ -172,8 +187,9 @@ const CreacionVehiculo: React.FC = () => {
 
   const fetchVehicles = async () => {
     try {
+      // USO DE LA VARIABLE API_URL
       const response = await fetch(
-        `https://integrappi-dvmh.onrender.com/vehiculos/obtener-vehiculos?id_usuario=${idUsuario}&estadoIntegra=creado`,
+        `${API_URL}/vehiculos/obtener-vehiculos?id_usuario=${idUsuario}&estadoIntegra=registro_incompleto`,
       );
 
       if (response.status === 404) {
@@ -323,110 +339,111 @@ const CreacionVehiculo: React.FC = () => {
     }
   };
 
-const enviarVehiculo = async () => {
-  try {
-    if (!cedulaConductor) {
-      Swal.fire(
-        "Error",
-        "No se encontró la cédula del conductor. Verifique el Paso 2.",
-        "error"
-      );
-      return;
-    }
-
-    // 1. VALIDAR PROGRESO
-    const progreso = getOverallDocumentProgress(secciones);
-    if (progreso < 100) {
-      Swal.fire(
-        "Documentos incompletos",
-        "Aún faltan documentos por cargar.",
-        "warning"
-      );
-      return; // detiene el flujo si faltan documentos
-    }
-
-    // 2. VERIFICAR BIOMETRÍA
-    const verificarBiometria = async (documento: string): Promise<boolean> => {
-      try {
-        const respuesta = await fetch(
-          "https://integrappi-dvmh.onrender.com/verificacion/verificar",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            // Si tu backend espera "tenedor", aquí le mandas la cédula del conductor
-            body: JSON.stringify({ tenedor: documento }),
-          }
+  const enviarVehiculo = async () => {
+    try {
+      if (!cedulaConductor) {
+        Swal.fire(
+          "Error",
+          "No se encontró la cédula del conductor. Verifique el Paso 2.",
+          "error"
         );
+        return;
+      }
 
-        const data = await respuesta.json();
+      // 1. VALIDAR PROGRESO
+      const progreso = getOverallDocumentProgress(secciones);
+      if (progreso < 100) {
+        Swal.fire(
+          "Documentos incompletos",
+          "Aún faltan documentos por cargar.",
+          "warning"
+        );
+        return; // detiene el flujo si faltan documentos
+      }
 
-        if (!data.existe) {
-          Swal.fire(
-            "Pendientes Huellas Digitales",
-            "El CONDUCTOR no ha registrado las huellas digitales, por favor acercarse a uno de los CEDIS para proceder.",
-            "info"
+      // 2. VERIFICAR BIOMETRÍA
+      const verificarBiometria = async (documento: string): Promise<boolean> => {
+        try {
+          // USO DE LA VARIABLE API_URL
+          const respuesta = await fetch(
+            `${API_URL}/verificacion/verificar`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ tenedor: documento }),
+            }
           );
+
+          const data = await respuesta.json();
+
+          if (!data.existe) {
+            Swal.fire(
+              "Pendientes Huellas Digitales",
+              "El CONDUCTOR no ha registrado las huellas digitales, por favor acercarse a uno de los CEDIS para proceder.",
+              "info"
+            );
+            return false;
+          }
+
+          if (!data.data.imagen_url || data.data.imagen_url.length === 0) {
+            Swal.fire(
+              "Advertencia",
+              "⚠ El conductor existe pero NO tiene huellas registradas.",
+              "warning"
+            );
+            return false;
+          }
+
+          return true; // ✅ Conductor tiene huellas
+        } catch (error) {
+          console.error(error);
+          Swal.fire("Error", "Error al verificar biometría del conductor", "error");
           return false;
         }
+      };
 
-        if (!data.data.imagen_url || data.data.imagen_url.length === 0) {
-          Swal.fire(
-            "Advertencia",
-            "⚠ El conductor existe pero NO tiene huellas registradas.",
-            "warning"
-          );
-          return false;
+      const tieneBiometria = await verificarBiometria(cedulaConductor);
+      if (!tieneBiometria) return; // detiene flujo si no tiene biometría
+
+
+      // 3. ACTUALIZAR ESTADO A COMPLETADO
+      const formData = new FormData();
+      formData.append("placa", selectedPlate ?? "");
+      formData.append("nuevo_estado", "completado_revision");
+      formData.append("usuario_id", idUsuario);
+
+      // USO DE LA VARIABLE API_URL
+      const response = await fetch(
+        `${API_URL}/vehiculos/actualizar-estado`,
+        {
+          method: "PUT",
+          body: formData,
         }
-
-        return true; // ✅ Conductor tiene huellas
-      } catch (error) {
-        console.error(error);
-        Swal.fire("Error", "Error al verificar biometría del conductor", "error");
-        return false;
-      }
-    };
-
-    const tieneBiometria = await verificarBiometria(cedulaConductor);
-    if (!tieneBiometria) return; // detiene flujo si no tiene biometría
-
-
-    // 3. ACTUALIZAR ESTADO A REGISTRO_INCOMPLETO
-    const formData = new FormData();
-    formData.append("placa", selectedPlate ?? "");
-    formData.append("nuevo_estado", "registro_incompleto");
-    formData.append("usuario_id", idUsuario);
-
-    const response = await fetch(
-      "https://integrappi-dvmh.onrender.com/vehiculos/actualizar-estado",
-      {
-        method: "PUT",
-        body: formData,
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Error backend:", errorText);
-      Swal.fire(
-        "Error",
-        "Hubo un problema al pasar el vehículo a revisión.",
-        "error"
       );
-      return;
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error backend:", errorText);
+        Swal.fire(
+          "Error",
+          "Hubo un problema al pasar el vehículo a revisión.",
+          "error"
+        );
+        return;
+      }
+
+      // 4. ÉXITO
+      Swal.fire(
+        "Vehículo en revisión",
+        "El usuario tiene biometría registrada y el vehículo fue enviado a revisión correctamente.",
+        "success"
+      );
+
+    } catch (error) {
+      console.error("Error en enviarVehiculo:", error);
+      Swal.fire("Error", "Ocurrió un problema inesperado.", "error");
     }
-
-    // 4. ÉXITO
-    Swal.fire(
-      "Vehículo en revisión",
-      "El usuario tiene biometría registrada y el vehículo fue enviado a revisión correctamente.",
-      "success"
-    );
-
-  } catch (error) {
-    console.error("Error en enviarVehiculo:", error);
-    Swal.fire("Error", "Ocurrió un problema inesperado.", "error");
-  }
-};
+  };
 
 
   /***********************
@@ -580,12 +597,12 @@ const enviarVehiculo = async () => {
                 </section>
               );
             })}
-          <div className="CreacionVehiculo-Botones-navegacion">
-          <button onClick={goToPrevStep}>Atrás</button>
-          <button onClick={enviarVehiculo}>
-           Finalizar Registro
-         </button>
-         </div>
+            <div className="CreacionVehiculo-Botones-navegacion">
+              <button onClick={goToPrevStep}>Atrás</button>
+              <button onClick={enviarVehiculo}>
+                Finalizar Registro
+              </button>
+            </div>
           </div>
         </div>
       )}

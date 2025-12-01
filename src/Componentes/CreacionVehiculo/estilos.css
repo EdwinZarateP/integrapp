@@ -63,28 +63,40 @@
   background-color: #159e30;
 }
 
-/* Contenedor para agrupar botones de navegación */
+/* Contenedor para agrupar botones de navegación (Atrás / Finalizar) */
 .CreacionVehiculo-Botones-navegacion {
   display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  gap: 15px;
-
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  margin-top: 30px;    
+  margin-bottom: 40px; 
+  flex-wrap: wrap;     
 }
 
+/* Estilo de los botones dentro del contenedor */
 .CreacionVehiculo-Botones-navegacion button {
   background-color: #2F6B3E;
   color: #fff;
   border: none;
-  border-radius: 4px;
-  padding: 18px 16px;
+  border-radius: 6px;
+  padding: 12px 24px;  
   cursor: pointer;
-  transition: background 0.3s ease;
-  margin-top: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.1s;
+  min-width: 120px;   
 }
 
 .CreacionVehiculo-Botones-navegacion button:hover {
   background-color: #159e30;
+  transform: translateY(-2px);
+}
+
+.CreacionVehiculo-Botones-navegacion button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Contenedor principal */
@@ -484,4 +496,111 @@
   height: 100%;
   background: #2F6B3E;
   transition: width 0.3s ease;
+}
+/* --- ESTILOS NUEVOS PARA LA BARRA DE BÚSQUEDA CON LUPA --- */
+.busqueda-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 450px;
+  gap: 0; /* Sin espacio entre input y botón */
+}
+
+.busqueda-wrapper .input-busqueda {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none; /* Quitamos el borde derecho para unirlo al botón */
+  width: 100%;
+}
+
+.btn-lupa {
+  background-color: #2F6B3E;
+  color: white;
+  border: 1px solid #2F6B3E;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  padding: 10px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  height: 42px; /* Ajuste para igualar altura del input */
+}
+
+.btn-lupa:hover {
+  background-color: #145a32;
+}
+
+/* Ajuste responsive para la barra */
+@media (max-width: 600px) {
+  .busqueda-wrapper {
+    max-width: 100%;
+  }
+}
+/* --- BARRA DE BÚSQUEDA CON LUPA Y X --- */
+.busqueda-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 450px;
+  gap: 0; /* Sin huecos entre elementos */
+}
+
+.busqueda-wrapper .input-busqueda {
+  flex: 1; /* Ocupa el espacio disponible */
+  width: auto; /* Dejamos que flex controle el ancho */
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none; /* Se une visualmente con el siguiente botón */
+  height: 42px; /* Altura fija para alinear con botones */
+}
+
+/* Botón de borrar (X) */
+.btn-clear {
+  background-color: #ffffff; /* Mismo fondo del input */
+  color: #999;
+  border-top: 1px solid #0b3d2e; /* Mismo borde del input */
+  border-bottom: 1px solid #0b3d2e;
+  border-left: none;
+  border-right: none;
+  padding: 0 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+  transition: color 0.2s;
+}
+
+.btn-clear:hover {
+  color: #d33; /* Rojo al pasar el mouse */
+}
+
+/* Botón de lupa */
+.btn-lupa {
+  background-color: #2F6B3E;
+  color: white;
+  border: 1px solid #2F6B3E;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  padding: 0 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  height: 42px;
+  min-width: 40px;
+}
+
+.btn-lupa:hover {
+  background-color: #145a32;
+}
+
+/* Ajuste responsive */
+@media (max-width: 600px) {
+  .busqueda-wrapper {
+    max-width: 100%;
+  }
 }

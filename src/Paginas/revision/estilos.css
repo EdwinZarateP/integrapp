@@ -1,4 +1,3 @@
-/* CONTENEDOR */
 body {
   background-color: #f7f8fa;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -8,11 +7,13 @@ body {
 
 .contenedor-principal {
   max-width: 900px;
-  margin: -10px auto;
+  margin: -10px auto; 
   padding: 20px 15px;
+  flex: 1;
+  margin-left: 20px; 
 }
 
-/* Dropdown selector */
+/* Dropdown selector / Barra de Búsqueda */
 .dropdown-contenedor {
   display: flex;
   flex-direction: column;
@@ -27,7 +28,7 @@ body {
   color: #444;
 }
 
-.select-vehiculo {
+.input-busqueda {
   width: 100%;
   max-width: 400px;
   padding: 10px;
@@ -36,15 +37,16 @@ body {
   font-size: 1rem;
   background: #ffffff;
   transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box; 
 }
 
-.select-vehiculo:focus {
+.input-busqueda:focus {
   outline: none;
   border-color: #145a32;
   box-shadow: 0 0 5px rgba(20, 90, 50, 0.4);
 }
 
-/* TARJETAS / VEHÍCULOS (ACORDEÓN) */
+/* TARJETAS / VEHÍCULOS */
 .vehiculo-card {
   background: #ffffff;
   border-radius: 8px;
@@ -54,16 +56,13 @@ body {
   border: 1px solid #d6e0d8;
 }
 
-/* HEADER clicable del card (visible siempre) */
 .vehiculo-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-
   background: #0b3d2e;              
   color: white;
-  
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -74,22 +73,24 @@ body {
 
 .vehiculo-header h3 {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 1.1rem; /* Ajustado para nombres largos */
   font-weight: 600;
   color: #ffffff;
+  /* Manejo de texto largo (Placa - Nombre) */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90%; 
+  text-transform: uppercase;
 }
 
 .vehiculo-header .toggle-icon {
   font-size: 1.25rem;
   color: #ffffff;
   transition: transform 0.3s ease;
+  margin-left: 10px;
 }
 
-.vehiculo-card.expanded .vehiculo-header .toggle-icon {
-  transform: rotate(180deg);
-}
-
-/* El cuerpo (contenido) del acordeón */
 .vehiculo-body {
   padding: 0 20px 20px 20px;
   font-size: 0.95rem;
@@ -98,44 +99,106 @@ body {
   transition: opacity 0.3s ease, max-height 0.4s ease;
 }
 
-/* Información general */
 .vehiculo-body p {
-  margin: 8px 0;
+  margin: 5px 0;
 }
 
-/* Lista de documentos */
-.lista-documentos {
-  list-style: none;
-  padding-left: 0;
-  margin: 10px 0;
+/* --- ESTILO DE TÍTULOS --- */
+.titulo-seccion {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0b3d2e;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 3px solid #27ae60; 
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.lista-documentos li {
-  margin: 4px 0;
+.titulo-subseccion {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #145a32;
+    margin-top: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 3px;
 }
 
-.lista-documentos a {
-  color: #145a32;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s;
+/* --- GRID PARA ORGANIZACIÓN DE DATOS --- */
+.datos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    margin-bottom: 10px;
 }
 
-.lista-documentos a:hover {
-  color: #0b3d2e;
-  text-decoration: underline;
+.datos-grid p {
+    background-color: #fafbfc;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    margin: 0;
+    word-break: break-word; 
 }
 
-/* Área de información extra / dinámica */
-.info-completa > div {
-  margin: 6px 0;
+/* BOTÓN VER DOCUMENTO DE SEGURIDAD  */
+.btn-ver-doc-seguridad {
+    background-color: #125510; 
+    color: white !important; 
+    padding: 4px 8px; 
+    margin-left: 10px;
+    border-radius: 12px; 
+    text-decoration: none; 
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-block;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.info-completa strong {
-  color: #0b3d2e;
+.btn-ver-doc-seguridad:hover {
+    background-color: #0d4709;
+    transform: translateY(-1px);
 }
 
-/* Botones y área de acciones */
+/* Grid de Documentos (Fotos y PDFs) */
+/* Reemplaza la necesidad de Tailwind para el grid */
+.grid-documentos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px; /* Espacio entre archivos */
+    margin-top: 15px;
+}
+
+.documento-card {
+    background-color: #f0f4f7;
+    border: 1px solid #d6e0e8;
+    border-radius: 6px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.documento-card:hover {
+    background-color: #e6ebf0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.documento-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #0b3d2e;
+    font-weight: 600;
+    border: none; 
+    background: none;
+    padding: 0;
+}
+
+/* Botones Generales */
 .acciones {
   margin-top: 15px;
   display: flex;
@@ -143,117 +206,56 @@ body {
   gap: 10px;
 }
 
-.btn-aprobar,
-.btn-enviar {
-  padding: 10px;
+.btn-rechazar, .btn-aprobar, .btn-enviar {
+  padding: 12px;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
   width: 100%;
   font-size: 1rem;
+  font-weight: 600;
   transition: background 0.2s;
 }
 
-.btn-aprobar {
-  background: #0b3d2e;
-}
+.btn-rechazar { background: #e74c3c; }
+.btn-rechazar:hover { background: #c0392b; }
 
-.btn-aprobar:hover {
-  background: #145a32;
-}
+.btn-aprobar { background: #27ae60; }
+.btn-aprobar:hover { background: #2ecc71; }
 
-.textarea-observaciones {
-  width: 100%;
-  min-height: 80px;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  resize: vertical;
-  font-size: 1rem;
-}
+.btn-enviar { background: #145a32; }
+.btn-enviar:hover { background: #0b3d2e; }
 
-.btn-enviar {
-  background: #145a32;
-}
-
-.btn-enviar:hover {
-  background: #0b3d2e;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  .select-vehiculo {
-    max-width: 100%;
-  }
-  .vehiculo-card {
-    margin-top: 15px;
-  }
-  .vehiculo-body {
-    padding: 0 15px 15px 15px;
-  }
-  .vehiculo-header {
-    padding: 12px 15px;
-  }
-}
-
-/* Vehículos Aprobados */
-.vehiculos-aprobados-contenedor {
-  margin-top: -180px;
-  background: #0b3d2e;
-  border-radius: 8px;
-  padding: 10px 100px;
-  border: 1px solid #e5e7eb;
-  margin-left: 1150px;
-}
-
-.vehiculos-aprobados-contenedor h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 900;
-  color: #ffffff;
-  margin-left: -70px;
-}
-
-.vehiculos-aprobados-lista {
-  margin-top: 15px;
+/* Botones especiales Incompletos (Opcional, si queda alguno) */
+.acciones-incompletos {
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.vehiculo-card.aprobado {
-  background: #ffffff;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  padding: 10px 15px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-/* ==============================
-   PANEL LATERAL (BOTONES ARRIBA IZQUIERDA)
-   ============================== */
+/* PANEL LATERAL */
 .layout-revision {
   display: flex;
   align-items: flex-start;
-  margin-top: 100px; /* debajo de la barra superior */
+  margin-top: 20px;
 }
 
-/* Contenedor lateral izquierdo */
 .panel-lateral {
   width: 260px;
   padding: 20px 15px;
   display: flex;
   flex-direction: column;
   gap: 15px;
-
   position: sticky;
-  top: 90px;        /* que no se vaya al hacer scroll */
+  top: 10px;
   height: fit-content;
 }
 
-/* Botones menú de vista */
 .btn-menu {
-  background: #0b3d2e;        /* Verde oscuro */
   color: #fff;
   padding: 12px;
   font-size: 1rem;
@@ -262,25 +264,171 @@ body {
   border-radius: 8px;
   cursor: pointer;
   text-align: left;
+  background-color: #145a32;
   transition: background 0.2s, transform 0.1s;
-
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   box-shadow: 0px 3px 8px rgba(0,0,0,0.25);
 }
 
-.btn-menu:hover {
-  background: #145a32;        /* Verde más claro */
-  transform: translateY(-2px);
+.btn-menu:hover { transform: translateY(-2px); }
+.btn-menu.active { border-left: 5px solid #89e28c; padding-left: 10px; }
+
+.btn-menu.color-rojo { background: #c0392b; }
+.btn-menu.color-amarillo { background: #f39c12; }
+.btn-menu.color-verde { background: #27ae60; }
+
+.contador-vehiculos {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
 }
 
-/* Botón activo */
-.btn-menu.active {
-  background: #145a32;
-  border-left: 5px solid #89e28c; /* Indicador de selección */
-  padding-left: 10px;
+/* SweetAlert Custom Styles */
+.swal2-input[type="file"] { 
+    padding: 10px !important; 
+    height: auto !important; 
+    border: 1px solid #ddd !important;
+    background: #f9f9f9;
+    box-shadow: none !important; 
+    width: 100%;
 }
 
-/* Para que el contenido principal no se suba sobre los botones */
-.contenedor-principal {
-  flex: 1;
-  margin-left: 20px;
+.swal2-textarea {
+    width: 90% !important;
+    margin: 10px auto !important;
+}
+
+/* Paginación */
+.paginacion-contenedor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 30px;
+  padding: 10px;
+  background: #f0f0f0;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.paginacion-contenedor button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  background: #0b3d2e;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.paginacion-contenedor button:disabled { background: #ccc; cursor: not-allowed; }
+.paginacion-contenedor span { font-weight: 600; color: #333; }
+
+/* =========================================
+   RESPONSIVE DESIGN
+   ========================================= */
+
+@media (max-width: 900px) {
+ 
+  .layout-revision {
+    flex-direction: column;
+    margin-top: 10px;
+  }
+
+  .contenedor-principal {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+    padding: 10px; 
+    width: 100%;
+  }
+
+  /* PANEL LATERAL: BARRA DE NAVEGACIÓN DESLIZABLE */
+  .panel-lateral {
+    width: 100%;
+    position: sticky; 
+    top: 0;
+    padding: 10px 15px;
+    background-color: #f7f8fa; 
+    z-index: 99; 
+    border-bottom: 1px solid #e1e4e8;
+    
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap; 
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch; 
+    gap: 12px;
+    
+    scrollbar-width: none; 
+    -ms-overflow-style: none;  
+  }
+
+  .panel-lateral::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* BOTONES DEL MENÚ */
+  .btn-menu {
+    flex: 0 0 auto; 
+    min-width: auto; 
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    border-radius: 20px; 
+    white-space: nowrap; 
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-menu.active {
+    border-left: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transform: scale(1.02);
+  }
+
+  .contador-vehiculos {
+    background: rgba(255, 255, 255, 0.3); 
+    font-size: 0.75rem;
+    padding: 2px 6px;
+  }
+}
+
+/* AJUSTES FINOS PARA MÓVILES PEQUEÑOS */
+@media (max-width: 600px) {
+  .vehiculo-header { 
+      padding: 12px; 
+  }
+  
+  .vehiculo-header h3 { 
+      font-size: 0.9rem;
+      max-width: 80%; 
+  }
+
+  .vehiculo-body { 
+      padding: 10px; 
+  }
+  
+  .input-busqueda {
+      width: 100%;
+      max-width: 100%;
+  }
+  
+  /* Ajuste para que el botón de documento  */
+  .btn-ver-doc-seguridad {
+      display: block;
+      width: 100%;
+      text-align: center;
+      margin-top: 5px;
+  }
+  
+  .my-3 {
+      flex-direction: column;
+      align-items: flex-start;
+  }
 }

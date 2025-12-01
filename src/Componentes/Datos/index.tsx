@@ -93,8 +93,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [tenedorSame, setTenedorSame] = useState<boolean>(false);
-  // const [cedulaConductor, setCedulaConductor] = useState<string>("");
-
 
   // Definición de campos obligatorios
   const requiredFields = [
@@ -110,23 +108,26 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     'condEmpresaRef', 'condCelularRef', 'condCiudadRef', 'condNroViajesRef', 'condAntiguedadRef', 'condMercTransportada',
     // Datos del Propietario
     'propNombre', 'propDocumento', 'propCiudadExpDoc', 'propCorreo', 'propCelular', 'propDireccion', 'propCiudad',
-    // Datos del Tenedor (aunque se pueda copiar, se valida igualmente)
+    // Datos del Tenedor
     'tenedNombre', 'tenedDocumento', 'tenedCiudadExpDoc', 'tenedCorreo', 'tenedCelular', 'tenedDireccion', 'tenedCiudad',
     // Datos del Vehículo
-    'vehModelo', 'vehMarca', 'vehTipoCarroceria', 'vehLinea', 'vehColor', 'vehRepotenciado', 'vehAno', 'vehEmpresaSat', 'vehUsuarioSat', 'vehClaveSat',
+    'vehModelo', 'vehMarca', 'vehTipoCarroceria', 'vehLinea', 'vehColor', 
+    // 👇 HE ELIMINADO 'vehRepotenciado' y 'vehAno' DE AQUÍ PARA QUE NO SEAN OBLIGATORIOS
+    'vehEmpresaSat', 'vehUsuarioSat', 'vehClaveSat',
     // Datos del Remolque
     'RemolPlaca', 'RemolModelo', 'RemolClase', 'RemolTipoCarroceria', 'RemolAlto', 'RemolLargo', 'RemolAncho'
   ];
 
-  // Cálculo del avance general (porcentaje de campos diligenciados)
+  // Cálculo del avance general
   const calcularAvance = () => {
     const total = requiredFields.length;
     const completados = requiredFields.filter(field => formData[field] && formData[field].trim() !== "").length;
     return Math.round((completados / total) * 100);
   };
 
-  // Función para validar que todos los campos requeridos tengan datos
+  // Función para validar
   const isFormValid = () => {
+    // Al haber quitado vehRepotenciado y vehAno de requiredFields, esta función ya no devolverá false si esos campos están vacíos.
     return requiredFields.every((field) => formData[field] && formData[field].trim() !== "");
   };
 
@@ -135,13 +136,12 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
       onValidChange(isFormValid());
     }
 
-    // 👉 Enviar la cédula del conductor hacia arriba
     if (onCedulaConductorChange) {
       onCedulaConductorChange(formData["condCedulaCiudadania"] || "");
     }
   }, [formData, onValidChange, onCedulaConductorChange]);
 
-  // Carga inicial de datos del vehículo mediante la placa
+  // Carga inicial
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -163,7 +163,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     fetchData();
   }, [placa]);
 
-  // Manejador para los cambios en los inputs
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (tenedorSame && e.target.name.startsWith("tened")) return;
     setFormData((prevData) => ({
@@ -172,7 +171,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     }));
   };
 
-  // Función para copiar los datos del propietario en los campos del tenedor
   const handleCopiarDatos = () => {
     setFormData((prevData) => ({
       ...prevData,
@@ -186,14 +184,12 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     }));
   };
 
-  // Toggle para "Tenedor = Propietario"
   const toggleTenedorSame = () => {
     const newState = !tenedorSame;
     setTenedorSame(newState);
     if (newState) handleCopiarDatos();
   };
 
-  // Manejador para enviar el formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -275,7 +271,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     },
     {
       title: 'Toggle Tenedor',
-      fields: [] // Solo para mostrar el toggle
+      fields: []
     },
     {
       title: 'Datos del Tenedor  (En caso que sea distinto al propietario)',
@@ -297,6 +293,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
         { label: 'Tipo Carroceria', name: 'vehTipoCarroceria' },
         { label: 'Línea', name: 'vehLinea' },
         { label: 'Color', name: 'vehColor' },
+        // AUNQUE NO SEAN OBLIGATORIOS, SIGUEN APARECIENDO EN EL FORMULARIO PARA QUIEN QUIERA LLENARLOS
         { label: 'Repotenciado', name: 'vehRepotenciado', options: ["Sí", "No"] },
         { label: 'Año Repotenciacion', name: 'vehAno', type: 'number', inputProps: { min: 1990, max: 2040 } },
         { label: 'Empresa Satelital', name: 'vehEmpresaSat' },
@@ -320,7 +317,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
 
   return (
     <div className="Datos-contenedor">
-      {/* Barra de progreso sticky en la parte superior */}
+      {/* Barra de progreso sticky */}
       <div className="Datos-avance-container">
         <span className="Datos-avance-texto">Avance: {calcularAvance()}%</span>
         <div className="Datos-barra-avance">
@@ -333,19 +330,19 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
           <div key={title}>
             {title === "Toggle Tenedor" && (
               <div className="Datos-toggle-tenedor">
-              <input
-                type="checkbox"
-                id="tenedorSameCheckbox"
-                className="Datos-checkbox"
-                checked={tenedorSame}
-                onChange={toggleTenedorSame}
-              />
-              <label htmlFor="tenedorSameCheckbox" className="Datos-checkbox-label">
-                {tenedorSame
-                  ? "Editar datos del Tenedor"
-                  : "Rellenar los datos del tenedor con los mismos del Propietario"}
-              </label>
-            </div>
+                <input
+                  type="checkbox"
+                  id="tenedorSameCheckbox"
+                  className="Datos-checkbox"
+                  checked={tenedorSame}
+                  onChange={toggleTenedorSame}
+                />
+                <label htmlFor="tenedorSameCheckbox" className="Datos-checkbox-label">
+                  {tenedorSame
+                    ? "Editar datos del Tenedor"
+                    : "Rellenar los datos del tenedor con los mismos del Propietario"}
+                </label>
+              </div>
             )}
             {fields.length > 0 && (
               <FormSection

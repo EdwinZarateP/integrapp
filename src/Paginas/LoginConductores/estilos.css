@@ -1,0 +1,160 @@
+/* CONTENEDOR PRINCIPAL */
+.LoginConductores-contenedor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  background-color: #ffffff;
+  padding-top: 60px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+}
+
+/* LOGO */
+.LoginConductores-Logo {
+  width: 140px;
+  height: auto;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+/* TITULO */
+.LoginConductores-titulo-app {
+  display: flex;
+  justify-content: center;
+  gap: 0px;
+  margin-bottom: 5px;
+}
+
+.LoginConductores-titulo-app h1:first-child {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.LoginConductores-titulo-app h1:last-child {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #8dc73f;
+  margin: 0;
+}
+
+/* SUBTÍTULO */
+.LoginConductores-subtitulo {
+  margin-top: 5px;
+  margin-bottom: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* TARJETA DEL FORMULARIO */
+.LoginConductores-formulario {
+  width: 90%;
+  max-width: 420px;
+  background: #ffffff;
+  padding: 35px 28px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.07);
+  border: 1px solid #f3f3f3;
+}
+
+/* INPUTS */
+.LoginConductores-grupo-input {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.LoginConductores-grupo-input label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.LoginConductores-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.2s;
+}
+
+.LoginConductores-input:focus {
+  border-color: #8dc73f;
+  box-shadow: 0 0 0 3px rgba(141,199,63,0.2);
+}
+
+/* OJITO */
+.LoginConductores-password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.LoginConductores-ojito {
+  position: absolute;
+  right: 12px;
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+}
+
+/* BOTÓN */
+.LoginConductores-boton {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: black;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.LoginConductores-boton:hover {
+  background: #1f1f1f;
+}
+
+/* LINKS */
+.LoginConductores-links {
+  margin-top: 25px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.LoginConductores-link {
+  color: #000080;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.LoginConductores-link:hover {
+  text-decoration: underline;
+  color: #1e40af;
+}
+
+/* ERROR */
+.LoginConductores-error {
+  margin-top: 15px;
+  padding: 12px;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fee2e2;
+  border-radius: 6px;
+  text-align: center;
+  width: 90%;
+  max-width: 420px;
+  font-weight: 600;
+}

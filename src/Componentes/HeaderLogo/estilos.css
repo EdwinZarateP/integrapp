@@ -1,0 +1,75 @@
+.HeaderLogo-contenedor {
+  display: flex;
+  flex-direction: row; /* Elementos en fila horizontal */
+  align-items: center; /* Centrado vertical */
+  justify-content: flex-start; /* Alineado a la izquierda */
+  padding: 0 30px; /* Espacio a los lados */
+  background-color: #2c3e50; /* Azul Oscuro (Mismo tono que tu referencia) */
+  height: 70px; /* Altura fija compacta */
+  width: 100%;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Sombra suave abajo */
+  position: fixed; /* CAMBIO CLAVE: Fixed para pegarlo a la pantalla, no al contenedor */
+  top: 0;       /* Pegado al borde superior */
+  left: 0;      /* Pegado al borde izquierdo */
+  z-index: 1000;
+  box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
+}
+
+/* Efecto hover sutil en toda la barra */
+.HeaderLogo-contenedor:hover {
+  background-color: #34495e; /* Un tono ligeramente más claro al pasar el mouse */
+}
+
+/* Imagen del logo */
+.HeaderLogo-img {
+  height: 45px; /* Tamaño reducido para caber en la barra */
+  width: auto;
+  margin-right: 15px; /* Separación con el texto */
+  margin-bottom: 0; /* Quitamos el margen inferior del diseño anterior */
+  object-fit: contain;
+  /* Filtro para asegurar que el logo resalte sobre fondo oscuro si es necesario */
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); 
+}
+
+/* Título (IntegrApp) */
+.HeaderLogo-titulo {
+  display: flex;
+  font-size: 1.5rem; /* Letra un poco más pequeña que en la portada */
+  font-weight: 700;
+  margin: 0;
+  line-height: 1;
+  font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+  text-transform: uppercase; /* Opcional: Para que se vea más como título de app */
+}
+
+/* Colores del texto adaptados al fondo oscuro */
+.HeaderLogo-titulo span:first-child { 
+  color: #ffffff; /* "Integr" en Blanco */
+}
+.HeaderLogo-titulo span:last-child { 
+  color: #8dc73f; /* "App" en Verde Corporativo */
+}
+
+/* Subtítulo - LO OCULTAMOS como pediste ("solo salga el logo") */
+.HeaderLogo-subtitulo {
+  display: none; 
+}
+
+/* AJUSTE PARA MÓVILES */
+@media (max-width: 768px) {
+  .HeaderLogo-contenedor {
+    padding: 0 15px;
+    height: 60px; /* Un poco más delgada en celular */
+    justify-content: center; /* En celular se ve mejor centrado */
+  }
+  
+  .HeaderLogo-img {
+    height: 35px;
+    margin-right: 10px;
+  }
+  
+  .HeaderLogo-titulo {
+    font-size: 1.2rem;
+  }
+}

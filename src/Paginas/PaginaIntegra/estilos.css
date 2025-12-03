@@ -23,9 +23,12 @@
 .PaginaIntegra-encabezado {
   background-color: #2c3e50;
   width: 100%;
+  height: 80px; 
   color: #fff;
   display: flex;
   justify-content: center;
+  align-items: center;
+  position: relative; 
   z-index: 1000;
 }
 
@@ -45,12 +48,17 @@
 }
 
 .PaginaIntegra-menu-boton {
-  display: none;
+  display: none; 
   background: none;
   border: none;
   color: white;
-  font-size: 1.5em;
+  font-size: 2rem;
   cursor: pointer;
+  position: absolute; 
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%); 
+  z-index: 1001;
 }
 
 .PaginaIntegra-item {
@@ -270,56 +278,48 @@
   right: 10px;
 }
 
-
 @media screen and (max-width: 768px) {
-  .PaginaIntegra-menu {
-    display: none;
-    flex-direction: column;
-    gap: 10px;
-    position: absolute;
-    top: 40px;
-    right: 0;
-    background-color: #000;
-    padding: 10px 20px;
-    border-radius: 5px;
-  }
-
   .PaginaIntegra-menu-boton {
     display: block;
-    padding: 10px;
   }
 
-  .PaginaIntegra-logo{
+  /* Estado CERRADO del menú (Por defecto oculto) */
+  .PaginaIntegra-menu {
+    display: none; 
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    background-color: #2c3e50;
+    padding: 20px 0;
+    z-index: 999;
+    border-top: 1px solid rgba(255,255,255,0.1); 
+  }
+
+  /* Estado ABIERTO del menú (Clase agregada por React) */
+  .PaginaIntegra-menu.abierto {
+    display: flex; 
+    height: auto; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
+  }
+
+
+  .PaginaIntegra-item {
+    text-align: center;
+    width: 100%;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .PaginaIntegra-logo {
+    display: block !important; 
+    width: 60px; 
+    margin: 10px auto; 
+    order: -1; 
+  }
+
+  .PaginaIntegra-logo2 {
     display: none;
-    }
-
-  .PaginaIntegra-pqr {
-    width: 40px;
-    height: 40px;
-    bottom: 20px;
-    right: 100px;
-  }
-
-  .PaginaIntegra-whatsapp {
-    width: 40px;
-    height: 40px;
-  }
-
-  .PaginaIntegra-titulo {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-top: 100px;
-  }
-
-  .PaginaIntegra-btn-carrusel {
-    top:30%;
-  }
-
-  .PaginaIntegra-logo2{
-    position: fixed;
-    display: flex;
-    left: 40%;
-    top:40%;
-    width: 60px;
   }
 }

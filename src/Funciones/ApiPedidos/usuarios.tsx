@@ -64,3 +64,15 @@ export const loginSeguridad = async (
   });
   return res.data;
 };
+
+// 🔹 Login de Conductor
+export const loginConductor = async (
+  usuario: string,
+  clave: string
+): Promise<LoginRespuesta> => {
+  const res = await axios.post<LoginRespuesta>(`${BASE_URL}/loginConductor`, {
+    usuario,
+    clave,
+  });
+  return res.data;
+};

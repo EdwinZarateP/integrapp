@@ -1,0 +1,613 @@
+/* -------------------------------------------------------------------------- */
+/* 1. CONFIGURACIÓN GLOBAL Y RESET                                            */
+/* -------------------------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.bg-conductor {
+  background-color: #eef2f5; /* Un gris/verde muy suave y moderno */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. BARRA SUPERIOR (HEADER)                                                 */
+/* -------------------------------------------------------------------------- */
+.barra-superior {
+  background-color: #2c3e50;
+  color: #fffcfc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px; /* Reducido un poco para móviles */
+  height: 65px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  flex-shrink: 0; 
+  z-index: 1000;
+  position: relative;
+}
+
+.barra-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  overflow: hidden; /* Evita desbordes */
+}
+
+.barra-logo {
+  height: 40px;     
+  width: auto;
+  object-fit: contain; 
+}
+
+.barra-titulos-agrupados {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.barra-titulo {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin: 0;
+  color: #fff;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.barra-subtitulos-linea {
+  display: flex;
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.barra-subtitulo { color: #ffffff; }
+.barra-subsubtitulo { color: #2ecc71; font-weight: 800; margin-left: 0px; }
+
+.barra-derecha {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.barra-usuario { 
+  font-weight: 600; 
+  font-size: 13px; 
+  display: flex; 
+  align-items: center; 
+  gap: -70px; 
+  background: rgba(255,255,255,0.1); 
+  padding: 5px 5px; 
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+  max-width: 220px; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hamburguesa-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.menu-desplegable {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  overflow: hidden;
+  min-width: 160px;
+  z-index: 1001;
+}
+
+.btn-cerrar-sesion {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  background: transparent;
+  color: #135717;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.btn-cerrar-sesion:hover { background: #fce4e4; }
+
+/* -------------------------------------------------------------------------- */
+/* 3. LAYOUT PRINCIPAL                                                        */
+/* -------------------------------------------------------------------------- */
+.layout-conductor {
+  display: flex;
+  width: 100%;
+  max-width: 1200px; /* Contenedor maximo razonable */
+  margin: 0 auto;
+  padding: 20px;
+  gap: 20px;
+  flex: 1; 
+  align-items: flex-start; /* Evita estiramiento innecesario */
+}
+
+/* -------------------------------------------------------------------------- */
+/* 4. SIDEBAR (Navegación de Pasos)                                           */
+/* -------------------------------------------------------------------------- */
+.sidebar-conductor {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.btn-sidebar-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: white;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  font-weight: 600;
+  color: #666;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.btn-sidebar-step:hover {
+  transform: translateX(3px);
+  background: #fff;
+  color: #2c3e50;
+}
+
+.btn-sidebar-step.active {
+  background-color: #2c3e50;
+  color: white;
+  box-shadow: 0 4px 10px rgba(44, 62, 80, 0.2);
+  border-color: #2c3e50;
+}
+
+.step-indicator {
+  width: 28px;
+  height: 28px;
+  background-color: #f0f2f5;
+  color: #7f8c8d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.btn-sidebar-step.active .step-indicator {
+  background-color: #27ae60;
+  color: white;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 5. CONTENIDO DERECHO (Formularios)                                         */
+/* -------------------------------------------------------------------------- */
+.contenido-conductor-container {
+  flex: 1; 
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  min-height: 500px; 
+  position: relative;
+  width: 100%; /* Asegura que tome el ancho disponible */
+}
+
+.step-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.step-header {
+  margin-bottom: 25px;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 15px;
+}
+
+.step-header h2 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-header p { margin: 0; color: #7f8c8d; font-size: 0.95rem; }
+
+/* Barras de Progreso */
+.progreso-header {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.progreso-header span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.barra-progreso-bg {
+  background: #e9ecef;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barra-progreso-fill {
+  background: #27ae60;
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 6. ELEMENTOS UI (Inputs, Botones, Cards)                                   */
+/* -------------------------------------------------------------------------- */
+.panel-creacion {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 100%;
+}
+
+.input-group-crear { 
+    display: flex; 
+    gap: 10px; 
+    flex-wrap: wrap; 
+}
+
+.input-moderno {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 15px;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-moderno:focus {
+  border-color: #27ae60;
+  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+}
+
+.btn-moderno-accion {
+  padding: 12px 25px;
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-moderno-accion:hover { background-color: #1a252f; }
+
+.seleccion-actual {
+  margin-top: 10px;
+  padding: 20px;
+  background: #f1f8e9; /* Verde muy clarito */
+  border-radius: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #c8e6c9;
+  gap: 15px;
+}
+
+.btn-continuar {
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.alert-box {
+  padding: 20px;
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* RECHAZADOS */
+.seccion-rechazados { margin-top: 25px; }
+.titulo-rechazados { color: #c0392b; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-size: 1.1rem;}
+.lista-rechazados { display: flex; flex-direction: column; gap: 12px; }
+.card-rechazado { 
+  border-left: 4px solid #c0392b;
+  background: #fff; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-radius: 8px; 
+  padding: 15px; 
+  display: flex; 
+  flex-direction: column; /* Vertical en defecto para movil */
+  gap: 10px;
+}
+.placa-rechazada-header strong { font-size: 1.1rem; color: #2c3e50; }
+.observacion-texto { color: #555; margin: 5px 0 0 0; font-size: 0.95rem; font-style: italic; }
+.btn-corregir { 
+  background: #c0392b; color: white; border: none; padding: 8px 15px; 
+  border-radius: 6px; cursor: pointer; display: flex; align-items: center; 
+  gap: 6px; font-weight: 600; align-self: flex-start;
+}
+
+/* LISTA DOCUMENTOS */
+.lista-documentos-container { margin-top: 20px; }
+
+.seccion-doc-card {
+  border: 1px solid #edf2f7;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.seccion-header {
+  background: #f8f9fa;
+  padding: 15px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  color: #34495e;
+}
+.seccion-header h4 { margin: 0; font-size: 1rem; }
+
+.seccion-body { padding: 5px 15px; background: white; }
+
+.doc-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+.doc-item-row:last-child { border-bottom: none; }
+
+.doc-name { 
+    display: flex; align-items: center; gap: 8px; 
+    font-size: 0.9rem; color: #555; font-weight: 500;
+    max-width: 60%; /* Evita que el texto empuje los botones */
+    line-height: 1.2;
+}
+.text-success { color: #27ae60; font-size: 1.1rem; }
+
+.btn-doc-action {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-doc-action.upload { background: #3498db; color: white; }
+.btn-doc-action.view { background: #95a5a6; color: white; }
+.btn-doc-action.delete { background: #e74c3c; color: white; padding: 6px 10px; }
+
+.btn-finalizar {
+  width: 100%;
+  padding: 16px;
+  background-color: #2c3e50;
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 25px;
+  box-shadow: 0 4px 10px rgba(44, 62, 80, 0.3);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 7. BOTONES FLOTANTES (WHATSAPP, GUARDAR)                                   */
+/* -------------------------------------------------------------------------- */
+.btn-whatsapp-flotante {
+  position: fixed;
+  bottom: 10px; /* Más pegado al borde inferior */
+  left: 10px;   /* Más pegado a la esquina izquierda */
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* Menos espacio entre icono y texto */
+  background-color: #25D366;
+  color: white;
+  padding: 8px 16px; /* Botón más compacto */
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9rem; /* Letra más pequeña */
+  box-shadow: 0 3px 10px rgba(37, 211, 102, 0.3);
+  transition: transform 0.2s ease;
+}
+
+/* Forzar tamaño del ícono SVG para que acompañe el tamaño pequeño */
+.btn-whatsapp-flotante svg {
+    width: 20px !important;
+    height: 20px !important;
+}
+
+.btn-whatsapp-flotante:active { transform: scale(0.95); }
+
+/* Para los botones guardar del componente Datos (Fijos a la derecha) */
+.contenedor-formulario-fijo button[type="submit"],
+.contenedor-formulario-fijo .btn-guardar { 
+  position: fixed !important;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10000;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* ========================================================================== */
+/* RESPONSIVE DESIGN (MÓVIL / TABLET)                                         */
+/* ========================================================================== */
+
+@media (max-width: 900px) {
+  
+  /* 1. LAYOUT PRINCIPAL: Columna vertical */
+  .layout-conductor {
+    flex-direction: column;
+    padding: 10px; /* Menos margen externo en celular */
+    gap: 15px;
+  }
+
+  /* 2. SIDEBAR (Navegación Horizontal) */
+  .sidebar-conductor {
+    width: 100%;
+    flex-direction: row; /* Horizontal */
+    overflow-x: auto; /* Scroll si no cabe */
+    white-space: nowrap;
+    padding-bottom: 5px; /* Espacio para scrollbar invisible */
+    -webkit-overflow-scrolling: touch;
+    gap: 10px;
+  }
+  
+  /* Ocultar barra de scroll visualmente */
+  .sidebar-conductor::-webkit-scrollbar { display: none; }
+
+  .btn-sidebar-step {
+    flex: 0 0 auto; /* No estirar, tamaño según contenido */
+    padding: 8px 15px; /* Más compactos */
+    border-radius: 50px; /* Forma de píldora */
+    font-size: 0.85rem;
+    min-width: auto;
+    background-color: rgba(255,255,255,0.8);
+  }
+  
+  .btn-sidebar-step .step-indicator {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    margin-right: -5px; /* Acercar el numero al texto */
+  }
+
+  /* 3. CONTENIDO PRINCIPAL */
+  .contenido-conductor-container {
+    padding: 20px 15px; /* Padding interno reducido para ganar espacio */
+    border-radius: 12px;
+    min-height: auto; /* Altura automática */
+  }
+
+  .step-header h2 {
+    font-size: 1.3rem; /* Titulo más chico */
+  }
+
+  /* 4. TARJETAS Y LISTAS */
+  .seleccion-actual {
+    flex-direction: column; /* Apilar texto y botón */
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+  }
+  
+  .seleccion-actual button {
+    width: 100%; /* Botón ancho completo */
+  }
+
+  .card-rechazado {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .btn-corregir { width: 100%; justify-content: center; margin-top: 5px; }
+
+  /* Lista documentos */
+  .doc-name {
+    font-size: 0.85rem;
+    max-width: 55%; /* Asegura espacio a los botones */
+  }
+  
+  .btn-doc-action {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  /* 5. HEADER MÁS COMPACTO */
+  .barra-superior {
+    padding: 0 15px;
+    height: 60px;
+  }
+  .barra-titulo { font-size: 13px; display: none; /* Ocultar texto largo en movil si quieres, o dejarlo */ }
+  .barra-titulos-agrupados { display: flex; } /* Mantiene logo + titulos */
+  
+  /* Ajuste botones flotantes para que no se pisen */
+  .btn-whatsapp-flotante {
+    padding: 10px 10px;
+    font-size: 0.85rem;
+    bottom: 15px; 
+    left: 15px;
+  }
+  
+  .contenedor-formulario-fijo button[type="submit"],
+  .contenedor-formulario-fijo .btn-guardar { 
+    width: auto; 
+    padding: 10px 20px;
+  }
+}
+
+/* Ajuste extra para pantallas MUY pequeñas (tipo iPhone SE) */
+@media (max-width: 400px) {
+  .barra-titulo { font-size: 12px; }
+  .barra-logo { height: 35px; }
+  .btn-sidebar-step span { display: inline-block; } /* Mostrar texto */
+  
+  .doc-item-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .doc-name { max-width: 100%; }
+  .doc-item-row > div { width: 100%; justify-content: flex-end; }
+}

@@ -6,7 +6,6 @@ import EstadosManifiestos from '../SeleccionEstados/index';
 import Estados from '../EstadosManifiestos/index';
 import SalaEspera from '../SalaEspera/index';
 import Novedad from '../Novedad/index';
-import FormularioHojavida from '../FormularioHojavida/index';
 import Api2 from '../Api/autenticar';
 import RevisionVehiculos from '../revision/index';
 import Olvidoclave from '../Olvidoclave/index';
@@ -21,6 +20,10 @@ import Pedidos from '../Pedidos/index';
 import PedidosCompletados from '../PedidosCompletados/index';
 import LoginUsuario from '../LoginUsuarios/index'
 import LoginUsuariosSeguridad from '../LoginUsuariosSeguridad/index'
+import LoginConductores from '../LoginConductores/index';
+import RegistroConductor from '../RegistroConductor/index';
+import PanelConductoresVista from '../PanelConductores/index';
+import OlvidoClaveConductor from '../OlvidoClaveConductor/index';
 import DescargableBotRecolecciones from '../descargables/index'
 import Indicadores from '../Indicadores/index'
 import "./estilos.css";
@@ -40,8 +43,7 @@ const App: React.FC = () => {
         <Route path="/SeleccionEstados" element={<EstadosManifiestos />} />
         <Route path="/Estados" element={<Estados />} />
         <Route path="/Novedad" element={<Novedad />} />
-        <Route path="/SalaEspera" element={<SalaEspera />} />
-        <Route path="/FormularioHojavida" element={<FormularioHojavida />} />        
+        <Route path="/SalaEspera" element={<SalaEspera />} />        
         <Route path="/Api2" element={<Api2 />} />
         <Route path="/revision" element={<RevisionVehiculos />} />
         <Route path="/PortalClientes" element={<PortalClientes />} />
@@ -51,6 +53,10 @@ const App: React.FC = () => {
         <Route path="/PedidosCompletados" element={<PedidosCompletados />} />
         <Route path="/LoginUsuario" element={<LoginUsuario />} />
         <Route path="/LoginUsuariosSeguridad" element={<LoginUsuariosSeguridad />} />
+        <Route path="/LoginConductores" element={<LoginConductores />} />
+        <Route path="/PanelConductores" element={<PanelConductoresVista/>} />
+        <Route path="/RegistroConductor" element={<RegistroConductor />} />
+        <Route path="/OlvidoClaveConductor" element={<OlvidoClaveConductor />} />
         <Route path="/indicadores" element={<Indicadores />} />
         <Route path="/descargables" element={<DescargableBotRecolecciones />} />
         <Route path="*" element={<NoEncontrado />} />

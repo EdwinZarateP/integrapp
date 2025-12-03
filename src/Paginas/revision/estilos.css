@@ -13,7 +13,10 @@ body {
   margin-left: 20px; 
 }
 
-/* Dropdown selector / Barra de Búsqueda */
+/* =========================================
+   BARRA DE BÚSQUEDA PERSONALIZADA
+   ========================================= */
+
 .dropdown-contenedor {
   display: flex;
   flex-direction: column;
@@ -22,28 +25,74 @@ body {
   margin-bottom: 25px;
 }
 
-.dropdown-contenedor label {
-  font-weight: 600;
-  font-size: 1rem;
-  color: #444;
-}
-
-.input-busqueda {
+/* Contenedor que agrupa Input + Botones */
+.busqueda-wrapper {
+  display: flex;
+  align-items: stretch; /* Estira los hijos al mismo alto */
   width: 100%;
   max-width: 400px;
-  padding: 10px;
-  border-radius: 6px;
+  position: relative; /* Necesario para ubicar la X absoluta */
+}
+
+/* Ajustes al Input existente para que se una al botón */
+.input-busqueda {
+  width: 100%;
+  padding: 10px 40px 10px 15px; /* Padding derecho extra para no tapar la X */
   border: 1px solid #0b3d2e;
   font-size: 1rem;
   background: #ffffff;
   transition: border-color 0.2s, box-shadow 0.2s;
-  box-sizing: border-box; 
+  
+  /* Clave para el diseño unido: */
+  border-radius: 6px 0 0 6px; /* Solo redondea izquierda */
+  border-right: none; /* Quita borde derecho */
 }
 
 .input-busqueda:focus {
   outline: none;
   border-color: #145a32;
-  box-shadow: 0 0 5px rgba(20, 90, 50, 0.4);
+  box-shadow: inset 0 0 5px rgba(20, 90, 50, 0.1); /* Sombra interna sutil */
+}
+
+/* Botón de Lupa (Buscar) */
+.btn-lupa {
+  background-color: #0b3d2e;
+  color: white;
+  border: 1px solid #0b3d2e;
+  border-radius: 0 6px 6px 0; /* Solo redondea derecha */
+  padding: 0 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.btn-lupa:hover {
+  background-color: #145a32;
+}
+
+/* Botón X (Limpiar) */
+.btn-clear {
+  position: absolute;
+  right: 60px; /* Se ubica a la izquierda del botón de lupa */
+  top: 50%;
+  transform: translateY(-50%); /* Centrado vertical exacto */
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.btn-clear:hover {
+  color: #c0392b; /* Rojo al pasar el mouse */
 }
 
 /* TARJETAS / VEHÍCULOS */

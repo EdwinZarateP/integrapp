@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { FaSearch, FaTimes } from "react-icons/fa"; // 👈 Importamos la Lupa y la X
+import { FaSearch, FaTimes } from "react-icons/fa"; 
 
 /* Componentes y Estilos */
 import BarraSuperiorSeguridad from "../../Componentes/Barra";
@@ -455,9 +455,9 @@ const RevisionVehiculos: React.FC = () => {
                     onKeyDown={(e) => handleKeyDown(e, ejecutarBusquedaIncompletos)}
                   />
                   {inputIncompletos && (
-                    <button className="btn-clear" onClick={limpiarIncompletos}><FaTimes /></button>
+                    <button className="btn-clear" onClick={limpiarIncompletos} title="Limpiar"><FaTimes /></button>
                   )}
-                  <button className="btn-lupa" onClick={ejecutarBusquedaIncompletos}><FaSearch /></button>
+                  <button className="btn-lupa" onClick={ejecutarBusquedaIncompletos} title="Buscar"><FaSearch /></button>
                 </div>
               </div>
               {filteredIncompletos.length === 0 && <p style={{marginTop: 20}}>No hay vehículos.</p>}
@@ -488,9 +488,9 @@ const RevisionVehiculos: React.FC = () => {
                     onKeyDown={(e) => handleKeyDown(e, ejecutarBusquedaCompletados)}
                   />
                   {inputCompletados && (
-                    <button className="btn-clear" onClick={limpiarCompletados}><FaTimes /></button>
+                    <button className="btn-clear" onClick={limpiarCompletados} title="Limpiar"><FaTimes /></button>
                   )}
-                  <button className="btn-lupa" onClick={ejecutarBusquedaCompletados}><FaSearch /></button>
+                  <button className="btn-lupa" onClick={ejecutarBusquedaCompletados} title="Buscar"><FaSearch /></button>
                 </div>
               </div>
               {paginatedVehicles.map((veh) => (
@@ -535,9 +535,9 @@ const RevisionVehiculos: React.FC = () => {
                     onKeyDown={(e) => handleKeyDown(e, ejecutarBusquedaAprobados)}
                   />
                   {inputAprobados && (
-                    <button className="btn-clear" onClick={limpiarAprobados}><FaTimes /></button>
+                    <button className="btn-clear" onClick={limpiarAprobados} title="Limpiar"><FaTimes /></button>
                   )}
-                  <button className="btn-lupa" onClick={ejecutarBusquedaAprobados}><FaSearch /></button>
+                  <button className="btn-lupa" onClick={ejecutarBusquedaAprobados} title="Buscar"><FaSearch /></button>
                 </div>
                 <p style={{fontSize: '0.85rem', color: '#666', marginTop: 5}}>
                   {searchQueryAprobados ? `Resultados para: "${searchQueryAprobados}"` : "Mostrando los 10 últimos aprobados."}
@@ -553,9 +553,9 @@ const RevisionVehiculos: React.FC = () => {
                         <span className="toggle-icon">{expandedId === veh._id ? "▲" : "▼"}</span>
                     </div>
                     {expandedId === veh._id && (
-                       <div className="vehiculo-body">
-                          <RenderDatosVehiculo veh={veh} />
-                       </div>
+                        <div className="vehiculo-body">
+                           <RenderDatosVehiculo veh={veh} />
+                        </div>
                     )}
                   </div>
               ))}

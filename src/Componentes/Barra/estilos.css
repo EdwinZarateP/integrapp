@@ -2,7 +2,6 @@
    BARRA SUPERIOR PROFESIONAL
    --------------------------- */
 .barra-superior {
-  
   background-color: #145a32;
   color: #ffffff;
   display: flex;
@@ -11,7 +10,6 @@
   padding: 0 30px;
   z-index: 9999;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
- 
 }
 
 /* ---------------------------
@@ -21,6 +19,14 @@
   display: flex;
   align-items: center;
   gap: 15px; 
+  /* --- AGREGADO PARA FUNCIONALIDAD DE CLICK --- */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+/* Efecto visual al pasar el mouse por el logo/titulo */
+.barra-izquierda:hover {
+  opacity: 0.9;
 }
 
 .barra-logo {
@@ -40,9 +46,9 @@
 
 /* NUEVA CLASE: Contenedor para INTEGR APP */
 .barra-subtitulos-linea {
-    display: flex; 
-    align-items: center;
-    margin-top: 2px;
+   display: flex; 
+   align-items: center;
+   margin-top: 2px;
 }
 
 /* ---------------------------
@@ -63,32 +69,23 @@
   font-weight: 500;
   letter-spacing: 2px;
   color: #e0f2f1;
-  margin-right: 0; /* Aseguramos que no haya espacio extra antes de APP */
-  /* Quitar display: inline-block; ya que su contenedor es display: flex */
+  margin-right: 0; 
 }
 
 .barra-subsubtitulo {
-  /* APP (pegado a INTEGR) */
   font-size: 13px; 
   font-weight: 700;
   letter-spacing: 2px;
-  color: #ffcc00;
+  color: #12480f;
   margin-left: 0px;
 }
 
-/* ---------------------------
-   SECCIÓN DERECHA 
-   (El resto del CSS de .barra-derecha, .barra-usuario, .hamburguesa, y .menu-desplegable es igual)
-   --------------------------- */
-
-/* ... (el resto de tu CSS para la derecha, menú y hamburguesa) */
 /* ---------------------------
    SECCIÓN DERECHA (USUARIO + HAMBURGUESA)
    --------------------------- */
 .barra-derecha {
   display: flex;
   align-items: center;
-  /* Aumenta el gap para separar el nombre del usuario del menú hamburguesa */
   gap: 30px; 
 }
 
@@ -96,18 +93,16 @@
   font-size: 17px;
   font-weight: 600;
   opacity: 0.95;
-  margin: 0; /* Elimina márgenes manuales */
-  padding-right: 10px; /* Separación antes del menú */
+  margin: 0; 
+  padding-right: 10px; 
 }
 
 /* ---------------------------
    MENÚ HAMBURGUESA
    --------------------------- */
 .hamburguesa-container {
-  /* Relativo al contenedor derecha, no a la barra */
   position: relative; 
   cursor: pointer;
-  /* Z-index alto para asegurar que se puede hacer clic */
   z-index: 10001; 
 }
 
@@ -127,7 +122,7 @@
   transition: 0.3s ease;
 }
 
-/* Animación al abrir (Mantenida) */
+/* Animación al abrir */
 .hamburguesa.abierta span:nth-child(1) {
   transform: translateY(10px) rotate(45deg);
 }
@@ -145,17 +140,17 @@
    --------------------------- */
 .menu-desplegable {
   position: absolute;
-  top: 40px; /* Separado de la barra superior */
+  top: 40px; 
   right: 0;
   background: #ffffff;
   color: #000;
   border-radius: 8px;
-  padding: 0; /* Quité el padding vertical, lo ponemos en el botón */
+  padding: 0; 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   animation: fadeInMenu 0.25s ease;
   z-index: 10000;
-  min-width: 180px; /* Asegura que haya espacio */
-  overflow: hidden; /* Para que el radio de borde funcione bien */
+  min-width: 180px; 
+  overflow: hidden; 
 }
 
 @keyframes fadeInMenu {
@@ -169,22 +164,20 @@
   }
 }
 
-/* Estilo específico para el botón Cerrar Sesión */
 .menu-desplegable button.btn-cerrar-sesion {
   background: none;
   border: none;
-  width: 100%; /* Ocupa todo el ancho del menú */
+  width: 100%; 
   padding: 12px 20px;
   text-align: left;
   font-size: 15px;
   cursor: pointer;
   font-weight: 600;
-  color: #dc3545; /* Color rojo para acción de cierre (profesional) */
+  color: #dc3545; 
   transition: background-color 0.2s;
 }
 
 .menu-desplegable button.btn-cerrar-sesion:hover {
-  background: #f8d7da; /* Fondo rojo muy claro al pasar el ratón */
+  background: #f8d7da; 
   color: #c82333;
 }
-

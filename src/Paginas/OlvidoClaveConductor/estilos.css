@@ -1,0 +1,111 @@
+/* ESTILOS ESPECÍFICOS OLVIDO CLAVE CONDUCTOR */
+.OlvidoConductor-contenedor {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f6f7f9;
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .OlvidoConductor-logo {
+    width: 100px;
+    margin-bottom: 15px;
+  }
+  
+  .OlvidoConductor-titulo {
+    display: flex;
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+  }
+  .OlvidoConductor-titulo h1:nth-child(1) { color: #111; margin: 0; }
+  .OlvidoConductor-titulo h1:nth-child(2) { color: #8dc73f; margin: 0; }
+  
+  .OlvidoConductor-subtitulo {
+      color: #555;
+      margin-bottom: 25px;
+      font-weight: 500;
+  }
+  
+  .OlvidoConductor-formulario {
+    width: 100%;
+    max-width: 400px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 30px;
+  }
+  
+  .OlvidoConductor-fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .OlvidoConductor-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .OlvidoConductor-etiqueta {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 600;
+  }
+  
+  .OlvidoConductor-input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  .OlvidoConductor-input:focus {
+      outline: none;
+      border-color: #8dc73f;
+      box-shadow: 0 0 0 3px rgba(141, 199, 63, 0.2);
+  }
+  
+  .OlvidoConductor-boton {
+    width: 100%;
+    background-color: #000;
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .OlvidoConductor-boton:hover {
+      background-color: #333;
+  }
+  
+  .OlvidoConductor-mensaje {
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  .OlvidoConductor-mensaje.exito {
+      background-color: #e6f6f5;
+      color: #0f766e;
+      border: 1px solid #0f766e;
+  }
+  .OlvidoConductor-mensaje.error {
+      background-color: #fdecec;
+      color: #b00020;
+      border: 1px solid #b00020;
+  }
+  
+  .OlvidoConductor-link {
+      color: #000080;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: underline;
+  }

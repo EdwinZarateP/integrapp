@@ -1,54 +1,94 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
-import logo from "../../Imagenes/albatros.png";
+import { Lock, User, Car, ChevronRight } from 'lucide-react';
+// CORRECCIÓN: Importar el componente, NO el archivo .css
+import HeaderLogo from '../../Componentes/HeaderLogo'; 
 import './estilos.css';
 
 const Inicio: React.FC = () => {
-  const CodigoTenedorCookie = Cookies.get('tenedorIntegrapp');
   const navigate = useNavigate();
 
+  // --- NAVEGACIÓN SEGURIDAD ---
+  const IrSeguridad = () => {
+    // Verificamos si existe cookie de seguridad
+    const seguridadCookie = Cookies.get('seguridadId'); 
+    
+    if (!seguridadCookie) { 
+      // Si no hay sesión, ir al LOGIN DE SEGURIDAD
+      navigate("/LoginUsuariosSeguridad");
+    } else {
+      // Si ya hay sesión, ir al panel de revisión
+      navigate("/revision");
+    }
+  };
+
+  // --- NAVEGACIÓN PROPIETARIO ---
   const IrPropietarios = () => {
-    if (!CodigoTenedorCookie) {
+    const tenedorCookie = Cookies.get('tenedorIntegrapp');
+    
+    if (!tenedorCookie) {
       navigate("/loginpropietarios");
     } else {
       navigate("/SalaEspera");
     }
   };
 
-  const IrSeguridad = () => {
-    if (!CodigoTenedorCookie) {
-      navigate("/LoginUsuariosSeguridad");
+  // --- NAVEGACIÓN CONDUCTOR ---
+  const IrConductor = () => { 
+    const conductorCookie = Cookies.get('conductorId');
+    
+    if (!conductorCookie) {
+      navigate("/LoginConductores");
     } else {
-      navigate("/revision");
+      navigate("/PanelConductores");
     }
   };
 
   return (
     <div className="Inicio-contenedor">
-      <div className="Inicio-cabecera">
-        <img src={logo} alt="Logo Albatros" className="Inicio-logo" />
-        <div className="Inicio-titulo">
-          <h1>Integr</h1>
-          <h1>App</h1>
-        </div>
-      </div>
+      {/* Ahora sí renderizará el componente correctamente */}
+      <HeaderLogo />
+
+      {/* GRID DE OPCIONES */}
       <div className="Inicio-opciones">
-        <div className="Inicio-opcion" onClick={IrSeguridad}>
-          <h2>🔒</h2>
+        
+        {/* TARJETA 1: SEGURIDAD (CANDADO) */}
+        <div className="Inicio-card" onClick={IrSeguridad}>
+          <div className="Inicio-card-icon-bg bg-seguridad">
+            <Lock className="icono-ajuste" />
+          </div>
           <h2>Seguridad</h2>
-          <p>Mira el proceso y el estado que tienen el o los vehiculos registrado</p>
+          <p>Validación de vehículos y monitoreo de procesos en tiempo real.</p>
+          <div className="Inicio-card-action">
+             Acceder <ChevronRight size={18} />
+          </div>
         </div>
-        <div className="Inicio-opcion" onClick={IrPropietarios}>
-          <h2>👨🏻‍💼Modo Propietario</h2>
-          <p>Registra tus vehículos, consulta tus manifiestos</p>
+
+        {/* TARJETA 2: PROPIETARIO (PERSONA) */}
+        <div className="Inicio-card" onClick={IrPropietarios}>
+          <div className="Inicio-card-icon-bg bg-propietario">
+            <User className="icono-ajuste" />
+          </div>
+          <h2>Modo Propietario</h2>
+          <p>Consulta de manifiestos.</p>
+          <div className="Inicio-card-action">
+             Acceder <ChevronRight size={18} />
+          </div>
         </div>
-        {/*
-        <div className="Inicio-opcion" onClick={IrEmpleados}>
-          <h2>📦Empleados</h2>
-          <p>Descarga tu certificado laboral</p>
+
+        {/* TARJETA 3: CONDUCTOR (CARRO) */}
+        <div className="Inicio-card" onClick={IrConductor}>
+          <div className="Inicio-card-icon-bg">
+            <Car className="icono-ajuste" />
+          </div>
+          <h2>Modo Conductor</h2>
+          <p>Creación de vehículos y Gestión.</p>
+          <div className="Inicio-card-action">
+             Acceder <ChevronRight size={18} />
+          </div>
         </div>
-        */}
+
       </div>
     </div>
   );

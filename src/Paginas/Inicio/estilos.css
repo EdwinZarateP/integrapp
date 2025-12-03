@@ -1,85 +1,169 @@
-/* Estilos base */
+/* CONTENEDOR PRINCIPAL */
 .Inicio-contenedor {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    font-family: Arial, sans-serif;
-  }
-  
-  .Inicio-cabecera {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-  
-  .Inicio-logo {
-    width: 120px;
-    height: auto;
-  }
-  
-  .Inicio-titulo {
-    width: 100%;
-    max-width: 350px;
-    display: flex;
-    font-size: 1rem;
-    margin-bottom: 20px;
-    justify-content: center;
-  }
-  
-  .Inicio-titulo :nth-child(2) {
-    color:rgb(141, 199, 63);
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f9fafb;
+  font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+  padding: 40px 20px;
+}
 
-  .Inicio-opciones {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
+.Inicio-cabecera:hover {
+  transform: scale(1.02);
+}
+/* HEADER */
+.Inicio-cabecera {
+  text-align: center;
+  margin-bottom: 60px;
+  animation: fadeInDown 0.8s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer; 
+  transition: transform 0.2s ease; 
+}
 
-  }
-  
-  .Inicio-opcion {
-    background-color: white;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 10px;
-    width: 100%;
-    max-width: 300px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-    cursor: pointer;
-    border: 2px solid rgb(141, 199, 63);
-  }
-  
-  .Inicio-opcion:hover {
-    background-color: rgb(141, 199, 63,0.05);
-  }
-  
-  .Inicio-opcion h2 {
-    color: rgb(141, 199, 63);
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-  }
-  
-  .Inicio-opcion p {
-    color: #333;
-    font-size: 1rem;
-  }
-  
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .Inicio-opciones {
-      flex-direction: column;
-    }
-  
-    .Inicio-opcion {
-      width: 100%;
-    }  
+.Inicio-logo-icon {
+  width: 100px;
+  height: auto;
+  margin-bottom: 15px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(141, 199, 63, 0.2));
+}
 
-    .Inicio-cabecera {
-      margin-bottom: 0;
-    }
-  }
+.Inicio-titulo {
+  display: flex;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.Inicio-titulo span:first-child { color: #111827; }
+.Inicio-titulo span:last-child { color: #8dc73f; }
+
+.Inicio-subtitulo {
+  color: #6b7280;
+  margin-top: 10px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* GRID DE TARJETAS */
+.Inicio-opciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* ESTILO DE LA TARJETA INDIVIDUAL */
+.Inicio-card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 30px 25px;
+  flex: 1 1 280px; 
+  max-width: 320px; 
+  min-height: 260px; 
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Inicio-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  border-color: #8dc73f;
+}
+
+.Inicio-card-icon-bg {
+  width: 70px !important;
+  height: 70px !important;
+  min-width: 70px;
+  min-height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* COLORES DE LOS CÍRCULOS */
+.bg-seguridad { background-color: #ffffff; color: #0284c7; }
+.bg-propietario { background-color: #ffffff; color: #9333ea; }
+.bg-conductor { background-color: #dcfce7; }
+
+/* ANIMACIÓN HOVER */
+.Inicio-card:hover .Inicio-card-icon-bg {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* CONTROL DE TAMAÑO DE ICONOS SVG */
+.Inicio-card-icon-bg svg {
+  width: 35px !important;
+  height: 35px !important;
+  stroke-width: 2px;
+  display: block;
+}
+
+/* TEXTOS */
+.Inicio-card h2 {
+  color: #111827;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+}
+
+.Inicio-card p {
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 25px 0;
+  flex-grow: 1;
+}
+
+/* BOTÓN ACCEDER */
+.Inicio-card-action {
+  color: #8dc73f;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid #f3f4f6;
+  width: 100%;
+}
+
+.Inicio-card:hover .Inicio-card-action {
+  color: #65a30d;
+  gap: 10px;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .Inicio-opciones { flex-direction: column; align-items: center; }
+  .Inicio-card { width: 100%; max-width: 100%; min-height: auto; }
+}

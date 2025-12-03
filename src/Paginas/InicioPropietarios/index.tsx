@@ -15,6 +15,11 @@ const InicioPropietarios: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // --- NUEVA FUNCIÓN PARA VOLVER AL INICIO ---
+  const irInicio = () => {
+    navigate("/"); 
+  };
+
   const manejarVisibilidadPassword = () => {
     setVisibilidadPassword(!passwordVisible);
   };
@@ -42,8 +47,6 @@ const InicioPropietarios: React.FC = () => {
     setLoading(true);
 
     try {
-      
-      // const response = await fetch("https://integrappi-dvmh.onrender.com/usuarios/token", {
       const response = await fetch(`${API_BASE}/usuarios/token`, {
         method: "POST",
         headers: {
@@ -91,11 +94,26 @@ const InicioPropietarios: React.FC = () => {
         </div>
       ) : (
         <>
-          <img src={logo} alt="Logo Integra" className="InicioPropietarios-logo" />
-          <div className="InicioPropietarios-titulo">
-            <h1>Integr</h1>
-            <h1>App</h1>
+          {/* --- HEADER CLICABLE PARA VOLVER AL INICIO --- */}
+          <div 
+            className="InicioPropietarios-header-clickable"
+            onClick={irInicio}
+            title="Volver al inicio"
+            style={{ 
+              cursor: 'pointer', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center',
+              marginBottom: '20px' // Un poco de espacio antes del formulario
+            }}
+          >
+            <img src={logo} alt="Logo Integra" className="InicioPropietarios-logo" />
+            <div className="InicioPropietarios-titulo">
+              <h1>Integr</h1>
+              <h1>App</h1>
+            </div>
           </div>
+          {/* --------------------------------------------- */}
 
           {errorMessage && <div className="mensajeError">{errorMessage}</div>}
 

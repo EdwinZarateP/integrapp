@@ -3,9 +3,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* Centrado vertical solo si hay espacio, se ajusta a flex-start en móvil */
   justify-content: center;
   font-family: Arial, sans-serif;
-  min-height: 100vh; /* Para asegurar que ocupe toda la pantalla */
+  /* Eliminamos min-height rígido, usamos min-height: 100vh para asegurar el tamaño de la pantalla */
+  min-height: 100vh; 
+  padding: 20px 10px; /* Padding de seguridad */
+  box-sizing: border-box;
+  overflow-x: hidden; /* Evita el movimiento horizontal */
 }
 
 .InicioPropietarios-loading-container {
@@ -28,41 +33,32 @@
   max-width: 400px;
   display: flex;
   font-size: 1rem;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Reducido de 20px */
+  margin-top: 0; /* Eliminado el margen negativo */
   justify-content: center;
 }
 
 .InicioPropietarios-titulo :nth-child(2) {
-  color:rgb(141, 199, 63);
+  color: #bacf65;
+  margin: 5px;
+  margin-top: 0px;
 }
-
-.InicioPropietarios-subtitulo {
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  font-size: 10px;
-  margin-bottom: 20px;
-  margin-right: 10px;
-  margin-left: 210px;
-  margin-top: -40px;
-
-}
-
-
 
 .InicioPropietarios-logo {
-  width: 150px;
+  width: 100px;
   height: auto;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Reducido de 20px */
+  margin-top: 30px; /* Margen superior para centrar */
 }
 
 .InicioPropietarios-formulario {
   display: flex;
   flex-direction: column;
-  width: 90%;
+  width: 100%; /* Ahora es 100% del contenedor */
+  margin-top: 0; /* Eliminado el margen negativo */
   max-width: 400px;
   background: white;
-  padding: 20px;
+  padding: 25px 20px; /* Ligeramente más padding para que se vea bien */
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -70,13 +66,13 @@
 .InicioPropietarios-contenedorInput {
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
+  margin-bottom: 12px; /* Reducido de 15px */
 }
 
 .InicioPropietarios-etiqueta {
   font-size: 14px;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 3px; /* Reducido de 5px */
 }
 
 .InicioPropietarios-inputWrapper {
@@ -91,6 +87,7 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
+  box-sizing: border-box; /* Importante para que el padding no afecte el ancho */
 }
 
 .InicioPropietarios-verContrasenaBtn {
@@ -106,18 +103,18 @@
 }
 
 .InicioPropietarios-pieDePagina {
-  margin-top: 20px;
+  margin-top: 15px; /* Reducido de 20px */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px; /* Reducido de 10px */
 }
 
 .InicioPropietarios-enlace {
   color: #04088b;
   text-decoration: none;
   font-size: 0.9rem;
-  margin-top: 10px;
+  margin-top: 5px; /* Reducido de 10px */
   font-weight: bold;
 }
 
@@ -133,11 +130,65 @@
 }
 
 
- /* Ajustes para pantallas pequeñas */
- @media (max-width: 600px) {
+/* =========================================
+   MEDIA QUERIES (RESPONSIVE MÓVIL) - AJUSTADO
+   ========================================= */
+@media (max-width: 600px) {
+  
+  /* 1. Contenedor Principal: 
+     Alineación al inicio para evitar desbordamiento y usar altura dinámica. */
+  .InicioPropietarios-contenedor {
+    justify-content: flex-start; 
+    padding: 10px; 
+    min-height: 100dvh; /* Altura de la vista real */
+  }
+
+  /* 2. Logo: MÁS PEQUEÑO y menos margen superior */
   .InicioPropietarios-logo {
-    width: 100px;
-  }  
+    width: 60px; /* Reducido de 100px a 60px */
+    margin-top: 80px; /* Reducido */
+    margin-bottom: 5px;
+  }
+
+  /* 3. Títulos: Más compactos */
+  .InicioPropietarios-titulo {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+  }
+
+  .InicioPropietarios-titulo :nth-child(2) {
+    margin: 3px;
+  }
+  
+  .InicioPropietarios-formulario {
+    padding: 20px 15px; /* Reducido el padding interno */
+    max-width: 350px; /* Límite para que se vea compacto */
+  }
+
+  /* 4. Inputs y Etiquetas: Reducción de tamaño de letra y padding */
+  .InicioPropietarios-etiqueta {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  .InicioPropietarios-input {
+    padding: 8px; /* Reducido de 10px */
+    font-size: 14px; /* Reducido de 16px */
+  }
+
+  /* 5. Pie de página y Enlaces: Más compactos */
+  .InicioPropietarios-pieDePagina {
+    margin-top: 10px;
+    gap: 5px;
+  }
+  
+  .InicioPropietarios-enlace {
+    font-size: 0.8rem;
+    margin-top: 2px;
+  }
+  
+  .InicioPropietarios-mensajeError {
+    font-size: 0.8rem;
+    padding: 8px;
+  }
 }
-
-

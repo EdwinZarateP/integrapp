@@ -3,12 +3,10 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import confetti from "canvas-confetti";
 import { useNavigate, Link } from "react-router-dom"; 
-
-// Ajusta la ruta de la imagen según tu estructura
 import logo from "../../Imagenes/albatros.png"; 
+import HeaderLogo from "../../Componentes/HeaderLogo"; 
 import "./estilos.css";
 
-// Variable de entorno
 const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
 
 interface UsuarioBackend {
@@ -99,13 +97,20 @@ const LoginConductores = () => {
   };
 
   return (
-    <div className="LoginConductores-contenedor">
+    <div className="LoginConductores-contenedor" style={{ position: 'relative' }}>
+      
+      {/* --- INTEGRACIÓN DEL HEADER --- */}
+      {/* Posicionamiento absoluto para fijarlo arriba */}
+      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", zIndex: 10 }}>
+          <HeaderLogo />
+      </div>
+
       <img src={logo} alt="logo" className="LoginConductores-Logo" />
       <div className="LoginConductores-titulo-app">
-          <h1>Integr</h1>
-          <h1>App</h1>
+          <h1>Ingreso</h1>
+          <h1>Conductores</h1>
       </div>
-      <h2 className="LoginConductores-subtitulo">Ingreso Conductores</h2>
+      
       
       <form className="LoginConductores-formulario" onSubmit={manejarLogin}>
         <div className="LoginConductores-grupo-input">
@@ -147,7 +152,7 @@ const LoginConductores = () => {
         </button>
       </form>
 
-      {/* --- SECCIÓN NUEVA: ENLACES DE REGISTRO Y RECUPERACIÓN --- */}
+      {/* --- SECCIÓN: ENLACES DE REGISTRO Y RECUPERACIÓN --- */}
       <div className="LoginConductores-links">
         <Link to="/RegistroConductor" className="LoginConductores-link">
             Registrarse

@@ -1,4 +1,3 @@
-/* CONTENEDOR PRINCIPAL */
 .Inicio-contenedor {
   display: flex;
   flex-direction: column;
@@ -10,13 +9,137 @@
   padding: 40px 20px;
 }
 
-.Inicio-cabecera:hover {
-  transform: scale(1.02);
+/* =========================================
+   NUEVOS ESTILOS PARA EL LOGO 3D METALICO Y TÍTULO
+   ========================================= */
+
+.Inicio-logo-container-3d {
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* Cambiado a columna para poner el título abajo */
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* Separación del Header */
+  margin-bottom: 50px; /* Separación de las Tarjetas */
+  perspective: 1000px; /* Clave para el efecto 3D */
+  
+  /* Animación de entrada para todo el bloque */
+  opacity: 0; 
+  animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
-/* HEADER */
+
+.Logo-3d-wrapper {
+  position: relative;
+  width: 100px; /* Ajusta el tamaño del logo aquí */
+  height: auto;
+  transform-style: preserve-3d;
+  animation: flotarLogo 4s ease-in-out infinite;
+  z-index: 2; 
+}
+
+/* --- NUEVOS ESTILOS PARA EL TÍTULO --- */
+.Inicio-titulo-3d {
+  margin-top: 10px; 
+  font-size: 2.4rem; 
+  font-weight: 800; 
+  letter-spacing: -1px; 
+  line-height: 1;
+  text-transform: uppercase;
+  
+  /* Animación propia con retraso */
+  opacity: 0;
+  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: 0.2s; /* Aparece después del logo */
+  
+  /* Sombra sutil para darle cuerpo */
+  text-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  display: flex;
+  gap: 2px; /* Unir visualmente las palabras pero manteniendo los spans */
+}
+
+.Inicio-titulo-3d span:first-child {
+  color: #111827; /* INTEGR en Negro/Gris Oscuro */
+}
+
+.Inicio-titulo-3d span:last-child {
+  color: #bacf65; /* APP en Verde Corporativo */
+}
+/* ------------------------------------- */
+
+.Inicio-logo-3d {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* Efecto 3D y Metálico Verde */
+  filter: 
+    /* Sombra profunda para profundidad */
+    drop-shadow(0px 15px 10px rgba(0, 0, 0, 0.4))
+    /* Resplandor Verde Metálico */
+    drop-shadow(0px 0px 5px rgba(141, 199, 63, 0.6))
+    /* Brillo extra para el efecto metal */
+    brightness(1.1)
+    contrast(1.1);
+  
+  transform: rotateX(10deg) rotateY(0deg);
+  transition: all 0.5s ease;
+}
+
+/* Efecto de reflejo debajo del logo (opcional, muy pro) */
+.Logo-sombra-metalica {
+  position: absolute;
+  bottom: -20px;
+  left: 10%;
+  width: 80%;
+  height: 20px;
+  background: radial-gradient(ellipse at center, rgba(141, 199, 63, 0.4) 0%, rgba(0, 0, 0, 0) 70%);
+  transform: rotateX(90deg) translateZ(-20px);
+  filter: blur(5px);
+  opacity: 0.6;
+  animation: sombraRespirar 4s ease-in-out infinite;
+}
+
+/* Animación de interacción */
+.Logo-3d-wrapper:hover .Inicio-logo-3d {
+  transform: rotateX(0deg) scale(1.05);
+  filter: 
+    drop-shadow(0px 20px 20px rgba(0, 0, 0, 0.3))
+    drop-shadow(0px 0px 15px rgba(141, 199, 63, 0.9))
+    brightness(1.2);
+}
+
+/* Animaciones Keyframes existentes del Logo */
+@keyframes flotarLogo {
+  0%, 100% { transform: translateY(0px) rotateX(5deg); }
+  50% { transform: translateY(-15px) rotateX(10deg); }
+}
+
+@keyframes sombraRespirar {
+  0%, 100% { transform: rotateX(90deg) scale(1); opacity: 0.6; }
+  50% { transform: rotateX(90deg) scale(0.8); opacity: 0.3; }
+}
+
+/* =========================================
+    ANIMACIÓN DE ENTRADA (FADE IN UP)
+   ========================================= */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px); 
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0); 
+  }
+}
+
+/* =========================================
+   FIN ESTILOS LOGO 3D
+   ========================================= */
+
+/* HEADER (Ajustado para no chocar) */
 .Inicio-cabecera {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 20px; /* Reducido porque metimos el logo 3D */
   animation: fadeInDown 0.8s ease-out;
   display: flex;
   flex-direction: column;
@@ -24,6 +147,11 @@
   cursor: pointer; 
   transition: transform 0.2s ease; 
 }
+
+.Inicio-cabecera:hover {
+  transform: scale(1.02);
+}
+
 
 .Inicio-logo-icon {
   width: 100px;
@@ -44,7 +172,7 @@
 }
 
 .Inicio-titulo span:first-child { color: #111827; }
-.Inicio-titulo span:last-child { color: #8dc73f; }
+.Inicio-titulo span:last-child { color: #d0dcbf; }
 
 .Inicio-subtitulo {
   color: #6b7280;
@@ -67,10 +195,10 @@
 .Inicio-card {
   background-color: #ffffff;
   border-radius: 20px;
-  padding: 30px 25px;
+  padding: 10px 15px;
   flex: 1 1 280px; 
-  max-width: 320px; 
-  min-height: 260px; 
+  max-width: 300px; 
+  min-height: 100px; 
   text-align: center;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0,0,0,0.04);
@@ -79,7 +207,26 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  /* NUEVO: Animación de entrada */
+  opacity: 0; /* Inicia invisible para que la animación lo revele */
+  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
+
+/* NUEVO: Retraso escalonado (Stagger effect) para las tarjetas */
+/* Tarjeta 1 */
+.Inicio-card:nth-child(1) {
+  animation-delay: 0.2s;
+}
+/* Tarjeta 2 */
+.Inicio-card:nth-child(2) {
+  animation-delay: 0.4s;
+}
+/* Tarjeta 3 */
+.Inicio-card:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
 
 .Inicio-card:hover {
   transform: translateY(-8px);
@@ -163,7 +310,95 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 608px) {
   .Inicio-opciones { flex-direction: column; align-items: center; }
   .Inicio-card { width: 100%; max-width: 100%; min-height: auto; }
+}
+/* =========================================
+   RESPONSIVE DESIGN (MÓVILES)
+   ========================================= */
+@media (max-width: 768px) {
+  
+  .Inicio-contenedor {
+    padding: 20px 15px;
+    justify-content: flex-start; 
+  }
+
+  /* 2. Logo 3D: Más pequeño */
+  .Logo-3d-wrapper {
+    width: 50px; /* Reducido de 100px */
+    margin-top: 40px;
+  }
+  
+  .Inicio-logo-container-3d {
+    margin-bottom: -20px; /* Menos separación con las tarjetas */
+    margin-top: 20px;
+  }
+
+  /* 3. Título y Subtítulo: Fuentes más compactas */
+  .Inicio-titulo-3d {
+    font-size: 1.8rem; /* Reducido de 2.4rem */
+    margin-top: 5px;
+    margin: 40px;
+  }
+
+  .Inicio-subtitulo {
+    font-size: 0.95rem;
+  }
+
+  .Inicio-opciones {
+    gap: 15px; 
+  }
+
+  /* 5. Tarjetas: Mucho más compactas */
+  .Inicio-card {
+    /* Quitamos el ancho fijo y usamos porcentajes con límite */
+    flex: 1 1 100%; 
+    width: 100%;
+    max-width: 340px; /* Límite para que no se vea "eterna" en tablets pequeñas */
+    min-height: auto; /* Altura automática según contenido */
+    padding: 15px; /* Reducido de 20px o más */
+    margin: 0 auto; /* Centradas si son menos del ancho total */
+  }
+
+  /* 6. Círculo del Ícono: Más pequeño */
+  .Inicio-card-icon-bg {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px;
+    min-height: 50px;
+    margin-bottom: 12px; /* Menos espacio abajo */
+  }
+
+  .Inicio-card-icon-bg svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  /* 7. Textos dentro de la tarjeta */
+  .Inicio-card h2 {
+    font-size: 1.1rem; 
+    margin-bottom: 8px;
+  }
+
+  .Inicio-card p {
+    font-size: 0.85rem; 
+    line-height: 1.4;
+    margin-bottom: 15px;
+  }
+
+  .Inicio-card-action {
+    padding-top: 10px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Ajuste extra para pantallas muy pequeñas (iPhone SE, etc) */
+@media (max-width: 380px) {
+  .Inicio-titulo-3d {
+    font-size: 1.5rem;
+  }
+  .Inicio-card {
+    padding: 12px;
+  }
 }

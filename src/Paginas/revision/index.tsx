@@ -53,18 +53,16 @@ const RevisionVehiculos: React.FC = () => {
   const vehiclesPerPage = 20;
 
   /* --- ESTADOS DE BÚSQUEDA --- */
-  // 1. Input temporal (lo que escribes)
   const [inputIncompletos, setInputIncompletos] = useState("");
   const [inputCompletados, setInputCompletados] = useState("");
   const [inputAprobados, setInputAprobados] = useState("");
 
-  // 2. Filtro ejecutado (al dar Enter/Lupa)
   const [searchQueryIncompletos, setSearchQueryIncompletos] = useState("");
   const [searchQueryCompletados, setSearchQueryCompletados] = useState("");
   const [searchQueryAprobados, setSearchQueryAprobados] = useState("");
 
   /* -------------------------------------------------------------------------- */
-  /* CICLO DE VIDA Y CARGA DE DATOS                                             */
+  /* CICLO DE VIDA Y CARGA DE DATOS                                           */
   /* -------------------------------------------------------------------------- */
 
   useEffect(() => {
@@ -92,7 +90,7 @@ const RevisionVehiculos: React.FC = () => {
   };
 
   /* -------------------------------------------------------------------------- */
-  /* EFECTO: BUSQUEDA EN APROBADOS (VERDE)                                      */
+  /* EFECTO: BUSQUEDA EN APROBADOS (VERDE)                                    */
   /* -------------------------------------------------------------------------- */
   
   useEffect(() => {
@@ -115,15 +113,13 @@ const RevisionVehiculos: React.FC = () => {
   };
 
   /* -------------------------------------------------------------------------- */
-  /* FUNCIONES DE BÚSQUEDA Y LIMPIEZA                                           */
+  /* FUNCIONES DE BÚSQUEDA Y LIMPIEZA                                         */
   /* -------------------------------------------------------------------------- */
 
-  // Ejecutar búsqueda
   const ejecutarBusquedaIncompletos = () => setSearchQueryIncompletos(inputIncompletos);
   const ejecutarBusquedaCompletados = () => setSearchQueryCompletados(inputCompletados);
   const ejecutarBusquedaAprobados = () => setSearchQueryAprobados(inputAprobados);
 
-  // Limpiar búsqueda (Borra texto y resetea filtro)
   const limpiarIncompletos = () => {
     setInputIncompletos("");
     setSearchQueryIncompletos("");
@@ -142,70 +138,101 @@ const RevisionVehiculos: React.FC = () => {
   };
 
   /* -------------------------------------------------------------------------- */
-  /* LÓGICA DE APROBACIÓN Y RECHAZO                                             */
+  /* LÓGICA DE APROBACIÓN Y RECHAZO                                           */
   /* -------------------------------------------------------------------------- */
 
   const aprobarVehiculo = async (veh: Vehiculo) => {
-    const fileResult = await Swal.fire({
-      title: `Cargar Estudio de Seguridad`,
-      text: `Para aprobar el vehículo ${veh.placa}, es obligatorio adjuntar el documento.`,
-      html: `<input type="file" id="swal-file" class="swal2-input" style="margin-top: 10px; width: 100%;">`,
+    // CAMBIO REALIZADO: Unificación de modales. 
+    // Ahora muestra input de archivo y textarea de comentario al mismo tiempo.
+    const { value: formValues } = await Swal.fire({
+      title: `Aprobar Vehículo`,
+      text: `Gestionar aprobación para placa: ${veh.placa}`,
+      // Inyectamos HTML con ambos inputs
+      html: `
+        <div style="text-align: left; margin-bottom: 5px;">
+            <label style="font-weight:600; font-size: 0.9rem;">1. Cargar Estudio de Seguridad (Opcional)</label>
+            <input type="file" id="swal-file" class="swal2-file" />
+        </div>
+        <div style="text-align: left;">
+            <label style="font-weight:600; font-size: 0.9rem;">2. Comentario / Observación (Opcional)</label>
+            <textarea id="swal-comment" class="swal2-textarea" placeholder="Escribe un comentario aquí si es necesario..."></textarea>
+        </div>
+      `,
       showCancelButton: true,
-      confirmButtonText: "Subir y Continuar",
-      confirmButtonColor: "#0056b3",
+      confirmButtonText: "Aprobar Vehículo",
+      confirmButtonColor: "#28a745", // Verde
+      cancelButtonText: "Cancelar",
+      cancelButtonColor: "#6c757d",
+      
       preConfirm: () => {
         const fileInput = document.getElementById("swal-file") as HTMLInputElement;
-        return (fileInput && fileInput.files && fileInput.files[0]) || Swal.showValidationMessage("Selecciona un archivo");
-      },
+        const commentInput = document.getElementById("swal-comment") as HTMLInputElement;
+        
+        return {
+           file: (fileInput && fileInput.files && fileInput.files[0]) ? fileInput.files[0] : null,
+           comment: commentInput ? commentInput.value : ""
+        };
+      }
     });
 
-    if (!fileResult.isConfirmed || !fileResult.value) return;
+    // Si el usuario cancela, no hacemos nada
+    if (!formValues) return;
+
+    const { file, comment } = formValues;
 
     try {
-      Swal.fire({ title: 'Subiendo...', didOpen: () => Swal.showLoading() });
-      const formDataArchivo = new FormData();
-      formDataArchivo.append("archivo", fileResult.value);
-      formDataArchivo.append("placa", veh.placa);
-      await axios.put(`${API_BASE}/vehiculos/subir-estudio-seguridad`, formDataArchivo);
-      Swal.close();
-    } catch {
-      Swal.fire("Error", "Falló la carga del documento.", "error");
-      return;
+        // Mostramos cargando
+        Swal.fire({ title: 'Procesando...', text: 'Actualizando información...', didOpen: () => Swal.showLoading() });
+
+        // 1. Si hay archivo, lo subimos primero
+        if (file) {
+            const formDataArchivo = new FormData();
+            formDataArchivo.append("archivo", file);
+            formDataArchivo.append("placa", veh.placa);
+            await axios.put(`${API_BASE}/vehiculos/subir-estudio-seguridad`, formDataArchivo);
+        }
+
+        // 2. Ejecutamos la aprobación (enviando el comentario si existe)
+        await ejecutarAprobacion(veh, comment);
+
+    } catch (error) {
+        console.error(error);
+        Swal.fire("Error", "Ocurrió un error al procesar la aprobación o subir el archivo.", "error");
     }
+  };
 
-    const confirmResult = await Swal.fire({
-      title: "Documento cargado",
-      text: `¿Confirma la APROBACIÓN del vehículo ${veh.placa}?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#28a745",
-      confirmButtonText: "Sí, Aprobar"
-    });
-
-    if (confirmResult.isConfirmed) {
+  // Función auxiliar para llamar al backend de aprobación
+  const ejecutarAprobacion = async (veh: Vehiculo, observaciones: string) => {
       try {
         const seguridadId = Cookies.get("seguridadId") || "";
         const formDataEstado = new FormData();
         formDataEstado.append("placa", veh.placa);
         formDataEstado.append("nuevo_estado", "aprobado");
         formDataEstado.append("usuario_id", seguridadId);
+        
+        // Si hay observaciones capturadas en el modal, las enviamos
+        if (observaciones) {
+            formDataEstado.append("observaciones", observaciones);
+        }
 
         await axios.put(`${API_BASE}/vehiculos/actualizar-estado`, formDataEstado);
-        Swal.fire("Aprobado", `El vehículo ${veh.placa} ha sido aprobado.`, "success");
+        
+        // Éxito
+        Swal.fire("Aprobado", `El vehículo ${veh.placa} ha sido aprobado exitosamente.`, "success");
 
+        // Actualizar estados locales
         setVehiculosCompletados(prev => prev.filter(v => v._id !== veh._id));
         fetchAprobadosBackend(""); 
         if (expandedId === veh._id) setExpandedId(null);
         setVista("aprobados");
-      } catch {
-        Swal.fire("Error", "No se pudo actualizar el estado.", "error");
+      } catch (error) {
+        throw error; // Lanzamos el error para que lo capture el bloque try/catch principal
       }
-    }
   };
 
   const rechazarVehiculo = async (veh: Vehiculo) => {
     const { value: observaciones } = await Swal.fire({
-      title: `Devolver a Pendientes: ${veh.placa}`,
+      title: `Devolver a Registro Incompleto ${veh.placa}`,
       input: 'textarea',
       inputPlaceholder: 'Ingrese las observaciones...',
       showCancelButton: true,
@@ -251,146 +278,159 @@ const RevisionVehiculos: React.FC = () => {
     if (newPage >= 1 && newPage <= totalPages) setCurrentPage(newPage);
   };
 
-  const RenderDatosVehiculo = ({ veh }: { veh: Vehiculo }) => (
-    <div className="detalle-completo">
-      
-      {/* 1. Información Básica */}
-      <h4 className="titulo-seccion">📌 Información Básica del Registro</h4>
-      <div className="datos-grid">
-        <p><strong>Placa:</strong> {veh.placa}</p>
-        <p><strong>Estado:</strong> {veh.estadoIntegra}</p>
-        <p><strong>ID Usuario (Registro):</strong> {veh.idUsuario}</p>
-        <p><strong>Usuario Integra (Auditor):</strong> {veh.usuarioIntegra || "No asignado"}</p>
-        {veh.observaciones && (
-           <p style={{ gridColumn: '1 / -1', backgroundColor: '#fff3cd', border: '1px solid #ffeeba', color: '#856404' }}>
-             <strong>⚠️ Últimas Observaciones:</strong> {veh.observaciones}
-           </p>
-        )}
-      </div>
+  const RenderDatosVehiculo = ({ veh }: { veh: Vehiculo }) => {
+    
+    // Lógica de estilos para las observaciones
+    const isAprobado = veh.estadoIntegra === "aprobado" || vista === "aprobados";
+    const estiloObservacion = isAprobado 
+        ? { backgroundColor: '#d4edda', border: '1px solid #c3e6cb', color: '#155724' } // Verde (Aprobado)
+        : { backgroundColor: '#fff3cd', border: '1px solid #ffeeba', color: '#856404' }; // Amarillo (Alerta)
+    
+    const tituloObservacion = isAprobado ? "✅ Observación de Aprobación:" : "⚠️ Últimas Observaciones:";
 
-      {/* 2. DATOS DEL CONDUCTOR */}
-      <h4 className="titulo-seccion">👤 Datos del Conductor</h4>
-      <div className="datos-grid">
-        <p><strong>Nombre Completo:</strong> {veh.condNombres} {veh.condPrimerApellido} {veh.condSegundoApellido}</p>
-        <p><strong>Cédula:</strong> {veh.condCedulaCiudadania}</p>
-        <p><strong>Expedida En:</strong> {veh.condExpedidaEn}</p>
-        <p><strong>Dirección:</strong> {veh.condDireccion}</p>
-        <p><strong>Ciudad:</strong> {veh.condCiudad}</p>
-        <p><strong>Celular:</strong> {veh.condCelular}</p>
-        <p><strong>Correo:</strong> {veh.condCorreo}</p>
-        <p><strong>EPS:</strong> {veh.condEps}</p>
-        <p><strong>ARL:</strong> {veh.condArl}</p>
-        <p><strong>Grupo Sanguíneo:</strong> {veh.condGrupoSanguineo}</p>
-      </div>
-      <div className="datos-grid">
-        <p><strong>Licencia No:</strong> {veh.condNoLicencia}</p>
-        <p><strong>Vencimiento Licencia:</strong> {veh.condFechaVencimientoLic}</p>
-        <p><strong>Categoría Licencia:</strong> {veh.condCategoriaLic}</p>
-      </div>
-      
-      {/* Referencias y Emergencia */}
-      <h5 className="titulo-subseccion">📞 Contacto Emergencia & Referencias</h5>
-      <div className="datos-grid">
-        <p><strong>Nombre Emergencia:</strong> {veh.condNombreEmergencia}</p>
-        <p><strong>Celular Emergencia:</strong> {veh.condCelularEmergencia}</p>
-        <p><strong>Parentesco:</strong> {veh.condParentescoEmergencia}</p>
-        <p><strong>Empresa Ref:</strong> {veh.condEmpresaRef}</p>
-        <p><strong>Celular Ref:</strong> {veh.condCelularRef}</p>
-        <p><strong>Ciudad Ref:</strong> {veh.condCiudadRef}</p>
-        <p><strong>Nro Viajes Ref:</strong> {veh.condNroViajesRef}</p>
-        <p><strong>Antigüedad Ref:</strong> {veh.condAntiguedadRef}</p>
-        <p><strong>Mercancía:</strong> {veh.condMercTransportada}</p>
-      </div>
-
-      {/* 3. DATOS DEL PROPIETARIO */}
-      <h4 className="titulo-seccion">🔑 Datos del Propietario</h4>
-      <div className="datos-grid">
-        <p><strong>Nombre:</strong> {veh.propNombre}</p>
-        <p><strong>Documento:</strong> {veh.propDocumento}</p>
-        <p><strong>Ciudad Exp:</strong> {veh.propCiudadExpDoc}</p>
-        <p><strong>Celular:</strong> {veh.propCelular}</p>
-        <p><strong>Correo:</strong> {veh.propCorreo}</p>
-        <p><strong>Dirección:</strong> {veh.propDireccion}</p>
-        <p><strong>Ciudad:</strong> {veh.propCiudad}</p>
-      </div>
-
-      {/* 4. DATOS DEL TENEDOR */}
-      <h4 className="titulo-seccion">🤝 Datos del Tenedor</h4>
-      <div className="datos-grid">
-        <p><strong>Nombre:</strong> {veh.tenedNombre}</p>
-        <p><strong>Documento:</strong> {veh.tenedDocumento}</p>
-        <p><strong>Ciudad Exp:</strong> {veh.tenedCiudadExpDoc}</p>
-        <p><strong>Celular:</strong> {veh.tenedCelular}</p>
-        <p><strong>Correo:</strong> {veh.tenedCorreo}</p>
-        <p><strong>Dirección:</strong> {veh.tenedDireccion}</p>
-        <p><strong>Ciudad:</strong> {veh.tenedCiudad}</p>
-      </div>
-
-      {/* 5. DATOS DEL VEHÍCULO */}
-      <h4 className="titulo-seccion">🚚 Datos del Vehículo</h4>
-      <div className="datos-grid">
-        <p><strong>Placa:</strong> {veh.placa}</p>
-        <p><strong>Marca:</strong> {veh.vehMarca}</p>
-        <p><strong>Línea:</strong> {veh.vehLinea}</p>
-        <p><strong>Modelo:</strong> {veh.vehModelo}</p>
-        <p><strong>Año:</strong> {veh.vehAno}</p>
-        <p><strong>Color:</strong> {veh.vehColor}</p>
-        <p><strong>Carrocería:</strong> {veh.vehTipoCarroceria}</p>
-        <p><strong>Repotenciado:</strong> {veh.vehRepotenciado}</p>
-      </div>
-      
-      {/* Datos Satelitales */}
-      <div className="datos-grid mt-2 bg-gray-50 p-2 rounded">
-        <p><strong>Empresa Satélite:</strong> {veh.vehEmpresaSat}</p>
-        <p><strong>Usuario Satélite:</strong> {veh.vehUsuarioSat}</p>
-        <p><strong>Clave Satélite:</strong> {veh.vehClaveSat}</p>
-      </div>
-
-      {/* 6. DATOS DEL REMOLQUE (Si aplica) */}
-      {(veh.RemolPlaca || veh.tarjetaRemolque) && (
-        <>
-          <h4 className="titulo-seccion">🚛 Datos del Remolque</h4>
+    return (
+        <div className="detalle-completo">
+          
+          {/* 1. Información Básica */}
+          <h4 className="titulo-seccion">📌 Información Básica del Registro</h4>
           <div className="datos-grid">
-            <p><strong>Placa Remolque:</strong> {veh.RemolPlaca}</p>
-            <p><strong>Modelo:</strong> {veh.RemolModelo}</p>
-            <p><strong>Clase:</strong> {veh.RemolClase}</p>
-            <p><strong>Carrocería:</strong> {veh.RemolTipoCarroceria}</p>
-            <p><strong>Alto:</strong> {veh.RemolAlto}</p>
-            <p><strong>Largo:</strong> {veh.RemolLargo}</p>
-            <p><strong>Ancho:</strong> {veh.RemolAncho}</p>
+            <p><strong>Placa:</strong> {veh.placa}</p>
+            <p><strong>Estado:</strong> {veh.estadoIntegra}</p>
+            <p><strong>ID Usuario (Registro):</strong> {veh.idUsuario}</p>
+            <p><strong>Usuario Integra (Auditor):</strong> {veh.usuarioIntegra || "No asignado"}</p>
+            
+            {/* Visualización condicional de observaciones (Verde o Amarillo) */}
+            {veh.observaciones && (
+                <p style={{ gridColumn: '1 / -1', ...estiloObservacion }}>
+                  <strong>{tituloObservacion}</strong> {veh.observaciones}
+                </p>
+            )}
           </div>
-        </>
-      )}
 
-      {/* 7. DOCUMENTOS */}
-      <h4 className="titulo-seccion">📄 Documentos y Fotos</h4>
-      
-      <div className="box-estudio-seguridad">
-         {veh.estudioSeguridad ? (
-           <div className="flex items-center gap-4 w-full">
-             <span className="font-bold text-blue-800">Estudio de Seguridad:</span>
-             <a href={veh.estudioSeguridad} target="_blank" rel="noopener noreferrer" className="btn-ver-doc-seguridad">
-               VER DOCUMENTO
-             </a>
-           </div>
-         ) : <span className="text-red-500 font-bold">Sin estudio de seguridad cargado.</span>}
-      </div>
+          {/* 2. DATOS DEL CONDUCTOR */}
+          <h4 className="titulo-seccion">👤 Datos del Conductor</h4>
+          <div className="datos-grid">
+            <p><strong>Nombre Completo:</strong> {veh.condNombres} {veh.condPrimerApellido} {veh.condSegundoApellido}</p>
+            <p><strong>Cédula:</strong> {veh.condCedulaCiudadania}</p>
+            <p><strong>Expedida En:</strong> {veh.condExpedidaEn}</p>
+            <p><strong>Dirección:</strong> {veh.condDireccion}</p>
+            <p><strong>Ciudad:</strong> {veh.condCiudad}</p>
+            <p><strong>Celular:</strong> {veh.condCelular}</p>
+            <p><strong>Correo:</strong> {veh.condCorreo}</p>
+            <p><strong>EPS:</strong> {veh.condEps}</p>
+            <p><strong>ARL:</strong> {veh.condArl}</p>
+            <p><strong>Grupo Sanguíneo:</strong> {veh.condGrupoSanguineo}</p>
+          </div>
+          <div className="datos-grid">
+            <p><strong>Licencia No:</strong> {veh.condNoLicencia}</p>
+            <p><strong>Vencimiento Licencia:</strong> {veh.condFechaVencimientoLic}</p>
+            <p><strong>Categoría Licencia:</strong> {veh.condCategoriaLic}</p>
+          </div>
+          
+          {/* Referencias y Emergencia */}
+          <h5 className="titulo-subseccion">📞 Contacto Emergencia & Referencias</h5>
+          <div className="datos-grid">
+            <p><strong>Nombre Emergencia:</strong> {veh.condNombreEmergencia}</p>
+            <p><strong>Celular Emergencia:</strong> {veh.condCelularEmergencia}</p>
+            <p><strong>Parentesco:</strong> {veh.condParentescoEmergencia}</p>
+            <p><strong>Empresa Ref:</strong> {veh.condEmpresaRef}</p>
+            <p><strong>Celular Ref:</strong> {veh.condCelularRef}</p>
+            <p><strong>Ciudad Ref:</strong> {veh.condCiudadRef}</p>
+            <p><strong>Nro Viajes Ref:</strong> {veh.condNroViajesRef}</p>
+            <p><strong>Antigüedad Ref:</strong> {veh.condAntiguedadRef}</p>
+            <p><strong>Mercancía:</strong> {veh.condMercTransportada}</p>
+          </div>
 
-      {veh.documentos && Object.keys(veh.documentos).length > 0 ? (
-        <div className="grid-documentos">
-          {Object.entries(veh.documentos).map(([nombre, url]) => (
-            <div key={nombre} className="documento-card" onClick={() => window.open(url as string, "_blank")}>
-              <p className="font-medium capitalize">{nombre.replace(/([A-Z])/g, " $1")}</p>
-              <span className="text-xs text-blue-600">Ver</span>
+          {/* 3. DATOS DEL PROPIETARIO */}
+          <h4 className="titulo-seccion">🔑 Datos del Propietario</h4>
+          <div className="datos-grid">
+            <p><strong>Nombre:</strong> {veh.propNombre}</p>
+            <p><strong>Documento:</strong> {veh.propDocumento}</p>
+            <p><strong>Ciudad Exp:</strong> {veh.propCiudadExpDoc}</p>
+            <p><strong>Celular:</strong> {veh.propCelular}</p>
+            <p><strong>Correo:</strong> {veh.propCorreo}</p>
+            <p><strong>Dirección:</strong> {veh.propDireccion}</p>
+            <p><strong>Ciudad:</strong> {veh.propCiudad}</p>
+          </div>
+
+          {/* 4. DATOS DEL TENEDOR */}
+          <h4 className="titulo-seccion">🤝 Datos del Tenedor</h4>
+          <div className="datos-grid">
+            <p><strong>Nombre:</strong> {veh.tenedNombre}</p>
+            <p><strong>Documento:</strong> {veh.tenedDocumento}</p>
+            <p><strong>Ciudad Exp:</strong> {veh.tenedCiudadExpDoc}</p>
+            <p><strong>Celular:</strong> {veh.tenedCelular}</p>
+            <p><strong>Correo:</strong> {veh.tenedCorreo}</p>
+            <p><strong>Dirección:</strong> {veh.tenedDireccion}</p>
+            <p><strong>Ciudad:</strong> {veh.tenedCiudad}</p>
+          </div>
+
+          {/* 5. DATOS DEL VEHÍCULO */}
+          <h4 className="titulo-seccion">🚚 Datos del Vehículo</h4>
+          <div className="datos-grid">
+            <p><strong>Placa:</strong> {veh.placa}</p>
+            <p><strong>Marca:</strong> {veh.vehMarca}</p>
+            <p><strong>Línea:</strong> {veh.vehLinea}</p>
+            <p><strong>Modelo:</strong> {veh.vehModelo}</p>
+            <p><strong>Año:</strong> {veh.vehAno}</p>
+            <p><strong>Color:</strong> {veh.vehColor}</p>
+            <p><strong>Carrocería:</strong> {veh.vehTipoCarroceria}</p>
+            <p><strong>Repotenciado:</strong> {veh.vehRepotenciado}</p>
+          </div>
+          
+          {/* Datos Satelitales */}
+          <div className="datos-grid mt-2 bg-gray-50 p-2 rounded">
+            <p><strong>Empresa Satélite:</strong> {veh.vehEmpresaSat}</p>
+            <p><strong>Usuario Satélite:</strong> {veh.vehUsuarioSat}</p>
+            <p><strong>Clave Satélite:</strong> {veh.vehClaveSat}</p>
+          </div>
+
+          {/* 6. DATOS DEL REMOLQUE (Si aplica) */}
+          {(veh.RemolPlaca || veh.tarjetaRemolque) && (
+            <>
+              <h4 className="titulo-seccion">🚛 Datos del Remolque</h4>
+              <div className="datos-grid">
+                <p><strong>Placa Remolque:</strong> {veh.RemolPlaca}</p>
+                <p><strong>Modelo:</strong> {veh.RemolModelo}</p>
+                <p><strong>Clase:</strong> {veh.RemolClase}</p>
+                <p><strong>Carrocería:</strong> {veh.RemolTipoCarroceria}</p>
+                <p><strong>Alto:</strong> {veh.RemolAlto}</p>
+                <p><strong>Largo:</strong> {veh.RemolLargo}</p>
+                <p><strong>Ancho:</strong> {veh.RemolAncho}</p>
+              </div>
+            </>
+          )}
+
+          {/* 7. DOCUMENTOS */}
+          <h4 className="titulo-seccion">📄 Documentos y Fotos</h4>
+          
+          <div className="box-estudio-seguridad">
+              {veh.estudioSeguridad ? (
+                <div className="flex items-center gap-4 w-full">
+                  <span className="font-bold text-blue-800">Estudio de Seguridad:</span>
+                  <a href={veh.estudioSeguridad} target="_blank" rel="noopener noreferrer" className="btn-ver-doc-seguridad">
+                    VER DOCUMENTO
+                  </a>
+                </div>
+              ) : <span className="text-red-500 font-bold">Sin estudio de seguridad cargado.</span>}
+          </div>
+
+          {veh.documentos && Object.keys(veh.documentos).length > 0 ? (
+            <div className="grid-documentos">
+              {Object.entries(veh.documentos).map(([nombre, url]) => (
+                <div key={nombre} className="documento-card" onClick={() => window.open(url as string, "_blank")}>
+                  <p className="font-medium capitalize">{nombre.replace(/([A-Z])/g, " $1")}</p>
+                  <span className="text-xs text-blue-600">Ver</span>
+                </div>
+              ))}
             </div>
-          ))}
+          ) : <p className="text-gray-500 italic">No hay documentos adjuntos adicionales.</p>}
         </div>
-      ) : <p className="text-gray-500 italic">No hay documentos adjuntos adicionales.</p>}
-    </div>
-  );
+    );
+  };
 
   /* -------------------------------------------------------------------------- */
-  /* FILTRADO LOCAL (ROJA Y AMARILLA)                                           */
+  /* FILTRADO LOCAL (ROJA Y AMARILLA)                                         */
   /* -------------------------------------------------------------------------- */
 
   const filtrarLocales = (lista: Vehiculo[], busqueda: string) => {
@@ -418,7 +458,7 @@ const RevisionVehiculos: React.FC = () => {
   }, [filteredCompletados, currentPage, vehiclesPerPage]);
 
   /* -------------------------------------------------------------------------- */
-  /* RENDERIZADO VISUAL                                                         */
+  /* RENDERIZADO VISUAL                                                       */
   /* -------------------------------------------------------------------------- */
 
   return (
@@ -504,7 +544,7 @@ const RevisionVehiculos: React.FC = () => {
                       <RenderDatosVehiculo veh={veh} />
                       <div className="acciones mt-4 border-t pt-4">
                         <button className="btn-aprobar" onClick={() => aprobarVehiculo(veh)}>Aprobar vehículo</button>
-                        <button className="btn-rechazar" onClick={() => rechazarVehiculo(veh)}>Devolver a Incompletos</button>
+                        <button className="btn-rechazar" onClick={() => rechazarVehiculo(veh)}>Rechazar Vehículo</button>
                       </div>
                     </div>
                   )}

@@ -75,7 +75,7 @@
   font-size: 13px; 
   font-weight: 700;
   letter-spacing: 2px;
-  color: #12480f;
+  color: #bacf65;
   margin-left: 0px;
 }
 
@@ -164,7 +164,7 @@
 }
 
 .menu-desplegable button.btn-cerrar-sesion {
-  background: none;
+  background:#edf2ca ;
   border: none;
   width: 100%; 
   padding: 12px 20px;
@@ -172,11 +172,11 @@
   font-size: 15px;
   cursor: pointer;
   font-weight: 2000;
-  color: #0b400a; 
+  color: #0c5d1f; 
   transition: background-color 0.4s;
 }
 
 .menu-desplegable button.btn-cerrar-sesion:hover {
-  background: #9bb680; 
-  color: #57b157;
+  background: #d7d8d2; 
+  color: #bacf65;
 }

@@ -358,6 +358,54 @@ body, html {
   font-weight: 600;
 }
 
+/* --- NUEVO: SELECCIÓN DE VEHÍCULOS (PASO 1) --- */
+.lista-vehiculos-seleccion {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.lista-vehiculos-title {
+  margin-bottom: 15px;
+  color: #333;
+  font-weight: bold;
+}
+
+.lista-vehiculos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-seleccion-vehiculo {
+  padding: 12px 20px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.btn-seleccion-vehiculo:hover {
+  border-color: #8dc73f;
+  transform: translateY(-2px);
+  background-color: #f9fff0;
+  box-shadow: 0 4px 8px rgba(141, 199, 63, 0.2);
+}
+
+.btn-seleccion-vehiculo svg {
+  color: #8dc73f;
+  font-size: 1.1rem;
+}
+/* --------------------------------------------- */
+
 /* RECHAZADOS */
 .seccion-rechazados { margin-top: 25px; }
 .titulo-rechazados { color: #c0392b; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-size: 1.1rem;}

@@ -206,7 +206,12 @@ const PanelConductoresVista: React.FC = () => {
         const rechazados = data.vehiculos.filter((v: any) => v.observaciones && v.observaciones.trim() !== "");
         setVehiculosRechazados(rechazados);
 
-        if (plates.length > 0 && !selectedPlate) setSelectedPlate(plates[0]);
+        /* --- CORRECCIÓN IMPORTANTE ---
+           Eliminamos la línea que seleccionaba automáticamente la primera placa.
+           Ahora selectedPlate se mantiene null hasta que el usuario elija.
+        */
+        // if (plates.length > 0 && !selectedPlate) setSelectedPlate(plates[0]); <-- ESTA LÍNEA SE QUITÓ
+
       } else { 
           setVehicles([]);
           setVehiculosRechazados([]);
@@ -225,6 +230,8 @@ const PanelConductoresVista: React.FC = () => {
       if (response.ok) {
         Swal.fire("Éxito", "Vehículo creado", "success");
         setVehicles(prev => !prev.includes(data.placa) ? [...prev, data.placa] : prev);
+        
+        // Al crear uno nuevo, SÍ lo seleccionamos automáticamente para agilizar
         setSelectedPlate(data.placa);
         setNewPlate("");
       } else { Swal.fire("Error", data.detail || "Error al crear", "error"); }
@@ -374,30 +381,15 @@ const PanelConductoresVista: React.FC = () => {
                                 <p style={{color: '#999'}}>¡Todo al día! No tienes vehículos pendientes.</p> 
                             ) : (
                                 <div className="lista-vehiculos-seleccion">
-                                   <p style={{marginBottom: '15px', color: '#333', fontWeight: 'bold'}}>Seleccione un vehículo para continuar:</p>
-                                   <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center'}}>
+                                   <p className="lista-vehiculos-title">Seleccione un vehículo para continuar:</p>
+                                   <div className="lista-vehiculos-grid">
                                      {vehicles.map((placaItem, idx) => (
                                        <button 
                                          key={idx}
                                          onClick={() => setSelectedPlate(placaItem)}
-                                         style={{
-                                           padding: '10px 20px',
-                                           backgroundColor: 'white',
-                                           border: '1px solid #ddd',
-                                           borderRadius: '8px',
-                                           cursor: 'pointer',
-                                           fontWeight: 'bold',
-                                           color: '#333',
-                                           boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                                           display: 'flex',
-                                           alignItems: 'center',
-                                           gap: '8px',
-                                           transition: 'all 0.2s'
-                                         }}
-                                         onMouseOver={(e) => e.currentTarget.style.borderColor = '#8dc73f'}
-                                         onMouseOut={(e) => e.currentTarget.style.borderColor = '#ddd'}
+                                         className="btn-seleccion-vehiculo" 
                                        >
-                                         <FaCar color="#8dc73f"/> {placaItem}
+                                         <FaCar /> {placaItem}
                                        </button>
                                      ))}
                                    </div>

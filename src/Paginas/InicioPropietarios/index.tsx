@@ -113,6 +113,10 @@ const InicioPropietarios: React.FC = () => {
               <h1>App</h1>
             </div>
           </div>
+
+             <div className="InicioPropietarios-subtitulo">
+              <h1>Ingreso Propietarios</h1>
+             </div>
           {/* --------------------------------------------- */}
 
           {errorMessage && <div className="mensajeError">{errorMessage}</div>}

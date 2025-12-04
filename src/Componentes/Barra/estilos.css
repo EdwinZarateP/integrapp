@@ -19,7 +19,6 @@
   display: flex;
   align-items: center;
   gap: 15px; 
-  /* --- AGREGADO PARA FUNCIONALIDAD DE CLICK --- */
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -172,12 +171,12 @@
   text-align: left;
   font-size: 15px;
   cursor: pointer;
-  font-weight: 600;
-  color: #dc3545; 
-  transition: background-color 0.2s;
+  font-weight: 2000;
+  color: #0b400a; 
+  transition: background-color 0.4s;
 }
 
 .menu-desplegable button.btn-cerrar-sesion:hover {
-  background: #f8d7da; 
-  color: #c82333;
+  background: #9bb680; 
+  color: #57b157;
 }

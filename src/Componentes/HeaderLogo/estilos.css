@@ -10,50 +10,51 @@
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Sombra suave abajo */
   position: fixed; /* CAMBIO CLAVE: Fixed para pegarlo a la pantalla, no al contenedor */
-  top: 0;       /* Pegado al borde superior */
-  left: 0;      /* Pegado al borde izquierdo */
+  top: 0;       
+  left: 0;      
   z-index: 1000;
   box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
 }
 
 /* Efecto hover sutil en toda la barra */
 .HeaderLogo-contenedor:hover {
-  background-color: #34495e; /* Un tono ligeramente más claro al pasar el mouse */
+  background-color: #34495e; 
 }
 
 /* Imagen del logo */
 .HeaderLogo-img {
-  height: 45px; /* Tamaño reducido para caber en la barra */
+  height: 65px;
   width: auto;
-  margin-right: 15px; /* Separación con el texto */
-  margin-bottom: 0; /* Quitamos el margen inferior del diseño anterior */
+  margin-right: 15px;
+  margin-bottom: 0;
   object-fit: contain;
-  /* Filtro para asegurar que el logo resalte sobre fondo oscuro si es necesario */
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); 
+  filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
 /* Título (IntegrApp) */
 .HeaderLogo-titulo {
   display: flex;
-  font-size: 1.5rem; /* Letra un poco más pequeña que en la portada */
+  font-size: 1.8rem; 
   font-weight: 700;
   margin: 0;
   line-height: 1;
   font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
-  text-transform: uppercase; /* Opcional: Para que se vea más como título de app */
+  text-transform: uppercase; 
 }
 
-/* Colores del texto adaptados al fondo oscuro */
 .HeaderLogo-titulo span:first-child { 
-  color: #ffffff; /* "Integr" en Blanco */
+  color: #ffffff; 
 }
 .HeaderLogo-titulo span:last-child { 
-  color: #8dc73f; /* "App" en Verde Corporativo */
+  color: #8dc73f; 
 }
 
 /* Subtítulo - LO OCULTAMOS como pediste ("solo salga el logo") */
 .HeaderLogo-subtitulo {
-  display: none; 
+  display: flex;
+  margin-left: -168px;
+  margin-top: 40px;
+  color: #ffffff;
 }
 
 /* AJUSTE PARA MÓVILES */

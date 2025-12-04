@@ -49,13 +49,14 @@ const CargaDocumento: React.FC<CargaDocumentoProps> = ({
     }
   };
 
+  // Dentro de CargaDocumento.tsx
+
   const handleUpload = async (files: File[]) => {
     const formData = new FormData();
     const key = documentName === "Fotos" ? 'archivos' : 'archivo';
     files.forEach(file => formData.append(key, file));
     formData.append('placa', placa);
 
-    // Usamos el mapping importado
     const lower = documentName.toLowerCase();
     const tipo = tiposMapping[lower] || lower.replace(/\s+/g, "_");
     formData.append('tipo', tipo);
@@ -70,9 +71,14 @@ const CargaDocumento: React.FC<CargaDocumentoProps> = ({
 
       if (response.status === 200) {
         setProgress(100);
-        const result = response.data.urls || response.data.url;
+        let result = response.data.urls || response.data.url;
         if (result && onUploadSuccess) {
-          onUploadSuccess(result); // ✅ Ahora el tipo es seguro
+            if (Array.isArray(result)) {
+                const cleanResult = result.filter(u => u && u !== "null" && u !== "undefined" && u.trim() !== "");
+                onUploadSuccess(cleanResult);
+            } else {
+                onUploadSuccess(result);
+            }
         }
       } else {
         alert('Error al subir el documento');

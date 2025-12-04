@@ -46,31 +46,47 @@
   color: #ffffff; 
 }
 .HeaderLogo-titulo span:last-child { 
-  color: #8dc73f; 
+  color: #bacf65; 
 }
 
-/* Subtítulo - LO OCULTAMOS como pediste ("solo salga el logo") */
 .HeaderLogo-subtitulo {
   display: flex;
   margin-left: -168px;
   margin-top: 40px;
   color: #ffffff;
 }
+.HeaderLogo-subtitulo span:first-child { 
+  color: #ffffff; 
+  margin-top: 5px;
+}
+.HeaderLogo-subtitulo span:last-child { 
+  color: #bacf65; 
+  margin: 5px;
+}
+
 
 /* AJUSTE PARA MÓVILES */
 @media (max-width: 768px) {
   .HeaderLogo-contenedor {
     padding: 0 15px;
-    height: 60px; /* Un poco más delgada en celular */
-    justify-content: center; /* En celular se ve mejor centrado */
+    height: 60px; 
+    justify-content: center; 
   }
   
   .HeaderLogo-img {
     height: 35px;
-    margin-right: 10px;
+    margin-right: 50px;
+    margin-top: -10px;
   }
   
   .HeaderLogo-titulo {
     font-size: 1.2rem;
+    margin-left: -40px;
+    margin-right: 60px;
+  }
+
+  .HeaderLogo-subtitulo {
+    margin-right: -40px;
+    margin-left: -210px;
   }
 }

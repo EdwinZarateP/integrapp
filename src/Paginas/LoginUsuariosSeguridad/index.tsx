@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../Imagenes/albatros.png";
 import "./estilos.css"; 
 
+// 1. Importamos el componente del Header
+import HeaderLogo from "../../Componentes/HeaderLogo";
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
 
 interface UsuarioBackend {
@@ -76,8 +79,14 @@ const LoginUsuariosSeguridad = () => {
   };
 
   return (
-    <div className="LoginSeguridad-contenedor">
+    <div className="LoginSeguridad-contenedor" style={{ position: 'relative' }}>
       
+      {/* 2. AQUI INTEGRAMOS EL HEADER LOGO */}
+      {/* Usamos absolute para forzarlo arriba sin romper el centrado del login */}
+      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", zIndex: 10 }}>
+        <HeaderLogo />
+      </div>
+
       {/* 1. ELEMENTOS FUERA DE LA TARJETA BLANCA */}
       
       {/* Logo */}
@@ -85,12 +94,9 @@ const LoginUsuariosSeguridad = () => {
 
       {/* Título de Marca (IntegrApp) con colores separados */}
       <div className="LoginSeguridad-titulo-brand">
-        <span>Integr</span>
-        <span>App</span>
+        <span>Ingreso</span>
+        <span>Seguridad</span>
       </div>
-
-      {/* Subtítulo */}
-      <h2 className="LoginSeguridad-subtitulo">Ingreso Seguridad</h2>
 
       {/* 2. TARJETA BLANCA (FORMULARIO) */}
       <form className="LoginSeguridad-formulario" onSubmit={manejarLogin}>

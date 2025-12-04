@@ -75,7 +75,7 @@ body, html {
 }
 
 .barra-subtitulo { color: #ffffff; }
-.barra-subsubtitulo { color: #2ecc71; font-weight: 800; margin-left: 0px; }
+.barra-subsubtitulo { color: #bacf65; font-weight: 800; margin-left: 0px; }
 
 .barra-derecha {
   display: flex;
@@ -538,6 +538,38 @@ body, html {
   right: 20px;
   z-index: 10000;
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+/* ESTILOS PARA EL NUEVO BOTÓN Y SECCIÓN DE RECHAZADOS */
+
+.btn-sidebar-step.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #f9f9f9 !important;
+    border-color: #ddd !important;
+    color: #aaa !important;
+    box-shadow: none !important;
+}
+
+
+.btn-sidebar-step:not(.disabled):hover {
+    transform: translateX(3px);
+    background: #fff;
+}
+
+.btn-sidebar-step.btn-rechazados:not(.disabled):hover,
+.btn-sidebar-step.btn-rechazados.active {
+    color: #c0392b !important;
+    border-color: #c0392b !important;
+    background-color: #fff5f5 !important;
+}
+
+.btn-sidebar-step.btn-rechazados.active .step-indicator {
+    background-color: #c0392b !important;
+    color: white !important;
+}
+
+.step-content.fade-in {
+    width: 100%;
 }
 
 /* ========================================================================== */

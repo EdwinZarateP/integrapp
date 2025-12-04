@@ -19,7 +19,10 @@ const HeaderLogo: React.FC = () => {
         <span>App</span>
       </div>
       
-      <p className="HeaderLogo-subtitulo">Plataforma integral de gestión logística</p>
+      <div className="HeaderLogo-subtitulo">
+        <span>Cadena De</span>
+        <span>Servicios</span>
+      </div>  
     </header>
   );
 };

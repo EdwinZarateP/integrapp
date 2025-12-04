@@ -2,8 +2,8 @@ import React from 'react';
 import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
 import { Lock, User, Car, ChevronRight } from 'lucide-react';
-// CORRECCIÓN: Importar el componente, NO el archivo .css
 import HeaderLogo from '../../Componentes/HeaderLogo'; 
+import logo from "../../Imagenes/albatros.png"; 
 import './estilos.css';
 
 const Inicio: React.FC = () => {
@@ -11,14 +11,11 @@ const Inicio: React.FC = () => {
 
   // --- NAVEGACIÓN SEGURIDAD ---
   const IrSeguridad = () => {
-    // Verificamos si existe cookie de seguridad
     const seguridadCookie = Cookies.get('seguridadId'); 
     
     if (!seguridadCookie) { 
-      // Si no hay sesión, ir al LOGIN DE SEGURIDAD
       navigate("/LoginUsuariosSeguridad");
     } else {
-      // Si ya hay sesión, ir al panel de revisión
       navigate("/revision");
     }
   };
@@ -47,8 +44,23 @@ const Inicio: React.FC = () => {
 
   return (
     <div className="Inicio-contenedor">
-      {/* Ahora sí renderizará el componente correctamente */}
+      {/* Componente Header existente */}
       <HeaderLogo />
+
+      {/* --- NUEVO LOGO 3D CENTRAL CON TÍTULO --- */}
+      <div className="Inicio-logo-container-3d">
+        <div className="Logo-3d-wrapper">
+            <img src={logo} alt="Albatros Logo 3D" className="Inicio-logo-3d" />
+            <div className="Logo-sombra-metalica"></div>
+        </div>
+
+        {/* --- NUEVO TÍTULO ANIMADO --- */}
+        <div className="Inicio-titulo-3d">
+            <span>INTEGR</span>
+            <span>APP</span>
+        </div>
+      </div>
+      {/* ---------------------------------------- */}
 
       {/* GRID DE OPCIONES */}
       <div className="Inicio-opciones">
@@ -83,7 +95,7 @@ const Inicio: React.FC = () => {
             <Car className="icono-ajuste" />
           </div>
           <h2>Modo Conductor</h2>
-          <p>Creación de vehículos y Gestión.</p>
+          <p>Gestión de vehículos y procesos.</p>
           <div className="Inicio-card-action">
              Acceder <ChevronRight size={18} />
           </div>

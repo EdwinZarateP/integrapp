@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { 
   FaCar, FaClipboardList, FaFileUpload, FaCheckCircle, 
-  FaUserCircle, FaBars, FaEdit, FaTrashAlt, FaWhatsapp, FaEye, FaExclamationTriangle 
+  FaUserCircle, FaBars, FaEdit, FaTrashAlt, FaWhatsapp, FaEye, FaExclamationTriangle, FaClock, FaTimesCircle 
 } from "react-icons/fa"; 
 import logo from "../../Imagenes/albatros.png"; 
 import Datos from '../../Componentes/Datos';
@@ -35,9 +35,9 @@ const initialSecciones: SeccionDocumentos[] = [
       items: [
         { nombre: "Tarjeta de Propiedad", progreso: 0 },
         { nombre: "soat", progreso: 0 },
+        { nombre: "Fotos", progreso: 0 }, 
         { nombre: "Revisión Tecnomecánica", progreso: 0 },
         { nombre: "Tarjeta de Remolque", progreso: 0 },
-        { nombre: "Fotos", progreso: 0 },
         { nombre: "Póliza de Responsabilidad Civil", progreso: 0 },
       ]
     },
@@ -70,6 +70,12 @@ const initialSecciones: SeccionDocumentos[] = [
     }
 ];
 
+const calculateSectionProgress = (items: DocumentoItem[]) => {
+    if (items.length === 0) return 0;
+    const completed = items.filter(i => i.progreso === 100).length;
+    return Math.round((completed / items.length) * 100);
+};
+
 const getOverallDocumentProgress = (secciones: SeccionDocumentos[]) => {
   let totalItems = 0;
   let completed = 0;
@@ -91,7 +97,6 @@ const BarraConductor: React.FC = () => {
 
   const obtenerNombreMostrar = () => {
     let nombreCompleto = "";
-    
     if (nombreRealCookie) {
         nombreCompleto = decodeURIComponent(nombreRealCookie); 
     } else if (rawUsuario.includes('@')) {
@@ -99,7 +104,6 @@ const BarraConductor: React.FC = () => {
     } else {
         return "CONDUCTOR";
     }
-
     const primerNombre = nombreCompleto.replace(/[0-9.]/g, ' ').trim().split(/\s+/)[0];
     return primerNombre.toUpperCase();
   };
@@ -168,105 +172,163 @@ const PanelConductoresVista: React.FC = () => {
   const { verDocumento, setVerDocumento } = almacenVariables;
 
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const [vehicles, setVehicles] = useState<string[]>([]); 
   
-  // Estado para manejar los vehículos devueltos (Rechazados)
-  const [vehiculosRechazados, setVehiculosRechazados] = useState<any[]>([]);
+  const [vehicles, setVehicles] = useState<string[]>([]); // Pendientes
+  const [vehiculosRechazados, setVehiculosRechazados] = useState<any[]>([]); // Devueltos
+  const [vehiculosEnRevision, setVehiculosEnRevision] = useState<any[]>([]); // En revisión
+  const [vehiculosAprobados, setVehiculosAprobados] = useState<any[]>([]); // Aprobados (NUEVO)
 
+  // Inicializar con COPIA PROFUNDA
+  const [secciones, setSecciones] = useState<SeccionDocumentos[]>(() => JSON.parse(JSON.stringify(initialSecciones)));
+  
   const [selectedPlate, setSelectedPlate] = useState<string | null>(null);
   const [newPlate, setNewPlate] = useState<string>("");
   const [datosValidos, setDatosValidos] = useState<boolean>(false);
   const [cedulaConductor, setCedulaConductor] = useState<string>("");
-  const [secciones, setSecciones] = useState<SeccionDocumentos[]>(initialSecciones);
   const [visibleSeccion, setVisibleSeccion] = useState<number | null>(null);
   const [selectedDocumento, setSelectedDocumento] = useState<any>(null);
   const [verDocumentoInfo, setVerDocumentoInfo] = useState<any>(null);
-
+  
   useEffect(() => { if (idUsuario) cargarDatosIniciales(); }, [idUsuario]);
 
   const cargarDatosIniciales = async () => {
-      await fetchVehiculosPendientes();
+      await fetchVehiculosUsuario();
   };
 
-  const fetchVehiculosPendientes = async () => {
+  const fetchVehiculosUsuario = async () => {
     try {
-      const response = await fetch(`${API_BASE}/vehiculos/obtener-vehiculos?id_usuario=${idUsuario}&estadoIntegra=registro_incompleto`);
+      const response = await fetch(`${API_BASE}/vehiculos/obtener-vehiculos?id_usuario=${idUsuario}`);
+      
       if (response.status === 404) { 
           setVehicles([]); 
           setVehiculosRechazados([]);
+          setVehiculosEnRevision([]);
+          setVehiculosAprobados([]);
           return; 
       }
       
       const data = await response.json();
+      
       if (data.vehiculos && Array.isArray(data.vehiculos)) {
-        const plates = data.vehiculos.map((veh: any) => veh.placa);
-        setVehicles(plates);
+        
+        // 1. PENDIENTES
+        const pendientes = data.vehiculos
+            .filter((v: any) => v.estadoIntegra === 'registro_incompleto' && (!v.observaciones || v.observaciones.trim() === ""))
+            .map((v: any) => v.placa);
+        
+        // 2. RECHAZADOS / DEVUELTOS
+        const rechazados = data.vehiculos.filter((v: any) => 
+            v.estadoIntegra === 'devuelto' || 
+            (v.estadoIntegra === 'registro_incompleto' && v.observaciones && v.observaciones.trim() !== "")
+        );
 
-        // Filtramos los que tienen observaciones para la lista de rechazados
-        const rechazados = data.vehiculos.filter((v: any) => v.observaciones && v.observaciones.trim() !== "");
+        // 3. EN REVISIÓN
+        const revision = data.vehiculos.filter((v: any) => 
+            v.estadoIntegra === 'completado_revision' || v.estadoIntegra === 'en_revision'
+        );
+
+        // 4. APROBADOS (NUEVO)
+        const aprobados = data.vehiculos.filter((v: any) => 
+            v.estadoIntegra === 'aprobado'
+        );
+
+        setVehicles(pendientes);
         setVehiculosRechazados(rechazados);
-
-        /* --- CORRECCIÓN IMPORTANTE ---
-           Eliminamos la línea que seleccionaba automáticamente la primera placa.
-           Ahora selectedPlate se mantiene null hasta que el usuario elija.
-        */
-        // if (plates.length > 0 && !selectedPlate) setSelectedPlate(plates[0]); <-- ESTA LÍNEA SE QUITÓ
+        setVehiculosEnRevision(revision);
+        setVehiculosAprobados(aprobados);
 
       } else { 
           setVehicles([]);
           setVehiculosRechazados([]);
+          setVehiculosEnRevision([]);
+          setVehiculosAprobados([]);
       }
-    } catch (error) { console.error("Error fetching pendientes", error); }
+    } catch (error) { console.error("Error fetching vehiculos", error); }
   };
 
   const handleCreateVehicle = async () => {
     if (!newPlate.trim()) return Swal.fire("Error", "Ingrese una placa válida", "error");
+    const placaCreada = newPlate.trim().toUpperCase();
+
     try {
       const formData = new FormData();
       formData.append("id_usuario", idUsuario);
-      formData.append("placa", newPlate.trim().toUpperCase());
+      formData.append("placa", placaCreada);
+
       const response = await fetch(`${API_BASE}/vehiculos/crear`, { method: "POST", body: formData });
       const data = await response.json();
+
       if (response.ok) {
-        Swal.fire("Éxito", "Vehículo creado", "success");
-        setVehicles(prev => !prev.includes(data.placa) ? [...prev, data.placa] : prev);
-        
-        // Al crear uno nuevo, SÍ lo seleccionamos automáticamente para agilizar
-        setSelectedPlate(data.placa);
+        Swal.fire("Éxito", "Vehículo creado correctamente", "success");
+        fetchVehiculosUsuario();
+        setSelectedPlate(null);
         setNewPlate("");
-      } else { Swal.fire("Error", data.detail || "Error al crear", "error"); }
+      } else { 
+          Swal.fire("Error", data.detail || "Error al crear", "error"); 
+      }
     } catch (error) { Swal.fire("Error", "Error de conexión", "error"); }
   };
 
-  useEffect(() => {
+  // En PanelConductoresVista.tsx
+
+useEffect(() => {
     const cargarInfo = async () => {
-      if (!selectedPlate) { setSecciones(initialSecciones); return; }
+      // RESETEAR LIMPIO si no hay placa
+      if (!selectedPlate) { 
+          setSecciones(JSON.parse(JSON.stringify(initialSecciones))); 
+          return; 
+      }
+
+      let seccionesLimpias = JSON.parse(JSON.stringify(initialSecciones));
+
       try {
         const data = await obtenerVehiculoPorPlaca(selectedPlate);
         if (data && data.data) {
           const vehiculo = data.data;
-          setSecciones(prev => prev.map(sec => ({
+          
+          const seccionesActualizadas = seccionesLimpias.map((sec: SeccionDocumentos) => ({
             ...sec,
-            items: sec.items.map(item => {
+            items: sec.items.map((item: DocumentoItem) => {
               const field = tiposMapping[normalizeKey(item.nombre)] || "";
-              if (field === "fotos" && Array.isArray(vehiculo.fotos) && vehiculo.fotos.length > 0) {
-                 return { ...item, progreso: 100, url: vehiculo.fotos };
-              }
+              
               if (field && vehiculo[field]) {
-                 return { ...item, progreso: 100, url: vehiculo[field] };
+                 let valor = vehiculo[field];
+                 if (Array.isArray(valor)) {
+                     valor = valor.filter((url: any) => 
+                        url && 
+                        url !== "null" && 
+                        url !== "undefined" && 
+                        typeof url === 'string' && 
+                        url.trim() !== ""
+                     )
+                     if (valor.length === 0) {
+                         return { ...item, progreso: 0, url: undefined };
+                     }
+                 }
+                 // -------------------------------------------
+
+                 return { ...item, progreso: 100, url: valor };
               }
               return { ...item, progreso: 0, url: undefined };
             })
-          })));
+          }));
+          
+          setSecciones(seccionesActualizadas);
+        } else {
+           setSecciones(seccionesLimpias);
         }
-      } catch (error) { console.error(error); }
+      } catch (error) { 
+          console.error(error); 
+          setSecciones(seccionesLimpias);
+      }
     };
     cargarInfo();
   }, [selectedPlate]);
 
   const changeStep = (step: number) => {
-    if (step > 1 && !selectedPlate) {
-        Swal.fire("Atención", "Debe seleccionar o crear una placa primero.", "warning");
+    if (step === 4 && vehiculosRechazados.length === 0) return;
+    if ((step === 2 || step === 3) && !selectedPlate && currentStep !== 4) {
+        Swal.fire("Atención", "Debe seleccionar o crear una placa primero en el paso 1.", "warning");
         return;
     }
     if (step === 3 && currentStep === 2 && !datosValidos) {
@@ -290,7 +352,7 @@ const PanelConductoresVista: React.FC = () => {
         showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Sí, borrar'
       }).then((result) => {
         if (result.isConfirmed) {
-            const newSec = [...secciones];
+            const newSec = JSON.parse(JSON.stringify(secciones));
             newSec[sectionIdx].items[itemIdx].progreso = 0;
             newSec[sectionIdx].items[itemIdx].url = undefined;
             setSecciones(newSec);
@@ -315,13 +377,9 @@ const PanelConductoresVista: React.FC = () => {
         if (!response.ok) throw new Error("Error al actualizar estado");
 
         Swal.fire("¡Enviado!", "El vehículo ha pasado a revisión.", "success").then(() => {
-             const pendientesActualizados = vehicles.filter(v => v !== selectedPlate);
-             setVehicles(pendientesActualizados);
-             setVehiculosRechazados(prev => prev.filter(v => v.placa !== selectedPlate));
-             
-             if (pendientesActualizados.length > 0) setSelectedPlate(pendientesActualizados[0]);
-             else setSelectedPlate(null);
-             setCurrentStep(1);
+              setSelectedPlate(null);
+              setCurrentStep(1);
+              fetchVehiculosUsuario();
         });
       } catch (error) {
           console.error(error);
@@ -349,6 +407,16 @@ const PanelConductoresVista: React.FC = () => {
                 </span>
             </button>
           ))}
+          
+          <button 
+            className={`btn-sidebar-step btn-rechazados ${currentStep === 4 ? "active" : ""} ${vehiculosRechazados.length === 0 ? "disabled" : ""}`}
+            onClick={() => changeStep(4)}
+            disabled={vehiculosRechazados.length === 0}
+            style={{ marginTop: '20px', border: '2px solid #e74c3c', color: vehiculosRechazados.length === 0 ? '#ccc' : '#c0392b' }}
+          >
+              <div className="step-indicator" style={{ backgroundColor: vehiculosRechazados.length === 0 ? '#eee' : '#e74c3c', color: 'white' }}><FaExclamationTriangle /></div>
+              <span>Vehículos Rechazados ({vehiculosRechazados.length})</span>
+          </button>
         </div>
 
         <div className="contenido-conductor-container">
@@ -376,55 +444,112 @@ const PanelConductoresVista: React.FC = () => {
                     </div>
                 ) : (
                     !esRechazado(selectedPlate) && (
-                        <div style={{marginTop: '30px', textAlign: 'center', padding: '20px', border: '2px dashed #eee', borderRadius: '10px'}}>
-                            {vehicles.length === 0 ? (
-                                <p style={{color: '#999'}}>¡Todo al día! No tienes vehículos pendientes.</p> 
-                            ) : (
-                                <div className="lista-vehiculos-seleccion">
-                                   <p className="lista-vehiculos-title">Seleccione un vehículo para continuar:</p>
-                                   <div className="lista-vehiculos-grid">
-                                     {vehicles.map((placaItem, idx) => (
+                        <div style={{marginTop: '30px', display:'flex', flexDirection:'column', gap:'20px'}}>
+                            
+                            {/* SECCIÓN 1: PENDIENTES */}
+                            <div className="seccion-lista-vehiculos">
+                                <h4 style={{textAlign:'left', color:'#555', borderBottom:'1px solid #ddd', paddingBottom:'5px'}}>
+                                    <FaClipboardList /> Continuar Registro (Pendientes)
+                                </h4>
+                                {vehicles.length === 0 ? (
+                                    <p style={{color: '#999', fontStyle:'italic', padding:'10px'}}>No tienes vehículos pendientes.</p> 
+                                ) : (
+                                     <div className="lista-vehiculos-grid">
+                                      {vehicles.map((placaItem, idx) => (
+                                        <button 
+                                          key={idx}
+                                          onClick={() => setSelectedPlate(placaItem)}
+                                          className="btn-seleccion-vehiculo" 
+                                        >
+                                          <FaCar /> {placaItem}
+                                        </button>
+                                      ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* SECCIÓN 2: DEVUELTOS / RECHAZADOS */}
+                            {vehiculosRechazados.length > 0 && (
+                                <div className="seccion-lista-vehiculos" style={{backgroundColor: '#fff5f5', padding: '15px', borderRadius: '8px', border: '1px solid #ffcccc'}}>
+                                    <h4 style={{textAlign:'left', color:'#c0392b', borderBottom:'1px solid #ffcccc', paddingBottom:'5px'}}>
+                                        <FaTimesCircle /> Vehículos Devueltos (Requieren Corrección)
+                                    </h4>
+                                    <div className="lista-vehiculos-grid">
+                                     {vehiculosRechazados.map((veh, idx) => (
                                        <button 
                                          key={idx}
-                                         onClick={() => setSelectedPlate(placaItem)}
-                                         className="btn-seleccion-vehiculo" 
+                                         onClick={() => {
+                                              setSelectedPlate(veh.placa);
+                                              changeStep(4);
+                                         }}
+                                         className="btn-seleccion-vehiculo btn-rechazado-item" 
+                                         style={{borderColor: '#e74c3c', color: '#c0392b', backgroundColor: '#fff'}}
                                        >
-                                         <FaCar /> {placaItem}
+                                         <FaExclamationTriangle /> {veh.placa}
                                        </button>
                                      ))}
-                                   </div>
+                                    </div>
                                 </div>
                             )}
+
+                            {/* SECCIÓN 3: APROBADOS (NUEVO - Debajo de Rechazados) */}
+                            {vehiculosAprobados.length > 0 && (
+                                <div className="seccion-lista-vehiculos" style={{backgroundColor: '#d4edda', padding: '15px', borderRadius: '8px', border: '1px solid #c3e6cb'}}>
+                                    <h4 style={{textAlign:'left', color:'#155724', borderBottom:'1px solid #c3e6cb', paddingBottom:'5px'}}>
+                                        <FaCheckCircle /> Vehículos Aprobados
+                                    </h4>
+                                    <div className="lista-vehiculos-grid">
+                                     {vehiculosAprobados.map((veh, idx) => (
+                                       <div 
+                                         key={idx}
+                                         className="vehiculo-aprobado-card" 
+                                         style={{
+                                              padding: '10px', 
+                                              borderRadius:'5px', 
+                                              backgroundColor: 'white', 
+                                              border: '1px solid #c3e6cb',
+                                              display: 'flex', alignItems: 'center', gap: '10px',
+                                              color: '#155724', fontWeight: 'bold'
+                                         }}
+                                       >
+                                         <FaCheckCircle /> {veh.placa}
+                                         <span style={{fontSize: '0.8rem', fontWeight: 'normal', color: '#155724', marginLeft: 'auto'}}>Aprobado para operar</span>
+                                       </div>
+                                     ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* SECCIÓN 4: EN REVISIÓN */}
+                            {vehiculosEnRevision.length > 0 && (
+                                <div className="seccion-lista-vehiculos" style={{backgroundColor: '#e3f2fd', padding: '15px', borderRadius: '8px', border: '1px solid #bbdefb'}}>
+                                    <h4 style={{textAlign:'left', color:'#1976d2', borderBottom:'1px solid #bbdefb', paddingBottom:'5px'}}>
+                                        <FaClock /> Vehículos en Revisión
+                                    </h4>
+                                    <div className="lista-vehiculos-grid">
+                                     {vehiculosEnRevision.map((veh, idx) => (
+                                       <div 
+                                         key={idx}
+                                         className="vehiculo-revision-card" 
+                                         style={{
+                                              padding: '10px', 
+                                              borderRadius:'5px', 
+                                              backgroundColor: 'white', 
+                                              border: '1px solid #90caf9',
+                                              display: 'flex', alignItems: 'center', gap: '10px',
+                                              color: '#1565c0', fontWeight: 'bold'
+                                         }}
+                                       >
+                                         <FaClock /> {veh.placa}
+                                         <span style={{fontSize: '0.8rem', fontWeight: 'normal', color: '#555', marginLeft: 'auto'}}>Esperando aprobación...</span>
+                                       </div>
+                                     ))}
+                                    </div>
+                                </div>
+                            )}
+
                         </div>
                     )
-                )}
-
-                {/* SECCIÓN DE VEHÍCULOS RECHAZADOS */}
-                {vehiculosRechazados.length > 0 && (
-                    <div className="seccion-rechazados">
-                        <h3 className="titulo-rechazados"><FaExclamationTriangle /> Vehículos Devueltos / Rechazados</h3>
-                        <div className="lista-rechazados">
-                            {vehiculosRechazados.map((veh, idx) => (
-                                <div key={idx} className="card-rechazado">
-                                    <div className="info-rechazado">
-                                        <div className="placa-rechazada-header">
-                                            <strong>{veh.placa}</strong>
-                                        </div>
-                                        <p className="observacion-texto">"{veh.observaciones}"</p>
-                                    </div>
-                                    <button 
-                                        className="btn-corregir" 
-                                        onClick={() => {
-                                            setSelectedPlate(veh.placa);
-                                            changeStep(3); 
-                                        }}
-                                    >
-                                        <FaEdit /> Corregir
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
                 )}
               </div>
             </div>
@@ -433,13 +558,18 @@ const PanelConductoresVista: React.FC = () => {
           {/* PASO 2 */}
           {currentStep === 2 && (
             <div className="step-content fade-in">
-               <div className="step-header">
+                <div className="step-header">
                 <h2><FaClipboardList /> Información Detallada</h2>
                 <p>Diligencia el formulario para la placa <strong>{selectedPlate}</strong>.</p>
               </div>
               {selectedPlate ? (
                 <div className="contenedor-formulario-fijo">
-                    <Datos placa={selectedPlate} onValidChange={setDatosValidos} onCedulaConductorChange={setCedulaConductor}/>
+                    <Datos 
+                        placa={selectedPlate} 
+                        onValidChange={setDatosValidos} 
+                        onCedulaConductorChange={setCedulaConductor}
+                        onSavedSuccess={() => changeStep(3)}
+                    />
                 </div>
               ) : ( <div className="alert-box">Seleccione un vehículo en el Paso 1.</div> )}
             </div>
@@ -448,10 +578,10 @@ const PanelConductoresVista: React.FC = () => {
           {/* PASO 3 */}
           {currentStep === 3 && (
             <div className="step-content fade-in">
-               <div className="step-header">
+                <div className="step-header">
                 <h2><FaFileUpload /> Carga de Documentos</h2>
                 <div className="progreso-header">
-                    <span>Avance: {getOverallDocumentProgress(secciones)}%</span>
+                    <span>Avance Total: {getOverallDocumentProgress(secciones)}%</span>
                     <div className="barra-progreso-bg">
                         <div className="barra-progreso-fill" style={{width: `${getOverallDocumentProgress(secciones)}%`}}></div>
                     </div>
@@ -462,7 +592,7 @@ const PanelConductoresVista: React.FC = () => {
                     {secciones.map((seccion, idx) => (
                         <div key={idx} className="seccion-doc-card">
                             <div className="seccion-header" onClick={() => toggleSeccion(idx)}>
-                                <h4>{seccion.subtitulo}</h4>
+                                <h4>{seccion.subtitulo} <span style={{fontSize:'0.8rem', color: '#666'}}>({calculateSectionProgress(seccion.items)}%)</span></h4>
                                 <span>{visibleSeccion === idx ? "▼" : "▶"}</span>
                             </div>
                             {visibleSeccion === idx && (
@@ -513,6 +643,40 @@ const PanelConductoresVista: React.FC = () => {
             </div>
           )}
 
+          {/* PASO 4 (RECHAZADOS) */}
+          {currentStep === 4 && (
+             <div className="step-content fade-in">
+                 <div className="step-header" style={{borderBottomColor: '#e74c3c'}}>
+                    <h2 style={{color: '#c0392b'}}><FaExclamationTriangle /> Edición de Vehículos Rechazados</h2>
+                    <p>Estos vehículos requieren correcciones según las observaciones.</p>
+                  </div>
+                 {vehiculosRechazados.length > 0 ? (
+                    <div className="lista-rechazados" style={{marginTop:'20px'}}>
+                        {vehiculosRechazados.map((veh, idx) => (
+                            <div key={idx} className="card-rechazado">
+                                <div className="info-rechazado">
+                                    <div className="placa-rechazada-header">
+                                        <strong>{veh.placa}</strong>
+                                    </div>
+                                    <p className="observacion-texto">"{veh.observaciones}"</p>
+                                </div>
+                                <button 
+                                    className="btn-corregir" 
+                                    onClick={() => {
+                                        setSelectedPlate(veh.placa);
+                                        changeStep(3); 
+                                    }}
+                                >
+                                    <FaEdit /> Corregir Documentos
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                 ) : (
+                     <div className="alert-box">No hay vehículos rechazados por el momento.</div>
+                 )}
+             </div>
+          )}
         </div>
       </div>
 
@@ -534,20 +698,79 @@ const PanelConductoresVista: React.FC = () => {
           placa={selectedPlate}
           onClose={() => setSelectedDocumento(null)}
           onUploadSuccess={(result: string | string[]) => {
-             const newSec = [...secciones];
-             newSec[selectedDocumento.sectionIndex].items[selectedDocumento.itemIndex].progreso = 100;
-             newSec[selectedDocumento.sectionIndex].items[selectedDocumento.itemIndex].url = result;
+             const newSec = JSON.parse(JSON.stringify(secciones));
+             const item = newSec[selectedDocumento.sectionIndex].items[selectedDocumento.itemIndex];
+             
+             item.progreso = 100;
+
+             if (normalizeKey(item.nombre) === 'fotos') {
+                if (Array.isArray(item.url)) {
+                    if (typeof result === 'string') item.url.push(result);
+                    else item.url = [...item.url, ...result]; 
+                } else if (typeof item.url === 'string') {
+                    if (typeof result === 'string') item.url = [item.url, result];
+                    else item.url = [item.url, ...result];
+                } else {
+                    item.url = Array.isArray(result) ? result : [result];
+                }
+             } else {
+                 item.url = result;
+             }
+
              setSecciones(newSec);
              setSelectedDocumento(null);
           }}
         />
       )}
+      
       {verDocumentoInfo && verDocumento && (
-         <VerDocumento 
+         <VerDocumento
             urls={verDocumentoInfo.urls} 
             placa={selectedPlate || ""} 
             onClose={() => { setVerDocumentoInfo(null); setVerDocumento(false); }}
-            onDeleteSuccess={() => { /* Lógica refresh */ }}
+            /* --- Busca el componente <VerDocumento> al final de PanelConductoresVista.tsx --- */
+/* --- Y reemplaza la propiedad onDeleteSuccess completa por esto: --- */
+
+onDeleteSuccess={(urlAEliminar: any) => {
+    // 1. Copiamos el estado actual
+    const newSec = JSON.parse(JSON.stringify(secciones));
+    const item = newSec[verDocumentoInfo.sectionIndex].items[verDocumentoInfo.itemIndex];
+    
+    // Helper para normalizar cadenas
+    const normalize = (u: any) => {
+        if (!u) return "";
+        if (typeof u !== 'string') return String(u);
+        try { return decodeURIComponent(u).trim(); } catch { return u.trim(); }
+    };
+
+    const targetUrl = normalize(urlAEliminar);
+
+    if (Array.isArray(item.url)) {
+        const nuevasUrls = item.url.filter((u: any) => {
+            const valor = normalize(u);
+            const esBasura = !u || valor === "" || valor === "null" || valor === "undefined";
+            const esLaBorrada = valor === targetUrl;
+            return !esBasura && !esLaBorrada;
+        });
+        item.url = nuevasUrls;
+        if (nuevasUrls.length === 0) {
+            item.progreso = 0;
+            item.url = undefined;
+            setVerDocumento(false); 
+            setVerDocumentoInfo(null);
+        } else {
+            setVerDocumentoInfo({ ...verDocumentoInfo, urls: nuevasUrls });
+        }
+    } else {
+        item.progreso = 0;
+        item.url = undefined;
+        setVerDocumento(false);
+        setVerDocumentoInfo(null);
+    }
+    setSecciones(newSec);
+    Swal.fire('Listo', 'Documento eliminado y lista actualizada.', 'success');
+}}
+            // ----------------------------------------
          />
       )}
     </div>

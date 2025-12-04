@@ -3,19 +3,35 @@ import municipios from "../../Componentes/Municipios/municipios.json";
 import Swal from 'sweetalert2';
 import './estilos.css';
 
-// Extensión de las props para inputs para permitir atributos extra
+// --- HELPERS PARA MUNICIPIOS ---
+const departamentosUnicos = [...new Set(municipios.map(m => m.DEPARTAMENTO))].sort();
+
+const getCiudadesPorDepto = (depto: string) => {
+  return municipios
+    .filter(m => m.DEPARTAMENTO === depto)
+    .map(m => m.CIUDAD)
+    .sort();
+};
+
+const buscarDepartamentoPorCiudad = (ciudad: string) => {
+  if (!ciudad) return "";
+  const encontrado = municipios.find(m => m.CIUDAD === ciudad);
+  return encontrado ? encontrado.DEPARTAMENTO : "";
+};
+
+// --- COMPONENTES UI ---
+
 interface InputFieldProps {
   label: string;
   name: string;
   type?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  options?: string[]; // Si tiene opciones, renderiza un <select>
+  options?: string[];
   disabled?: boolean;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
 }
 
-// Componente para renderizar cada campo de entrada
 const InputField: React.FC<InputFieldProps> = ({ label, name, type = 'text', value, onChange, options, disabled, inputProps }) => (
   <div className="Datos-input-container">
     <label>{label}</label>
@@ -39,7 +55,6 @@ const InputField: React.FC<InputFieldProps> = ({ label, name, type = 'text', val
   </div>
 );
 
-// Interfaz para cada sección del formulario
 interface FormSectionProps {
   title: string;
   fields: { 
@@ -60,7 +75,6 @@ const epsColombia = ["Sura", "Sanitas", "Compensar", "Coomeva", "Salud Total"];
 const arlColombia = ["Positiva", "Sura", "Colpatria", "Bolívar", "Axa Colpatria"];
 const parentescos = ["Padre", "Madre", "Hijo(a)", "Hermano(a)", "Esposo(a)", "Abuelo(a)", "Tio(a)", "Otro"];
 
-// Componente para renderizar una sección completa (título y campos)
 const FormSection: React.FC<FormSectionProps> = ({ title, fields, formData, handleChange, disabled = false }) => (
   <div className="Datos-form-section">
     <h4>{title}</h4>
@@ -82,104 +96,111 @@ const FormSection: React.FC<FormSectionProps> = ({ title, fields, formData, hand
   </div>
 );
 
-// Interfaz de las props del componente Datos
 interface DatosProps {
   placa: string;
   onValidChange?: (isValid: boolean) => void; 
-  onCedulaConductorChange?: (cedula: string) => void; 
+  onCedulaConductorChange?: (cedula: string) => void;
+  // NUEVA PROP para manejar la redirección al guardar con éxito
+  onSavedSuccess: () => void;
 }
 
-const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorChange  }) => {
+const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorChange, onSavedSuccess }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [tenedorSame, setTenedorSame] = useState<boolean>(false);
 
-  // Definición de campos obligatorios
+  const phoneFields = ['condCelular', 'condCelularEmergencia', 'condCelularRef', 'propCelular', 'tenedCelular'];
+
   const requiredFields = [
-    // Información del Conductor
-    'condPrimerApellido', 'condSegundoApellido', 'condNombres',
-    'condCedulaCiudadania', 'condExpedidaEn', 'condDireccion',
-    'condCiudad', 'condCelular', 'condCorreo', 'condEps', 'condArl',
-    'condNoLicencia', 'condFechaVencimientoLic', 'condCategoriaLic',
-    'condGrupoSanguineo',
-    // En caso de emergencia
-    'condNombreEmergencia', 'condCelularEmergencia', 'condParentescoEmergencia',
-    // Referencias Laborales
-    'condEmpresaRef', 'condCelularRef', 'condCiudadRef', 'condNroViajesRef', 'condAntiguedadRef', 'condMercTransportada',
-    // Datos del Propietario
-    'propNombre', 'propDocumento', 'propCiudadExpDoc', 'propCorreo', 'propCelular', 'propDireccion', 'propCiudad',
-    // Datos del Tenedor
-    'tenedNombre', 'tenedDocumento', 'tenedCiudadExpDoc', 'tenedCorreo', 'tenedCelular', 'tenedDireccion', 'tenedCiudad',
-    // Datos del Vehículo
-    'vehModelo', 'vehMarca', 'vehTipoCarroceria', 'vehLinea', 'vehColor', 
-    // 👇 HE ELIMINADO 'vehRepotenciado' y 'vehAno' DE AQUÍ PARA QUE NO SEAN OBLIGATORIOS
-    'vehEmpresaSat', 'vehUsuarioSat', 'vehClaveSat',
-    // Datos del Remolque
-    'RemolPlaca', 'RemolModelo', 'RemolClase', 'RemolTipoCarroceria', 'RemolAlto', 'RemolLargo', 'RemolAncho'
+    'condPrimerApellido', 'condSegundoApellido', 'condNombres', 'condCedulaCiudadania', 'condExpedidaEn', 'condDireccion',
+    'condCiudad', 'condCelular', 'condCorreo', 'condEps', 'condArl', 'condNoLicencia', 'condFechaVencimientoLic', 'condCategoriaLic',
+    'condGrupoSanguineo', 'condNombreEmergencia', 'condCelularEmergencia', 'condParentescoEmergencia', 'condEmpresaRef', 'condCelularRef',
+    'condCiudadRef', 'condNroViajesRef', 'condAntiguedadRef', 'condMercTransportada', 'propNombre', 'propDocumento', 'propCiudadExpDoc',
+    'propCorreo', 'propCelular', 'propDireccion', 'propCiudad', 'tenedNombre', 'tenedDocumento', 'tenedCiudadExpDoc', 'tenedCorreo',
+    'tenedCelular', 'tenedDireccion', 'tenedCiudad', 'vehModelo', 'vehMarca', 'vehTipoCarroceria', 'vehLinea', 'vehColor', 
+    'vehEmpresaSat', 'vehUsuarioSat', 'vehClaveSat', 'RemolPlaca', 'RemolModelo', 'RemolClase', 'RemolTipoCarroceria', 
+    'RemolAlto', 'RemolLargo', 'RemolAncho'
   ];
 
-  // Cálculo del avance general
   const calcularAvance = () => {
     const total = requiredFields.length;
     const completados = requiredFields.filter(field => formData[field] && formData[field].trim() !== "").length;
     return Math.round((completados / total) * 100);
   };
 
-  // Función para validar
   const isFormValid = () => {
-    // Al haber quitado vehRepotenciado y vehAno de requiredFields, esta función ya no devolverá false si esos campos están vacíos.
     return requiredFields.every((field) => formData[field] && formData[field].trim() !== "");
   };
 
   useEffect(() => {
-    if (onValidChange) {
-      onValidChange(isFormValid());
-    }
-
-    if (onCedulaConductorChange) {
-      onCedulaConductorChange(formData["condCedulaCiudadania"] || "");
-    }
+    if (onValidChange) onValidChange(isFormValid());
+    if (onCedulaConductorChange) onCedulaConductorChange(formData["condCedulaCiudadania"] || "");
   }, [formData, onValidChange, onCedulaConductorChange]);
 
-  // Carga inicial
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://integrappi-dvmh.onrender.com/vehiculos/obtener-vehiculo/${placa}`);
-        if (!response.ok) {
-          throw new Error("Error al obtener la información del vehículo");
-        }
+        const response = await fetch(`http://127.0.0.1:8000/vehiculos/obtener-vehiculo/${placa}`);
+        if (!response.ok) throw new Error("Error al obtener la información del vehículo");
+        
         const data = await response.json();
         if (data.data) {
-          setFormData((prevData) => ({
-            ...prevData,
-            ...data.data
-          }));
+          const loadedData = data.data;
+          const departamentosCalculados: Record<string, string> = {};
+          const cityToDeptoMap: Record<string, string> = {
+            'condExpedidaEn': 'condDeptoExpedida', 'condCiudad': 'condDeptoCiudad', 'condCiudadRef': 'condDeptoCiudadRef',
+            'propCiudadExpDoc': 'propDeptoExpedida', 'propCiudad': 'propDeptoCiudad', 'tenedCiudadExpDoc': 'tenedDeptoExpedida',
+            'tenedCiudad': 'tenedDeptoCiudad'
+          };
+
+          Object.keys(cityToDeptoMap).forEach(cityField => {
+             if (loadedData[cityField]) {
+                departamentosCalculados[cityToDeptoMap[cityField]] = buscarDepartamentoPorCiudad(loadedData[cityField]);
+             }
+          });
+
+          setFormData((prevData) => ({ ...prevData, ...loadedData, ...departamentosCalculados }));
         }
-      } catch (error) {
-        console.error("Error cargando la información del vehículo:", error);
-      }
+      } catch (error) { console.error("Error cargando la información del vehículo:", error); }
     };
-    fetchData();
+    if (placa) fetchData();
   }, [placa]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    if (tenedorSame && e.target.name.startsWith("tened")) return;
-    setFormData((prevData) => ({
-      ...prevData,
-      [e.target.name]: e.target.value.trim()
-    }));
+    const { name, value } = e.target;
+
+    if (phoneFields.some(field => name.includes(field))) {
+        const numericValue = value.replace(/\D/g, '');
+        if (numericValue.length > 10) return;
+        setFormData(prev => ({ ...prev, [name]: numericValue }));
+        return;
+    }
+
+    if (tenedorSame && name.startsWith("tened")) return;
+
+    if (name.includes('Depto')) {
+        let ciudadField = "";
+        if (name === 'condDeptoExpedida') ciudadField = 'condExpedidaEn';
+        if (name === 'condDeptoCiudad') ciudadField = 'condCiudad';
+        if (name === 'condDeptoCiudadRef') ciudadField = 'condCiudadRef';
+        if (name === 'propDeptoExpedida') ciudadField = 'propCiudadExpDoc';
+        if (name === 'propDeptoCiudad') ciudadField = 'propCiudad';
+        if (name === 'tenedDeptoExpedida') ciudadField = 'tenedCiudadExpDoc';
+        if (name === 'tenedDeptoCiudad') ciudadField = 'tenedCiudad';
+
+        setFormData(prev => ({ ...prev, [name]: value, [ciudadField]: "" }));
+    } else {
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
   };
 
   const handleCopiarDatos = () => {
     setFormData((prevData) => ({
       ...prevData,
-      tenedNombre: prevData.propNombre || "",
-      tenedDocumento: prevData.propDocumento || "",
-      tenedCiudadExpDoc: prevData.propCiudadExpDoc || "",
-      tenedCorreo: prevData.propCorreo || "",
-      tenedCelular: prevData.propCelular || "",
-      tenedDireccion: prevData.propDireccion || "",
+      tenedNombre: prevData.propNombre || "", tenedDocumento: prevData.propDocumento || "",
+      tenedDeptoExpedida: prevData.propDeptoExpedida || "", tenedCiudadExpDoc: prevData.propCiudadExpDoc || "",
+      tenedCorreo: prevData.propCorreo || "", tenedCelular: prevData.propCelular || "",
+      tenedDireccion: prevData.propDireccion || "", tenedDeptoCiudad: prevData.propDeptoCiudad || "",
       tenedCiudad: prevData.propCiudad || ""
     }));
   };
@@ -192,31 +213,43 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    for (const field of phoneFields) {
+        if (formData[field] && formData[field].length !== 10) {
+            Swal.fire({ title: "Número incorrecto", text: `El número de celular en el campo "${field}" debe tener exactamente 10 dígitos.`, icon: "warning" });
+            return;
+        }
+    }
+
     setIsLoading(true);
     try {
-      const cleanedFormData = Object.fromEntries(
-        Object.entries(formData).map(([key, value]) => [key, value || ""])
-      );
-      const response = await fetch(`https://integrappi-dvmh.onrender.com/vehiculos/actualizar-informacion/${placa}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cleanedFormData),
+      const cleanedFormData = Object.fromEntries(Object.entries(formData).map(([key, value]) => [key, value || ""]));
+      const response = await fetch(`http://127.0.0.1:8000/vehiculos/actualizar-informacion/${placa}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cleanedFormData),
       });
       const result = await response.json();
+      
+      // --- CAMBIO AQUÍ: Alerta con botón de continuar ---
       Swal.fire({
-        title: "Hola",
-        text: result.message || "Datos actualizados correctamente",
+        title: "¡Datos Guardados!",
+        text: result.message || "La información se ha actualizado correctamente.",
         icon: "success",
-        confirmButtonText: "OK"
-      });      
-    } catch (error) {
-      alert('Hubo un error al actualizar la información');
-    } finally {
-      setIsLoading(false);
-    }
+        showCancelButton: true,
+        confirmButtonText: "Continuar al Paso 3",
+        cancelButtonText: "Quedarme aquí",
+        confirmButtonColor: '#27ae60'
+      }).then((result) => {
+        if (result.isConfirmed) {
+            // Llamamos a la función que nos pasó el padre para cambiar de paso
+            onSavedSuccess();
+        }
+      });
+      // --------------------------------------------------
+
+    } catch (error) { alert('Hubo un error al actualizar la información'); } finally { setIsLoading(false); }
   };
 
-  // Definición de las secciones del formulario
+  // Definición de las secciones del formulario con DEPARTAMENTO + CIUDAD
   const sections = [
     {
       title: 'Información del Conductor',
@@ -225,10 +258,12 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
         { label: 'Segundo Apellido', name: 'condSegundoApellido' },
         { label: 'Nombres', name: 'condNombres' },
         { label: 'Cédula de Ciudadanía', name: 'condCedulaCiudadania' },
-        { label: 'Expedida en', name: 'condExpedidaEn', options: municipios.map(m => m.CIUDAD) },
+        { label: 'Departamento (Expedida)', name: 'condDeptoExpedida', options: departamentosUnicos },
+        { label: 'Expedida en (Ciudad)', name: 'condExpedidaEn', options: getCiudadesPorDepto(formData['condDeptoExpedida']) },
         { label: 'Dirección', name: 'condDireccion' },
-        { label: 'Ciudad', name: 'condCiudad', options: municipios.map(m => m.CIUDAD) },
-        { label: 'Celular', name: 'condCelular', type: 'number' },
+        { label: 'Departamento (Residencia)', name: 'condDeptoCiudad', options: departamentosUnicos },
+        { label: 'Ciudad', name: 'condCiudad', options: getCiudadesPorDepto(formData['condDeptoCiudad']) },
+        { label: 'Celular (10 dígitos)', name: 'condCelular', type: 'text', inputProps: { maxLength: 10, placeholder: 'Ej: 3001234567' } },
         { label: 'Correo Electrónico', name: 'condCorreo', type: 'email' },
         { label: 'EPS', name: 'condEps', options: epsColombia },
         { label: 'ARL', name: 'condArl', options: arlColombia },
@@ -242,7 +277,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
       title: 'En Caso de Emergencia Avisar a',
       fields: [
         { label: 'Nombre', name: 'condNombreEmergencia' },
-        { label: 'Celular', name: 'condCelularEmergencia', type: 'number' },
+        { label: 'Celular (10 dígitos)', name: 'condCelularEmergencia', type: 'text', inputProps: { maxLength: 10 } },
         { label: 'Parentesco', name: 'condParentescoEmergencia', options: parentescos },
       ],
     },
@@ -250,8 +285,9 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
       title: 'Referencias Laborales',
       fields: [
         { label: 'Empresa', name: 'condEmpresaRef' },
-        { label: 'Celular', name: 'condCelularRef', type: 'number' },
-        { label: 'Ciudad', name: 'condCiudadRef', options: municipios.map(m => m.CIUDAD) },
+        { label: 'Celular (10 dígitos)', name: 'condCelularRef', type: 'text', inputProps: { maxLength: 10 } },
+        { label: 'Departamento', name: 'condDeptoCiudadRef', options: departamentosUnicos },
+        { label: 'Ciudad', name: 'condCiudadRef', options: getCiudadesPorDepto(formData['condDeptoCiudadRef']) },
         { label: 'Nro. Viajes', name: 'condNroViajesRef', type: 'number' },
         { label: 'Años Antigüedad', name: 'condAntiguedadRef', type: 'number' },
         { label: 'Merc. Transportada', name: 'condMercTransportada' },
@@ -262,11 +298,13 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
       fields: [
         { label: 'Nombre/Razón', name: 'propNombre' },
         { label: 'Número documento', name: 'propDocumento', type: 'number' },
-        { label: 'Expedida en', name: 'propCiudadExpDoc', options: municipios.map(m => m.CIUDAD) },
+        { label: 'Departamento (Expedida)', name: 'propDeptoExpedida', options: departamentosUnicos },
+        { label: 'Expedida en', name: 'propCiudadExpDoc', options: getCiudadesPorDepto(formData['propDeptoExpedida']) },
         { label: 'Correo', name: 'propCorreo', type: 'email' },
-        { label: 'Celular', name: 'propCelular', type: 'number' },
+        { label: 'Celular (10 dígitos)', name: 'propCelular', type: 'text', inputProps: { maxLength: 10 } },
         { label: 'Dirección', name: 'propDireccion' },
-        { label: 'Ciudad', name: 'propCiudad', options: municipios.map(m => m.CIUDAD) },
+        { label: 'Departamento', name: 'propDeptoCiudad', options: departamentosUnicos },
+        { label: 'Ciudad', name: 'propCiudad', options: getCiudadesPorDepto(formData['propDeptoCiudad']) },
       ],
     },
     {
@@ -278,11 +316,13 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
       fields: [
         { label: 'Nombre/Razón', name: 'tenedNombre' },
         { label: 'Número documento', name: 'tenedDocumento', type: 'number' },
-        { label: 'Expedida en', name: 'tenedCiudadExpDoc', options: municipios.map(m => m.CIUDAD) },
+        { label: 'Departamento (Expedida)', name: 'tenedDeptoExpedida', options: departamentosUnicos },
+        { label: 'Expedida en', name: 'tenedCiudadExpDoc', options: getCiudadesPorDepto(formData['tenedDeptoExpedida']) },
         { label: 'Correo', name: 'tenedCorreo', type: 'email' },
-        { label: 'Celular', name: 'tenedCelular', type: 'number' },
+        { label: 'Celular (10 dígitos)', name: 'tenedCelular', type: 'text', inputProps: { maxLength: 10 } },
         { label: 'Dirección', name: 'tenedDireccion' },
-        { label: 'Ciudad', name: 'tenedCiudad', options: municipios.map(m => m.CIUDAD) },
+        { label: 'Departamento', name: 'tenedDeptoCiudad', options: departamentosUnicos },
+        { label: 'Ciudad', name: 'tenedCiudad', options: getCiudadesPorDepto(formData['tenedDeptoCiudad']) },
       ],
     },
     {
@@ -293,7 +333,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
         { label: 'Tipo Carroceria', name: 'vehTipoCarroceria' },
         { label: 'Línea', name: 'vehLinea' },
         { label: 'Color', name: 'vehColor' },
-        // AUNQUE NO SEAN OBLIGATORIOS, SIGUEN APARECIENDO EN EL FORMULARIO PARA QUIEN QUIERA LLENARLOS
         { label: 'Repotenciado', name: 'vehRepotenciado', options: ["Sí", "No"] },
         { label: 'Año Repotenciacion', name: 'vehAno', type: 'number', inputProps: { min: 1990, max: 2040 } },
         { label: 'Empresa Satelital', name: 'vehEmpresaSat' },
@@ -317,7 +356,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
 
   return (
     <div className="Datos-contenedor">
-      {/* Barra de progreso sticky */}
       <div className="Datos-avance-container">
         <span className="Datos-avance-texto">Avance: {calcularAvance()}%</span>
         <div className="Datos-barra-avance">
@@ -330,28 +368,14 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
           <div key={title}>
             {title === "Toggle Tenedor" && (
               <div className="Datos-toggle-tenedor">
-                <input
-                  type="checkbox"
-                  id="tenedorSameCheckbox"
-                  className="Datos-checkbox"
-                  checked={tenedorSame}
-                  onChange={toggleTenedorSame}
-                />
+                <input type="checkbox" id="tenedorSameCheckbox" className="Datos-checkbox" checked={tenedorSame} onChange={toggleTenedorSame} />
                 <label htmlFor="tenedorSameCheckbox" className="Datos-checkbox-label">
-                  {tenedorSame
-                    ? "Editar datos del Tenedor"
-                    : "Rellenar los datos del tenedor con los mismos del Propietario"}
+                  {tenedorSame ? "Editar datos del Tenedor" : "Rellenar los datos del tenedor con los mismos del Propietario"}
                 </label>
               </div>
             )}
             {fields.length > 0 && (
-              <FormSection
-                title={title}
-                fields={fields}
-                formData={formData}
-                handleChange={handleChange}
-                disabled={title.includes("Tenedor") && tenedorSame}
-              />
+              <FormSection title={title} fields={fields} formData={formData} handleChange={handleChange} disabled={title.includes("Tenedor") && tenedorSame} />
             )}
           </div>
         ))}

@@ -110,14 +110,14 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  background: #0b3d2e;              
+  background: #0b3d2e;               
   color: white;
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .vehiculo-header:hover {
-  background: #145a32;              
+  background: #145a32;               
 }
 
 .vehiculo-header h3 {
@@ -336,19 +336,32 @@ body {
     font-weight: 700;
 }
 
-/* SweetAlert Custom Styles */
-.swal2-input[type="file"] { 
-    padding: 10px !important; 
-    height: auto !important; 
-    border: 1px solid #ddd !important;
+/* SweetAlert Custom Styles (MODIFICADO) */
+.swal2-file {
+    font-size: 16px;
+    width: 90% !important;
+    margin: 5px auto 15px auto !important; /* Margen ajustado */
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
     background: #f9f9f9;
-    box-shadow: none !important; 
-    width: 100%;
+    box-shadow: none !important;
+    padding: 8px !important;
+    height: auto !important;
+    overflow: hidden;
 }
 
+/* Input file focus */
+.swal2-file:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2) !important;
+}
+
+/* Estilo para el textarea dentro del modal */
 .swal2-textarea {
     width: 90% !important;
-    margin: 10px auto !important;
+    margin: 5px auto 10px auto !important;
+    min-height: 100px;
+    font-size: 0.95rem;
 }
 
 /* Paginación */

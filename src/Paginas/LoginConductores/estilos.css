@@ -3,19 +3,24 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* Cambiado de flex-start a center */
+  /* Centrado vertical solo si hay espacio suficiente */
+  justify-content: center; 
   min-height: 100vh;
   background-color: #ffffff;
-  padding: 0 20px; /* Sin padding arriba, solo a los lados */
+  padding: 0 20px; 
   font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+  box-sizing: border-box; 
+  /* SOLUCIÓN: Evita el movimiento lateral al desbordar el contenido */
+  overflow-x: hidden; 
 }
 
-/* LOGO (Tamaño referencia: 150px) */
+/* LOGO  */
 .LoginConductores-Logo {
-  width: 150px; /* Cambiado de 140px a 150px */
+  width: 100px; 
   height: auto;
-  margin-bottom: 10px;
+  margin-bottom: 5px; /* Reducido para acercar al título */
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+  margin-top: 90px;
 }
 
 /* TITULO */
@@ -23,40 +28,44 @@
   display: flex;
   justify-content: center;
   gap: 0px;
-  margin-bottom: 5px;
+  /* Reducido para compactar el espacio vertical del bloque de título */
+  margin: 5px 0 15px 0; 
 }
 
 .LoginConductores-titulo-app h1:first-child {
-  font-size: 2rem; /* Ajustado ligeramente para coincidir con el estándar */
+  font-size: 2rem; 
   font-weight: 700;
   color: #1a1a1a;
   margin: 0;
+  margin-top: 6px;
 }
 
 .LoginConductores-titulo-app h1:last-child {
   font-size: 2rem;
   font-weight: 700;
   color: #8dc73f;
-  margin: 0;
+  margin: 3px;
+  margin-top: 6px;
 }
 
 /* SUBTÍTULO */
 .LoginConductores-subtitulo {
-  margin-top: 0; /* Reducido margen superior */
-  margin-bottom: 20px; /* Reducido de 25px a 20px */
+  margin-top: 0; 
+  margin-bottom: 20px; 
   font-size: 1.2rem;
   font-weight: 600;
   color: #333;
+  text-align: center;
 }
 
-/* TARJETA DEL FORMULARIO (Medidas exactas de referencia) */
+/* TARJETA DEL FORMULARIO */
 .LoginConductores-formulario {
   width: 90%;
-  max-width: 400px; /* Cambiado de 420px a 400px */
+  max-width: 400px; 
   background: #ffffff;
-  padding: 30px 20px; /* Ajustado a 20px laterales como referencia */
-  border-radius: 10px; /* Ajustado radio de borde */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Sombra ajustada a referencia */
+  padding: 30px 20px; 
+  border-radius: 10px; 
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
   border: 1px solid #f3f3f3;
   box-sizing: border-box;
 }
@@ -65,21 +74,21 @@
 .LoginConductores-grupo-input {
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px; /* Reducido de 20px a 15px */
+  margin-bottom: 12px; /* Reducido de 15px a 12px */
 }
 
 .LoginConductores-grupo-input label {
-  margin-bottom: 5px; /* Reducido de 8px a 5px */
+  margin-bottom: 3px; /* Reducido de 5px a 3px */
   font-weight: 600;
   color: #374151;
-  font-size: 14px; /* Ajuste fino de tamaño letra etiqueta */
+  font-size: 14px; 
 }
 
 .LoginConductores-input {
   width: 100%;
-  padding: 10px; /* Cambiado de 14px a 10px (Referencia) */
+  padding: 10px; 
   border: 1px solid #e5e7eb;
-  border-radius: 5px; /* Radio más sutil */
+  border-radius: 5px; 
   font-size: 16px;
   outline: none;
   transition: 0.2s;
@@ -103,7 +112,7 @@
   position: absolute;
   right: 10px;
   top: 50%;
-  transform: translateY(-50%); /* Centrado vertical exacto */
+  transform: translateY(-50%); 
   border: none;
   background: none;
   font-size: 1.2rem;
@@ -112,12 +121,13 @@
   padding: 0;
   display: flex;
   align-items: center;
+  z-index: 10;
 }
 
 /* BOTÓN */
 .LoginConductores-boton {
   width: 100%;
-  padding: 12px; /* Cambiado de 14px a 12px */
+  padding: 12px; 
   border: none;
   border-radius: 5px;
   background: black;
@@ -126,6 +136,7 @@
   font-weight: 600;
   cursor: pointer;
   margin-top: 10px;
+  transition: background 0.3s ease;
 }
 
 .LoginConductores-boton:hover {
@@ -134,11 +145,11 @@
 
 /* LINKS */
 .LoginConductores-links {
-  margin-top: 20px;
+  margin-top: 15px; /* Reducido */
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px; /* Reducido */
 }
 
 .LoginConductores-link {
@@ -146,6 +157,7 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
+  transition: color 0.3s ease;
 }
 
 .LoginConductores-link:hover {
@@ -167,3 +179,70 @@
   font-size: 0.9rem;
   box-sizing: border-box;
 }
+
+/* =========================================
+   MEDIA QUERIES (RESPONSIVE MÓVIL) - AJUSTADO AL MÁXIMO
+   ========================================= */
+@media (max-width: 600px) {
+  
+  /* 1. Contenedor Principal: 
+     Alineación al inicio (arriba) para evitar desbordamiento en móviles. */
+  .LoginConductores-contenedor {
+    justify-content: flex-start; 
+    padding: 10px; /* Reducido de 15px 10px a solo 10px */
+    min-height: 100dvh; 
+  }
+
+  /* 2. Logo: 
+     MÁS PEQUEÑO y menos margen. */
+  .LoginConductores-Logo {
+    width: 60px; 
+    margin-top: 80px; 
+    margin-bottom: 2px;
+  }
+
+  /* 3. Títulos: Reducir tamaño de fuente y márgenes. */
+  .LoginConductores-titulo-app h1:first-child,
+  .LoginConductores-titulo-app h1:last-child {
+    font-size: 1.2rem;
+    margin-top: 0; 
+  }
+  
+  .LoginConductores-titulo-app {
+      margin: 3px 0 0; 
+  }
+
+  .LoginConductores-subtitulo {
+    font-size: 0.8rem; 
+    margin-bottom: 10px; 
+
+  /* 4. Formulario: 
+     Mantener compacto. */
+  .LoginConductores-formulario {
+    padding: 18px 15px; 
+    width: 100%;
+    max-width: 350px; 
+  }
+
+  /* 5. Inputs y Botones: Ajustar tamaño de padding y fuente. */
+  .LoginConductores-grupo-input label {
+    font-size: 12px; 
+  }
+
+  .LoginConductores-input {
+    padding: 7px; /* MÁS PEQUEÑO: de 8px a 7px */
+    font-size: 14px; 
+  }
+
+  .LoginConductores-boton {
+    padding: 8px; /* MÁS PEQUEÑO: de 10px a 8px */
+    font-size: 14px; /* Reducido */
+  }
+
+  .LoginConductores-links {
+    margin-top: 10px; /* Reducido */
+    gap: 5px;
+    margin-bottom: 10px; 
+  }
+}
+  }

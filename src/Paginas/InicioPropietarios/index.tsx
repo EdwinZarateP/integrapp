@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import BotonSencillo from "../../Componentes/BotonSencillo";
 import { ContextoApp } from "../../Contexto/index";
 import HashLoader from "react-spinners/HashLoader";
+import HeaderLogo from "../../Componentes/HeaderLogo"; // Importación del Header
 import "./estilos.css";
 
 const InicioPropietarios: React.FC = () => {
@@ -86,7 +87,14 @@ const InicioPropietarios: React.FC = () => {
   };
 
   return (
-    <div className="InicioPropietarios-contenedor">
+    <div className="InicioPropietarios-contenedor" style={{ position: 'relative' }}>
+      
+      {/* --- INTEGRACIÓN DEL HEADER --- */}
+      {/* Posicionamiento absoluto para fijarlo arriba sin romper el layout flex del contenedor */}
+      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", zIndex: 10 }}>
+        <HeaderLogo />
+      </div>
+
       {loading ? (
         <div className="InicioPropietarios-loading-container">
           <HashLoader size={60} color={"rgb(141, 199, 63)"} loading={loading} />
@@ -109,14 +117,10 @@ const InicioPropietarios: React.FC = () => {
           >
             <img src={logo} alt="Logo Integra" className="InicioPropietarios-logo" />
             <div className="InicioPropietarios-titulo">
-              <h1>Integr</h1>
-              <h1>App</h1>
+              <h1>Ingreso</h1>
+              <h1>Propietario</h1>
             </div>
           </div>
-
-             <div className="InicioPropietarios-subtitulo">
-              <h1>Ingreso Propietarios</h1>
-             </div>
           {/* --------------------------------------------- */}
 
           {errorMessage && <div className="mensajeError">{errorMessage}</div>}

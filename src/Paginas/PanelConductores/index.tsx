@@ -145,7 +145,6 @@ const BarraConductor: React.FC = () => {
 };
 
 /* --- COMPONENTE PRINCIPAL --- */
-/* --- COMPONENTE PRINCIPAL --- */
 const PanelConductoresVista: React.FC = () => {
   const navigate = useNavigate();
   
@@ -173,7 +172,6 @@ const PanelConductoresVista: React.FC = () => {
   
   // Estado para manejar los vehículos devueltos (Rechazados)
   const [vehiculosRechazados, setVehiculosRechazados] = useState<any[]>([]);
-  // NOTA: Se eliminó historialVehiculos porque ya no se usa en el Paso 4.
 
   const [selectedPlate, setSelectedPlate] = useState<string | null>(null);
   const [newPlate, setNewPlate] = useState<string>("");
@@ -188,7 +186,6 @@ const PanelConductoresVista: React.FC = () => {
 
   const cargarDatosIniciales = async () => {
       await fetchVehiculosPendientes();
-      // Ya no cargamos historial porque no se muestra
   };
 
   const fetchVehiculosPendientes = async () => {
@@ -228,7 +225,6 @@ const PanelConductoresVista: React.FC = () => {
       if (response.ok) {
         Swal.fire("Éxito", "Vehículo creado", "success");
         setVehicles(prev => !prev.includes(data.placa) ? [...prev, data.placa] : prev);
-        // fetchHistorialCompleto(); -> Eliminado
         setSelectedPlate(data.placa);
         setNewPlate("");
       } else { Swal.fire("Error", data.detail || "Error al crear", "error"); }
@@ -282,10 +278,10 @@ const PanelConductoresVista: React.FC = () => {
   };
 
   const eliminarDocumento = (sectionIdx: number, itemIdx: number) => {
-     Swal.fire({
+      Swal.fire({
         title: '¿Eliminar documento?', text: "Tendrás que cargarlo de nuevo.", icon: 'warning',
         showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Sí, borrar'
-     }).then((result) => {
+      }).then((result) => {
         if (result.isConfirmed) {
             const newSec = [...secciones];
             newSec[sectionIdx].items[itemIdx].progreso = 0;
@@ -293,15 +289,15 @@ const PanelConductoresVista: React.FC = () => {
             setSecciones(newSec);
             Swal.fire('Borrado', 'El documento ha sido eliminado.', 'success');
         }
-     });
+      });
   };
 
   const handleFinalizar = async () => {
-     if (!cedulaConductor) return Swal.fire("Error", "No se ha capturado la cédula del conductor.", "error");
-     const progreso = getOverallDocumentProgress(secciones);
-     if (progreso < 100) return Swal.fire("Incompleto", "Faltan documentos por cargar.", "warning");
+      if (!cedulaConductor) return Swal.fire("Error", "No se ha capturado la cédula del conductor.", "error");
+      const progreso = getOverallDocumentProgress(secciones);
+      if (progreso < 100) return Swal.fire("Incompleto", "Faltan documentos por cargar.", "warning");
 
-     try {
+      try {
         Swal.fire({ title: 'Enviando...', didOpen: () => Swal.showLoading() });
         const formData = new FormData();
         formData.append("placa", selectedPlate || "");
@@ -315,15 +311,15 @@ const PanelConductoresVista: React.FC = () => {
              const pendientesActualizados = vehicles.filter(v => v !== selectedPlate);
              setVehicles(pendientesActualizados);
              setVehiculosRechazados(prev => prev.filter(v => v.placa !== selectedPlate));
-             // fetchHistorialCompleto(); -> Eliminado
+             
              if (pendientesActualizados.length > 0) setSelectedPlate(pendientesActualizados[0]);
              else setSelectedPlate(null);
              setCurrentStep(1);
         });
-     } catch (error) {
-         console.error(error);
-         Swal.fire("Error", "No se pudo finalizar el proceso.", "error");
-     }
+      } catch (error) {
+          console.error(error);
+          Swal.fire("Error", "No se pudo finalizar el proceso.", "error");
+      }
   };
 
   const esRechazado = (placa: string | null) => {
@@ -336,7 +332,6 @@ const PanelConductoresVista: React.FC = () => {
       <BarraConductor />
       <div className="layout-conductor">
         <div className="sidebar-conductor">
-          {/* ARRAY DE PASOS: SOLO 1, 2 Y 3 */}
           {[1, 2, 3].map(step => (
             <button key={step} className={`btn-sidebar-step ${currentStep === step ? "active" : ""}`} onClick={() => changeStep(step)}>
                 <div className="step-indicator">{step}</div>
@@ -370,11 +365,44 @@ const PanelConductoresVista: React.FC = () => {
                             <strong style={{fontSize: '1.2rem', color: '#1565c0'}}>{selectedPlate}</strong>
                         </div>
                         <button className="btn-continuar" onClick={() => changeStep(2)}>Continuar &rarr;</button>
+                        <button className="btn-cambiar" style={{marginLeft: '10px', fontSize:'0.8rem', background:'none', border:'none', textDecoration:'underline', cursor:'pointer', color:'#666'}} onClick={() => setSelectedPlate(null)}>Cambiar</button>
                     </div>
                 ) : (
                     !esRechazado(selectedPlate) && (
-                        <div style={{marginTop: '30px', textAlign: 'center', color: '#999', padding: '20px', border: '2px dashed #eee', borderRadius: '10px'}}>
-                            {vehicles.length === 0 ? <p>¡Todo al día! No tienes vehículos pendientes.</p> : <p>Seleccione un vehículo.</p>}
+                        <div style={{marginTop: '30px', textAlign: 'center', padding: '20px', border: '2px dashed #eee', borderRadius: '10px'}}>
+                            {vehicles.length === 0 ? (
+                                <p style={{color: '#999'}}>¡Todo al día! No tienes vehículos pendientes.</p> 
+                            ) : (
+                                <div className="lista-vehiculos-seleccion">
+                                   <p style={{marginBottom: '15px', color: '#333', fontWeight: 'bold'}}>Seleccione un vehículo para continuar:</p>
+                                   <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center'}}>
+                                     {vehicles.map((placaItem, idx) => (
+                                       <button 
+                                         key={idx}
+                                         onClick={() => setSelectedPlate(placaItem)}
+                                         style={{
+                                           padding: '10px 20px',
+                                           backgroundColor: 'white',
+                                           border: '1px solid #ddd',
+                                           borderRadius: '8px',
+                                           cursor: 'pointer',
+                                           fontWeight: 'bold',
+                                           color: '#333',
+                                           boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                           display: 'flex',
+                                           alignItems: 'center',
+                                           gap: '8px',
+                                           transition: 'all 0.2s'
+                                         }}
+                                         onMouseOver={(e) => e.currentTarget.style.borderColor = '#8dc73f'}
+                                         onMouseOut={(e) => e.currentTarget.style.borderColor = '#ddd'}
+                                       >
+                                         <FaCar color="#8dc73f"/> {placaItem}
+                                       </button>
+                                     ))}
+                                   </div>
+                                </div>
+                            )}
                         </div>
                     )
                 )}
@@ -396,7 +424,6 @@ const PanelConductoresVista: React.FC = () => {
                                         className="btn-corregir" 
                                         onClick={() => {
                                             setSelectedPlate(veh.placa);
-                                            // Redirige al Paso 3 (Documentación)
                                             changeStep(3); 
                                         }}
                                     >
@@ -497,7 +524,6 @@ const PanelConductoresVista: React.FC = () => {
         </div>
       </div>
 
-      {/* BOTÓN WHATSAPP FLOTANTE USANDO CLASE CSS */}
       <a 
         href={`https://wa.me/${numeroSoporte}?text=${mensajeSoporte}`}
         target="_blank"

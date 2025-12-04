@@ -1,20 +1,18 @@
-/* CONTENEDOR PRINCIPAL */
+/* CONTENEDOR PRINCIPAL (Ajustado para centrar verticalmente como Propietarios) */
 .LoginConductores-contenedor {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center; /* Cambiado de flex-start a center */
   min-height: 100vh;
   background-color: #ffffff;
-  padding-top: 60px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 0 20px; /* Sin padding arriba, solo a los lados */
   font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
 }
 
-/* LOGO */
+/* LOGO (Tamaño referencia: 150px) */
 .LoginConductores-Logo {
-  width: 140px;
+  width: 150px; /* Cambiado de 140px a 150px */
   height: auto;
   margin-bottom: 10px;
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
@@ -29,14 +27,14 @@
 }
 
 .LoginConductores-titulo-app h1:first-child {
-  font-size: 1.9rem;
+  font-size: 2rem; /* Ajustado ligeramente para coincidir con el estándar */
   font-weight: 700;
   color: #1a1a1a;
   margin: 0;
 }
 
 .LoginConductores-titulo-app h1:last-child {
-  font-size: 1.9rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #8dc73f;
   margin: 0;
@@ -44,45 +42,48 @@
 
 /* SUBTÍTULO */
 .LoginConductores-subtitulo {
-  margin-top: 5px;
-  margin-bottom: 25px;
-  font-size: 1.1rem;
+  margin-top: 0; /* Reducido margen superior */
+  margin-bottom: 20px; /* Reducido de 25px a 20px */
+  font-size: 1.2rem;
   font-weight: 600;
   color: #333;
 }
 
-/* TARJETA DEL FORMULARIO */
+/* TARJETA DEL FORMULARIO (Medidas exactas de referencia) */
 .LoginConductores-formulario {
   width: 90%;
-  max-width: 420px;
+  max-width: 400px; /* Cambiado de 420px a 400px */
   background: #ffffff;
-  padding: 35px 28px;
-  border-radius: 14px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.07);
+  padding: 30px 20px; /* Ajustado a 20px laterales como referencia */
+  border-radius: 10px; /* Ajustado radio de borde */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Sombra ajustada a referencia */
   border: 1px solid #f3f3f3;
+  box-sizing: border-box;
 }
 
 /* INPUTS */
 .LoginConductores-grupo-input {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: 15px; /* Reducido de 20px a 15px */
 }
 
 .LoginConductores-grupo-input label {
-  margin-bottom: 8px;
+  margin-bottom: 5px; /* Reducido de 8px a 5px */
   font-weight: 600;
   color: #374151;
+  font-size: 14px; /* Ajuste fino de tamaño letra etiqueta */
 }
 
 .LoginConductores-input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 10px; /* Cambiado de 14px a 10px (Referencia) */
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 5px; /* Radio más sutil */
+  font-size: 16px;
   outline: none;
   transition: 0.2s;
+  box-sizing: border-box;
 }
 
 .LoginConductores-input:focus {
@@ -95,27 +96,33 @@
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .LoginConductores-ojito {
   position: absolute;
-  right: 12px;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%); /* Centrado vertical exacto */
   border: none;
   background: none;
   font-size: 1.2rem;
   cursor: pointer;
   color: #666;
+  padding: 0;
+  display: flex;
+  align-items: center;
 }
 
 /* BOTÓN */
 .LoginConductores-boton {
   width: 100%;
-  padding: 14px;
+  padding: 12px; /* Cambiado de 14px a 12px */
   border: none;
-  border-radius: 10px;
+  border-radius: 5px;
   background: black;
   color: white;
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   margin-top: 10px;
@@ -127,17 +134,18 @@
 
 /* LINKS */
 .LoginConductores-links {
-  margin-top: 25px;
+  margin-top: 20px;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .LoginConductores-link {
   color: #000080;
   text-decoration: none;
   font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .LoginConductores-link:hover {
@@ -148,13 +156,14 @@
 /* ERROR */
 .LoginConductores-error {
   margin-top: 15px;
-  padding: 12px;
+  padding: 10px;
   background: #fef2f2;
   color: #dc2626;
   border: 1px solid #fee2e2;
-  border-radius: 6px;
+  border-radius: 5px;
   text-align: center;
-  width: 90%;
-  max-width: 420px;
+  width: 100%;
   font-weight: 600;
+  font-size: 0.9rem;
+  box-sizing: border-box;
 }

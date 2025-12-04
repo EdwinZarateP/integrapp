@@ -36,6 +36,20 @@
   color:rgb(141, 199, 63);
 }
 
+.InicioPropietarios-subtitulo {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  font-size: 10px;
+  margin-bottom: 20px;
+  margin-right: 10px;
+  margin-left: 210px;
+  margin-top: -40px;
+
+}
+
+
+
 .InicioPropietarios-logo {
   width: 150px;
   height: auto;

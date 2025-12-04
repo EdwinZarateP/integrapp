@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import confetti from "canvas-confetti";
-import { useNavigate } from "react-router-dom"; // Asegúrate de importar esto
-
+import { useNavigate } from "react-router-dom";
 import logo from "../../Imagenes/albatros.png";
-import "./estilos.css";
+import "./estilos.css"; 
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -78,41 +77,76 @@ const LoginUsuariosSeguridad = () => {
 
   return (
     <div className="LoginSeguridad-contenedor">
-      <img src={logo} alt="logo" className="LoginSeguridad-Logo" />
-      <h2 className="LoginSeguridad-titulo">Ingreso Seguridad</h2>
-      <form className="LoginSeguridad-formulario" onSubmit={manejarLogin}>
-        <input
-          type="text"
-          placeholder="Usuario"
-          value={usuario}
-          onChange={(e) => setUsuario(e.target.value)}
-          className="LoginSeguridad-input"
-        />
+      
+      {/* 1. ELEMENTOS FUERA DE LA TARJETA BLANCA */}
+      
+      {/* Logo */}
+      <img src={logo} alt="logo" className="LoginSeguridad-logo" />
 
-        <div className="LoginSeguridad-password-wrapper">
+      {/* Título de Marca (IntegrApp) con colores separados */}
+      <div className="LoginSeguridad-titulo-brand">
+        <span>Integr</span>
+        <span>App</span>
+      </div>
+
+      {/* Subtítulo */}
+      <h2 className="LoginSeguridad-subtitulo">Ingreso Seguridad</h2>
+
+      {/* 2. TARJETA BLANCA (FORMULARIO) */}
+      <form className="LoginSeguridad-formulario" onSubmit={manejarLogin}>
+        
+        {/* Input Usuario */}
+        <label className="LoginSeguridad-etiqueta">Usuario</label>
+        <div className="LoginSeguridad-inputWrapper">
+            <input
+            type="text"
+            placeholder="Ingrese su usuario"
+            value={usuario}
+            onChange={(e) => setUsuario(e.target.value)}
+            className="LoginSeguridad-input"
+            />
+        </div>
+
+        {/* Input Clave */}
+        <label className="LoginSeguridad-etiqueta">Clave</label>
+        <div className="LoginSeguridad-inputWrapper">
           <input
             type={mostrarClave ? "text" : "password"}
-            placeholder="Clave"
+            placeholder="Ingrese su contraseña"
             value={clave}
             onChange={(e) => setClave(e.target.value)}
-            className="LoginSeguridad-input LoginSeguridad-input-password"
+            className="LoginSeguridad-input"
           />
-
+          
+          {/* Botón del ojito */}
           <button
             type="button"
             onClick={() => setMostrarClave(!mostrarClave)}
-            className="LoginSeguridad-ojito"
+            style={{
+                top: "15%",
+                position: "absolute",
+                right: "10px",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "1.2rem",
+                color: "#888",
+                display: "flex",
+                alignItems: "center"
+            }}
           >
             {mostrarClave ? "🙈" : "👁️"}
           </button>
         </div>
 
+        {/* Botón Ingresar */}
         <button type="submit" className="LoginSeguridad-boton">
           Ingresar
         </button>
-      </form>
 
-      {error && <p className="LoginSeguridad-error">{error}</p>}
+        {/* Error dentro de la tarjeta */}
+        {error && <p className="LoginSeguridad-mensajeError">{error}</p>}
+      </form>
     </div>
   );
 };

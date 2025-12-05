@@ -389,6 +389,27 @@ body {
 .paginacion-contenedor button:disabled { background: #ccc; cursor: not-allowed; }
 .paginacion-contenedor span { font-weight: 600; color: #333; }
 
+.btn-descarga-pdf {
+    background-color: #e74c3c; 
+    color: white;
+    border: 1px solid white; 
+    padding: 5px 10px; 
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem; 
+    white-space: nowrap; 
+    transition: background 0.2s;
+}
+
+.btn-descarga-pdf:hover {
+    background-color: #c0392b;
+    transform: scale(1.02);
+}
+
 /* =========================================
    RESPONSIVE DESIGN
    ========================================= */

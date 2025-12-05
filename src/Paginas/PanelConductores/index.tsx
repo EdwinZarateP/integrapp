@@ -259,10 +259,18 @@ const PanelConductoresVista: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        Swal.fire("Éxito", "Vehículo creado correctamente", "success");
-        fetchVehiculosUsuario();
-        setSelectedPlate(null);
+        Swal.fire({
+            icon: 'success', 
+            title: "Éxito", 
+            text: "Vehículo creado correctamente", 
+            timer: 1500,
+            showConfirmButton: false
+        });
+        await fetchVehiculosUsuario();
+        // CAMBIO: Asignar placa y redirigir inmediatamente
+        setSelectedPlate(placaCreada);
         setNewPlate("");
+        changeStep(2);
       } else { 
           Swal.fire("Error", data.detail || "Error al crear", "error"); 
       }
@@ -300,10 +308,10 @@ useEffect(() => {
                         url !== "undefined" && 
                         typeof url === 'string' && 
                         url.trim() !== ""
-                     )
-                     if (valor.length === 0) {
-                         return { ...item, progreso: 0, url: undefined };
-                     }
+                      )
+                      if (valor.length === 0) {
+                          return { ...item, progreso: 0, url: undefined };
+                      }
                  }
                  // -------------------------------------------
 
@@ -361,29 +369,68 @@ useEffect(() => {
       });
   };
 
-  const handleFinalizar = async () => {
+const handleFinalizar = async () => {
+      // 1. Validaciones previas
       if (!cedulaConductor) return Swal.fire("Error", "No se ha capturado la cédula del conductor.", "error");
       const progreso = getOverallDocumentProgress(secciones);
       if (progreso < 100) return Swal.fire("Incompleto", "Faltan documentos por cargar.", "warning");
 
       try {
-        Swal.fire({ title: 'Enviando...', didOpen: () => Swal.showLoading() });
+        // 2. Feedback de carga
+        Swal.fire({ 
+            title: 'Finalizando...', 
+            text: 'Enviando a revisión y notificando al equipo de seguridad.',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading() 
+        });
+        // Recuperamos el nombre guardado en cookies (igual que en la barra superior)
+        const nombreCookie = Cookies.get("conductorNombre");
+        const rawUsuario = Cookies.get("conductorUsuario") || "";
+        
+        let nombreParaEnviar = "Conductor"; // Valor por defecto
+
+        if (nombreCookie && nombreCookie !== "undefined") {
+            // Decodificamos por si tiene tildes o caracteres especiales
+            nombreParaEnviar = decodeURIComponent(nombreCookie);
+        } else if (rawUsuario) {
+            // Si no hay nombre, usamos el usuario (antes del @)
+            nombreParaEnviar = rawUsuario.split('@')[0];
+        }
+        
+        // Limpiamos el nombre 
+        nombreParaEnviar = nombreParaEnviar.toUpperCase().trim();
+        // ------------------------------------------
+
         const formData = new FormData();
         formData.append("placa", selectedPlate || "");
-        formData.append("nuevo_estado", "completado_revision");
+        formData.append("nuevo_estado", "completado_revision"); 
+        
+        // MANTENEMOS EL ID 
         formData.append("usuario_id", idUsuario);
+        
+        // AGREGAMOS EL NOMBRE 
+        formData.append("nombre_conductor", nombreParaEnviar);
 
+        // 3. Petición al Backend
         const response = await fetch(`${API_BASE}/vehiculos/actualizar-estado`, { method: "PUT", body: formData });
+        
         if (!response.ok) throw new Error("Error al actualizar estado");
 
-        Swal.fire("¡Enviado!", "El vehículo ha pasado a revisión.", "success").then(() => {
+        // 4. Mensaje de éxito
+        Swal.fire(
+            "¡Enviado a Revisión!", 
+            "El equipo de Seguridad ha sido notificado y revisará tus documentos pronto.", 
+            "success"
+        ).then(() => {
+              // Limpieza y redirección
               setSelectedPlate(null);
               setCurrentStep(1);
               fetchVehiculosUsuario();
         });
+
       } catch (error) {
           console.error(error);
-          Swal.fire("Error", "No se pudo finalizar el proceso.", "error");
+          Swal.fire("Error", "No se pudo finalizar el proceso. Intenta nuevamente.", "error");
       }
   };
 
@@ -433,124 +480,118 @@ useEffect(() => {
                     <button className="btn-moderno-accion" onClick={handleCreateVehicle}>Crear Placa</button>
                 </div>
                 
-                {selectedPlate && !esRechazado(selectedPlate) ? (
-                    <div className="seleccion-actual">
-                        <div style={{display:'flex', flexDirection:'column'}}>
-                            <small style={{color:'#666'}}>Vehículo pendiente actual:</small>
-                            <strong style={{fontSize: '1.2rem', color: '#1565c0'}}>{selectedPlate}</strong>
-                        </div>
-                        <button className="btn-continuar" onClick={() => changeStep(2)}>Continuar &rarr;</button>
-                        <button className="btn-cambiar" style={{marginLeft: '10px', fontSize:'0.8rem', background:'none', border:'none', textDecoration:'underline', cursor:'pointer', color:'#666'}} onClick={() => setSelectedPlate(null)}>Cambiar</button>
+                {/* Ahora siempre muestra las listas, y al hacer click navega directo */}
+                
+                <div style={{marginTop: '30px', display:'flex', flexDirection:'column', gap:'20px'}}>
+                    
+                    {/* SECCIÓN 1: PENDIENTES */}
+                    <div className="seccion-lista-vehiculos">
+                        <h4 style={{textAlign:'left', color:'#555', borderBottom:'1px solid #ddd', paddingBottom:'5px'}}>
+                            <FaClipboardList /> Continuar Registro (Pendientes)
+                        </h4>
+                        {vehicles.length === 0 ? (
+                            <p style={{color: '#999', fontStyle:'italic', padding:'10px'}}>No tienes vehículos pendientes.</p> 
+                        ) : (
+                                <div className="lista-vehiculos-grid">
+                                    {vehicles.map((placaItem, idx) => (
+                                    <button 
+                                        key={idx}
+                                        onClick={() => {
+                                            // CAMBIO: Seleccionar y mover al paso 2 inmediatamente
+                                            setSelectedPlate(placaItem);
+                                            changeStep(2);
+                                        }}
+                                        className="btn-seleccion-vehiculo" 
+                                    >
+                                        <FaCar /> {placaItem}
+                                    </button>
+                                    ))}
+                                </div>
+                        )}
                     </div>
-                ) : (
-                    !esRechazado(selectedPlate) && (
-                        <div style={{marginTop: '30px', display:'flex', flexDirection:'column', gap:'20px'}}>
-                            
-                            {/* SECCIÓN 1: PENDIENTES */}
-                            <div className="seccion-lista-vehiculos">
-                                <h4 style={{textAlign:'left', color:'#555', borderBottom:'1px solid #ddd', paddingBottom:'5px'}}>
-                                    <FaClipboardList /> Continuar Registro (Pendientes)
-                                </h4>
-                                {vehicles.length === 0 ? (
-                                    <p style={{color: '#999', fontStyle:'italic', padding:'10px'}}>No tienes vehículos pendientes.</p> 
-                                ) : (
-                                     <div className="lista-vehiculos-grid">
-                                      {vehicles.map((placaItem, idx) => (
-                                        <button 
-                                          key={idx}
-                                          onClick={() => setSelectedPlate(placaItem)}
-                                          className="btn-seleccion-vehiculo" 
-                                        >
-                                          <FaCar /> {placaItem}
-                                        </button>
-                                      ))}
-                                    </div>
-                                )}
+
+                    {/* SECCIÓN 2: DEVUELTOS / RECHAZADOS */}
+                    {vehiculosRechazados.length > 0 && (
+                        <div className="seccion-lista-vehiculos" style={{backgroundColor: '#fff5f5', padding: '15px', borderRadius: '8px', border: '1px solid #ffcccc'}}>
+                            <h4 style={{textAlign:'left', color:'#c0392b', borderBottom:'1px solid #ffcccc', paddingBottom:'5px'}}>
+                                    <FaTimesCircle /> Vehículos Devueltos (Requieren Corrección)
+                            </h4>
+                            <div className="lista-vehiculos-grid">
+                                {vehiculosRechazados.map((veh, idx) => (
+                                <button 
+                                    key={idx}
+                                    onClick={() => {
+                                            setSelectedPlate(veh.placa);
+                                            changeStep(4);
+                                    }}
+                                    className="btn-seleccion-vehiculo btn-rechazado-item" 
+                                    style={{borderColor: '#e74c3c', color: '#c0392b', backgroundColor: '#fff'}}
+                                >
+                                    <FaExclamationTriangle /> {veh.placa}
+                                </button>
+                                ))}
                             </div>
-
-                            {/* SECCIÓN 2: DEVUELTOS / RECHAZADOS */}
-                            {vehiculosRechazados.length > 0 && (
-                                <div className="seccion-lista-vehiculos" style={{backgroundColor: '#fff5f5', padding: '15px', borderRadius: '8px', border: '1px solid #ffcccc'}}>
-                                    <h4 style={{textAlign:'left', color:'#c0392b', borderBottom:'1px solid #ffcccc', paddingBottom:'5px'}}>
-                                        <FaTimesCircle /> Vehículos Devueltos (Requieren Corrección)
-                                    </h4>
-                                    <div className="lista-vehiculos-grid">
-                                     {vehiculosRechazados.map((veh, idx) => (
-                                       <button 
-                                         key={idx}
-                                         onClick={() => {
-                                              setSelectedPlate(veh.placa);
-                                              changeStep(4);
-                                         }}
-                                         className="btn-seleccion-vehiculo btn-rechazado-item" 
-                                         style={{borderColor: '#e74c3c', color: '#c0392b', backgroundColor: '#fff'}}
-                                       >
-                                         <FaExclamationTriangle /> {veh.placa}
-                                       </button>
-                                     ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* SECCIÓN 3: APROBADOS (NUEVO - Debajo de Rechazados) */}
-                            {vehiculosAprobados.length > 0 && (
-                                <div className="seccion-lista-vehiculos" style={{backgroundColor: '#d4edda', padding: '15px', borderRadius: '8px', border: '1px solid #c3e6cb'}}>
-                                    <h4 style={{textAlign:'left', color:'#155724', borderBottom:'1px solid #c3e6cb', paddingBottom:'5px'}}>
-                                        <FaCheckCircle /> Vehículos Aprobados
-                                    </h4>
-                                    <div className="lista-vehiculos-grid">
-                                     {vehiculosAprobados.map((veh, idx) => (
-                                       <div 
-                                         key={idx}
-                                         className="vehiculo-aprobado-card" 
-                                         style={{
-                                              padding: '10px', 
-                                              borderRadius:'5px', 
-                                              backgroundColor: 'white', 
-                                              border: '1px solid #c3e6cb',
-                                              display: 'flex', alignItems: 'center', gap: '10px',
-                                              color: '#155724', fontWeight: 'bold'
-                                         }}
-                                       >
-                                         <FaCheckCircle /> {veh.placa}
-                                         <span style={{fontSize: '0.8rem', fontWeight: 'normal', color: '#155724', marginLeft: 'auto'}}>Aprobado para operar</span>
-                                       </div>
-                                     ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* SECCIÓN 4: EN REVISIÓN */}
-                            {vehiculosEnRevision.length > 0 && (
-                                <div className="seccion-lista-vehiculos" style={{backgroundColor: '#e3f2fd', padding: '15px', borderRadius: '8px', border: '1px solid #bbdefb'}}>
-                                    <h4 style={{textAlign:'left', color:'#1976d2', borderBottom:'1px solid #bbdefb', paddingBottom:'5px'}}>
-                                        <FaClock /> Vehículos en Revisión
-                                    </h4>
-                                    <div className="lista-vehiculos-grid">
-                                     {vehiculosEnRevision.map((veh, idx) => (
-                                       <div 
-                                         key={idx}
-                                         className="vehiculo-revision-card" 
-                                         style={{
-                                              padding: '10px', 
-                                              borderRadius:'5px', 
-                                              backgroundColor: 'white', 
-                                              border: '1px solid #90caf9',
-                                              display: 'flex', alignItems: 'center', gap: '10px',
-                                              color: '#1565c0', fontWeight: 'bold'
-                                         }}
-                                       >
-                                         <FaClock /> {veh.placa}
-                                         <span style={{fontSize: '0.8rem', fontWeight: 'normal', color: '#555', marginLeft: 'auto'}}>Esperando aprobación...</span>
-                                       </div>
-                                     ))}
-                                    </div>
-                                </div>
-                            )}
-
                         </div>
-                    )
-                )}
+                    )}
+
+                    {/* SECCIÓN 3: APROBADOS (NUEVO - Debajo de Rechazados) */}
+                    {vehiculosAprobados.length > 0 && (
+                        <div className="seccion-lista-vehiculos" style={{backgroundColor: '#d4edda', padding: '15px', borderRadius: '8px', border: '1px solid #c3e6cb'}}>
+                            <h4 style={{textAlign:'left', color:'#155724', borderBottom:'1px solid #c3e6cb', paddingBottom:'5px'}}>
+                                    <FaCheckCircle /> Vehículos Aprobados
+                            </h4>
+                            <div className="lista-vehiculos-grid">
+                                {vehiculosAprobados.map((veh, idx) => (
+                                <div 
+                                    key={idx}
+                                    className="vehiculo-aprobado-card" 
+                                    style={{
+                                        padding: '10px', 
+                                        borderRadius:'5px', 
+                                        backgroundColor: 'white', 
+                                        border: '1px solid #c3e6cb',
+                                        display: 'flex', alignItems: 'center', gap: '10px',
+                                        color: '#155724', fontWeight: 'bold'
+                                    }}
+                                >
+                                    <FaCheckCircle /> {veh.placa}
+                                    <span style={{fontSize: '0.8rem', fontWeight: 'normal', color: '#155724', marginLeft: 'auto'}}>Aprobado para operar</span>
+                                </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* SECCIÓN 4: EN REVISIÓN */}
+                    {vehiculosEnRevision.length > 0 && (
+                        <div className="seccion-lista-vehiculos" style={{backgroundColor: '#e3f2fd', padding: '15px', borderRadius: '8px', border: '1px solid #bbdefb'}}>
+                            <h4 style={{textAlign:'left', color:'#1976d2', borderBottom:'1px solid #bbdefb', paddingBottom:'5px'}}>
+                                    <FaClock /> Vehículos en Revisión
+                            </h4>
+                            <div className="lista-vehiculos-grid">
+                                {vehiculosEnRevision.map((veh, idx) => (
+                                <div 
+                                    key={idx}
+                                    className="vehiculo-revision-card" 
+                                    style={{
+                                        padding: '10px', 
+                                        marginTop: "10px",
+                                        borderRadius:'5px', 
+                                        backgroundColor: 'white', 
+                                        border: '1px solid #90caf9',
+                                        display: 'flex', alignItems: 'center', gap: '10px',
+                                        color: '#1565c0', fontWeight: 'bold'
+                                    }}
+                                >
+                                    <FaClock /> {veh.placa}
+                                    <span style={{fontSize: '0.8rem', fontWeight: 'normal', color: '#555', marginLeft: 'auto'}}>Esperando aprobación...</span>
+                                </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                </div>
               </div>
             </div>
           )}
@@ -728,9 +769,7 @@ useEffect(() => {
             urls={verDocumentoInfo.urls} 
             placa={selectedPlate || ""} 
             onClose={() => { setVerDocumentoInfo(null); setVerDocumento(false); }}
-            /* --- Busca el componente <VerDocumento> al final de PanelConductoresVista.tsx --- */
-/* --- Y reemplaza la propiedad onDeleteSuccess completa por esto: --- */
-
+            
 onDeleteSuccess={(urlAEliminar: any) => {
     // 1. Copiamos el estado actual
     const newSec = JSON.parse(JSON.stringify(secciones));
@@ -770,7 +809,6 @@ onDeleteSuccess={(urlAEliminar: any) => {
     setSecciones(newSec);
     Swal.fire('Listo', 'Documento eliminado y lista actualizada.', 'success');
 }}
-            // ----------------------------------------
          />
       )}
     </div>

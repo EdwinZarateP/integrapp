@@ -166,9 +166,11 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     if (placa) fetchData();
   }, [placa]);
 
+  // --- HANDLE CHANGE CORREGIDO ---
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
+    // 1. Validaciones Numéricas para Celulares
     if (phoneFields.some(field => name.includes(field))) {
         const numericValue = value.replace(/\D/g, '');
         if (numericValue.length > 10) return;
@@ -176,8 +178,20 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
         return;
     }
 
+    // 2. NUEVAS VALIDACIONES DE RANGOS (Modelo y Antigüedad)
+    // Si el usuario intenta escribir algo fuera del rango, lo ignoramos
+    if (value !== "") {
+        // No permitir modelo mayor a 2026
+        if (name === 'vehModelo' && parseInt(value) > 2026) return;
+        
+        // No permitir antigüedad mayor a 30 años
+        if (name === 'condAntiguedadRef' && parseInt(value) > 30) return;
+    }
+
+    // 3. Validación Tenedor (si es igual al propietario)
     if (tenedorSame && name.startsWith("tened")) return;
 
+    // 4. Lógica de Departamentos
     if (name.includes('Depto')) {
         let ciudadField = "";
         if (name === 'condDeptoExpedida') ciudadField = 'condExpedidaEn';
@@ -229,7 +243,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
       });
       const result = await response.json();
       
-      // --- CAMBIO AQUÍ: Alerta con botón de continuar ---
       Swal.fire({
         title: "¡Datos Guardados!",
         text: result.message || "La información se ha actualizado correctamente.",
@@ -240,16 +253,14 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
         confirmButtonColor: '#27ae60'
       }).then((result) => {
         if (result.isConfirmed) {
-            // Llamamos a la función que nos pasó el padre para cambiar de paso
             onSavedSuccess();
         }
       });
-      // --------------------------------------------------
 
     } catch (error) { alert('Hubo un error al actualizar la información'); } finally { setIsLoading(false); }
   };
 
-  // Definición de las secciones del formulario con DEPARTAMENTO + CIUDAD
+  // Definición de las secciones del formulario
   const sections = [
     {
       title: 'Información del Conductor',
@@ -289,7 +300,8 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
         { label: 'Departamento', name: 'condDeptoCiudadRef', options: departamentosUnicos },
         { label: 'Ciudad', name: 'condCiudadRef', options: getCiudadesPorDepto(formData['condDeptoCiudadRef']) },
         { label: 'Nro. Viajes', name: 'condNroViajesRef', type: 'number' },
-        { label: 'Años Antigüedad', name: 'condAntiguedadRef', type: 'number' },
+        // --- CORRECCIÓN ANTIGÜEDAD (MAX 30) ---
+        { label: 'Años Antigüedad', name: 'condAntiguedadRef', type: 'number', inputProps: { min: 0, max: 30 } },
         { label: 'Merc. Transportada', name: 'condMercTransportada' },
       ],
     },
@@ -328,13 +340,14 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     {
       title: 'Datos del Vehiculo 🚛',
       fields: [
-        { label: 'Modelo', name: 'vehModelo', type: 'number', inputProps: { min: 1990, max: 2040 } },
+        // --- CORRECCIÓN MODELO (MAX 2026) ---
+        { label: 'Modelo', name: 'vehModelo', type: 'number', inputProps: { min: 1990, max: 2026 } },
         { label: 'Marca', name: 'vehMarca' },
         { label: 'Tipo Carroceria', name: 'vehTipoCarroceria' },
         { label: 'Línea', name: 'vehLinea' },
         { label: 'Color', name: 'vehColor' },
         { label: 'Repotenciado', name: 'vehRepotenciado', options: ["Sí", "No"] },
-        { label: 'Año Repotenciacion', name: 'vehAno', type: 'number', inputProps: { min: 1990, max: 2040 } },
+        { label: 'Año Repotenciacion', name: 'vehAno', type: 'number', inputProps: { min: 1990, max: 2025 } },
         { label: 'Empresa Satelital', name: 'vehEmpresaSat' },
         { label: 'Usuario Satelital', name: 'vehUsuarioSat' },
         { label: 'Clave Satelital', name: 'vehClaveSat' },

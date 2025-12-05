@@ -575,120 +575,150 @@ body, html {
 /* ========================================================================== */
 /* RESPONSIVE DESIGN (MÓVIL / TABLET)                                         */
 /* ========================================================================== */
-
 @media (max-width: 900px) {
   
-  /* 1. LAYOUT PRINCIPAL: Columna vertical */
-  .layout-conductor {
-    flex-direction: column;
-    padding: 10px; /* Menos margen externo en celular */
-    gap: 15px;
+  /* 1. HEADER MÁS PEQUEÑO Y COMPACTO */
+  .barra-superior {
+    height: 50px; /* Reducido de 60/65px a 50px */
+    padding: 0 10px;
   }
 
-  /* 2. SIDEBAR (Navegación Horizontal) */
+  .barra-logo {
+    height: 32px; 
+  }
+  .barra-subtitulos-linea { display: none; }
+  .barra-titulo { font-size: 12px; }
+
+  /* Usuario más discreto */
+  .barra-usuario {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    max-width: 120px;
+  }
+
+  /* 2. LAYOUT: REDUCCIÓN DE ESPACIOS EXTERNOS */
+  .layout-conductor {
+    flex-direction: column;
+    padding: 5px; 
+    gap: 8px;     
+    margin-top: 0;
+  }
+
+  /* 3. SIDEBAR (NAVEGACIÓN) */
   .sidebar-conductor {
     width: 100%;
-    flex-direction: row; /* Horizontal */
-    overflow-x: auto; /* Scroll si no cabe */
-    white-space: nowrap;
-    padding-bottom: 5px; /* Espacio para scrollbar invisible */
-    -webkit-overflow-scrolling: touch;
-    gap: 10px;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 0; 
+    gap: 8px;
+    margin-bottom: 2px;
   }
   
-  /* Ocultar barra de scroll visualmente */
   .sidebar-conductor::-webkit-scrollbar { display: none; }
 
   .btn-sidebar-step {
-    flex: 0 0 auto; /* No estirar, tamaño según contenido */
-    padding: 8px 15px; /* Más compactos */
-    border-radius: 50px; /* Forma de píldora */
-    font-size: 0.85rem;
-    min-width: auto;
-    background-color: rgba(255,255,255,0.8);
+    flex: 0 0 auto;
+    padding: 6px 12px; 
+    border-radius: 20px;
+    font-size: 0.75rem; 
+    background-color: white;
+    border: 1px solid #e0e0e0; 
+    box-shadow: none; 
   }
   
   .btn-sidebar-step .step-indicator {
-    width: 22px;
-    height: 22px;
-    font-size: 11px;
-    margin-right: -5px; /* Acercar el numero al texto */
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    margin-right: 5px;
+  }
+  
+  .btn-sidebar-step.active {
+    background-color: #2c3e50;
+    color: white;
+    border-color: #2c3e50;
   }
 
-  /* 3. CONTENIDO PRINCIPAL */
+  /* 4. CONTENIDO PRINCIPAL: APROVECHAR ESPACIO */
   .contenido-conductor-container {
-    padding: 20px 15px; /* Padding interno reducido para ganar espacio */
-    border-radius: 12px;
-    min-height: auto; /* Altura automática */
+    padding: 15px; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    width: 100%;
+  }
+
+  .step-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
   }
 
   .step-header h2 {
-    font-size: 1.3rem; /* Titulo más chico */
+    font-size: 1.1rem; 
+    margin-bottom: 4px;
+  }
+  
+  .step-header p {
+    font-size: 0.8rem; 
   }
 
-  /* 4. TARJETAS Y LISTAS */
+  /* 5. INPUTS Y FORMULARIOS MÁS COMPACTOS */
+  .input-moderno {
+    padding: 8px 10px; 
+    font-size: 0.9rem;
+    height: 40px; 
+  }
+
+  .btn-moderno-accion {
+    width: 100%; 
+    padding: 10px;
+    font-size: 0.95rem;
+    margin-top: 5px;
+  }
+  
+  .input-group-crear {
+    gap: 8px; 
+  }
+
+  /* 6. COMPONENTES EXTRA */
   .seleccion-actual {
-    flex-direction: column; /* Apilar texto y botón */
-    align-items: flex-start;
-    gap: 10px;
-    width: 100%;
-  }
-  
-  .seleccion-actual button {
-    width: 100%; /* Botón ancho completo */
-  }
-
-  .card-rechazado {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .btn-corregir { width: 100%; justify-content: center; margin-top: 5px; }
-
-  /* Lista documentos */
-  .doc-name {
+    padding: 12px;
+    margin-top: 0;
     font-size: 0.85rem;
-    max-width: 55%; /* Asegura espacio a los botones */
-  }
-  
-  .btn-doc-action {
-    padding: 6px 10px;
-    font-size: 0.75rem;
   }
 
-  /* 5. HEADER MÁS COMPACTO */
-  .barra-superior {
-    padding: 0 15px;
-    height: 60px;
+  .alert-box {
+    padding: 10px;
+    font-size: 0.85rem;
   }
-  .barra-titulo { font-size: 13px; display: none; /* Ocultar texto largo en movil si quieres, o dejarlo */ }
-  .barra-titulos-agrupados { display: flex; } /* Mantiene logo + titulos */
-  
-  /* Ajuste botones flotantes para que no se pisen */
+
+  /* Lista de Vehículos más compacta */
+  .btn-seleccion-vehiculo {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  /* Botones flotantes */
   .btn-whatsapp-flotante {
-    padding: 10px 10px;
-    font-size: 0.85rem;
-    bottom: 15px; 
-    left: 15px;
+    padding: 8px;
+    bottom: 10px;
+    left: 10px;
   }
   
+  .btn-whatsapp-flotante span {
+    display: none; 
+  }
+  
+  .btn-whatsapp-flotante svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  
+  /* Botón Guardar fijo */
   .contenedor-formulario-fijo button[type="submit"],
   .contenedor-formulario-fijo .btn-guardar { 
-    width: auto; 
-    padding: 10px 20px;
+    bottom: 10px;
+    right: 10px;
+    padding: 10px 15px;
+    font-size: 0.9rem;
   }
-}
-
-/* Ajuste extra para pantallas MUY pequeñas (tipo iPhone SE) */
-@media (max-width: 400px) {
-  .barra-titulo { font-size: 12px; }
-  .barra-logo { height: 35px; }
-  .btn-sidebar-step span { display: inline-block; } /* Mostrar texto */
-  
-  .doc-item-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .doc-name { max-width: 100%; }
-  .doc-item-row > div { width: 100%; justify-content: flex-end; }
 }

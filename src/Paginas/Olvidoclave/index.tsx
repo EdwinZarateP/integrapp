@@ -9,7 +9,7 @@ type ApiRespuesta = {
   detail?: string;
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''; // ej: "https://tu-backend.com"
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''; 
 
 const Olvidoclave: React.FC = () => {
   const [email, setEmail] = useState('');

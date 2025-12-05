@@ -22,6 +22,7 @@ interface RespuestaBackend {
 }
 
 const LoginConductores = () => {
+  // Estado visual (lo que el usuario escribe)
   const [usuario, setUsuario] = useState("");
   const [clave, setClave] = useState("");
   const [mostrarClave, setMostrarClave] = useState(false);
@@ -40,7 +41,7 @@ const LoginConductores = () => {
     if (savedPass) setClave(savedPass);
 
     // Login automático si ya existen credenciales válidas
-    if (savedId && savedPerfil) {
+    if (savedId && savedPerfil && savedUser && savedPass) {
       if (savedPerfil === "CONDUCTOR" || savedPerfil === "ADMIN") {
         navigate("/PanelConductores", { replace: true });
       }
@@ -52,22 +53,29 @@ const LoginConductores = () => {
     setError("");
 
     try {
+      // --- LÓGICA AGREGADA ---
+      // Normalizamos el correo: quitamos espacios y convertimos a minúsculas
+      const usuarioNormalizado = usuario.trim().toLowerCase();
+
       const response = await axios.post<RespuestaBackend>(
         `${API_BASE}/baseusuarios/loginConductor`, 
-        { usuario, clave }
+        { 
+          usuario: usuarioNormalizado, // Enviamos el normalizado
+          clave 
+        }
       );
 
       const data = response.data.usuario || response.data;
       const perfilUsuario = data.perfil ? data.perfil.toString().toUpperCase() : "";
 
-      // 2. Validación estricta
+      // 2. Validación estricta de Perfil
       if (perfilUsuario !== "CONDUCTOR" && perfilUsuario !== "ADMIN") {
         setError("🚫 Acceso denegado. Este sistema es exclusivo para Conductores.");
         return; 
       }
 
-      // 3. Guardar cookies
-      Cookies.set("conductorUsuario", data.usuario, { expires: 30 });
+      // 3. Guardar cookies (Guardamos el usuario ya normalizado)
+      Cookies.set("conductorUsuario", usuarioNormalizado, { expires: 30 });
       Cookies.set("conductorClave", clave, { expires: 30 });
       Cookies.set("conductorId", data.id.toString(), { expires: 30 });
       Cookies.set("conductorPerfil", perfilUsuario, { expires: 30 });
@@ -79,17 +87,25 @@ const LoginConductores = () => {
         origin: { y: 0.6 },
       });
 
-      // Redirección CORRECTA al panel
+      // Redirección
       setTimeout(() => {
         navigate("/PanelConductores", { replace: true });
       }, 800);
 
     } catch (err: any) {
       console.error(err);
-      if (err.response && err.response.status === 401) {
-        setError("Usuario o clave incorrectos.");
+      
+      if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+        // Limpieza de seguridad
+        Cookies.remove("conductorClave");
+        Cookies.remove("conductorId");
+        Cookies.remove("conductorPerfil");
+        
+        setClave(""); 
+        setError("Correo o contraseña incorrectos.");
+        
       } else if (err.response && err.response.status === 404) {
-        setError("Usuario no encontrado.");
+        setError("Conductor no encontrado.");
       } else {
         setError("Error de conexión con el servidor.");
       }
@@ -99,29 +115,30 @@ const LoginConductores = () => {
   return (
     <div className="LoginConductores-contenedor" style={{ position: 'relative' }}>
       
-      {/* --- INTEGRACIÓN DEL HEADER --- */}
-      {/* Posicionamiento absoluto para fijarlo arriba */}
+      {/* Header fijo */}
       <div style={{ position: "absolute", top: 0, left: 0, width: "100%", zIndex: 10 }}>
           <HeaderLogo />
       </div>
 
-      <img src={logo} alt="logo" className="LoginConductores-Logo" />
+      <img src={logo} alt="logo" className="LoginConductores-Logo" style={{ marginTop: '80px' }} />
+      
       <div className="LoginConductores-titulo-app">
           <h1>Ingreso</h1>
           <h1>Conductores</h1>
       </div>
       
-      
       <form className="LoginConductores-formulario" onSubmit={manejarLogin}>
         <div className="LoginConductores-grupo-input">
-            <label>Usuario</label>
+            {/* Etiqueta actualizada para reflejar que es el correo */}
+            <label>Correo Electrónico</label>
             <input
-            type="text"
-            placeholder="Usuario"
+            type="email" // Cambiado a email para mejor UX en móviles
+            placeholder="ejemplo@correo.com"
             value={usuario}
             onChange={(e) => setUsuario(e.target.value)}
             className="LoginConductores-input"
             required
+            autoComplete="email"
             />
         </div>
 
@@ -130,7 +147,7 @@ const LoginConductores = () => {
             <div className="LoginConductores-password-wrapper">
             <input
                 type={mostrarClave ? "text" : "password"}
-                placeholder="Clave"
+                placeholder="Contraseña"
                 value={clave}
                 onChange={(e) => setClave(e.target.value)}
                 className="LoginConductores-input"
@@ -152,7 +169,6 @@ const LoginConductores = () => {
         </button>
       </form>
 
-      {/* --- SECCIÓN: ENLACES DE REGISTRO Y RECUPERACIÓN --- */}
       <div className="LoginConductores-links">
         <Link to="/RegistroConductor" className="LoginConductores-link">
             Registrarse

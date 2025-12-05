@@ -3,7 +3,8 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { FaSearch, FaTimes } from "react-icons/fa"; 
+import { FaSearch, FaTimes } from "react-icons/fa";
+import HvVehiculos from "../../Componentes/HvVehiculos"; 
 
 /* Componentes y Estilos */
 import BarraSuperiorSeguridad from "../../Componentes/Barra";
@@ -140,17 +141,15 @@ const RevisionVehiculos: React.FC = () => {
   /* -------------------------------------------------------------------------- */
   /* LÓGICA DE APROBACIÓN Y RECHAZO                                           */
   /* -------------------------------------------------------------------------- */
-
-  const aprobarVehiculo = async (veh: Vehiculo) => {
-    // CAMBIO REALIZADO: Unificación de modales. 
-    // Ahora muestra input de archivo y textarea de comentario al mismo tiempo.
+const aprobarVehiculo = async (veh: Vehiculo) => {
     const { value: formValues } = await Swal.fire({
       title: `Aprobar Vehículo`,
       text: `Gestionar aprobación para placa: ${veh.placa}`,
-      // Inyectamos HTML con ambos inputs
       html: `
         <div style="text-align: left; margin-bottom: 5px;">
-            <label style="font-weight:600; font-size: 0.9rem;">1. Cargar Estudio de Seguridad (Opcional)</label>
+            <label style="font-weight:600; font-size: 0.9rem;">
+                1. Cargar Estudio de Seguridad <span style="color:red">* (Obligatorio)</span>
+            </label>
             <input type="file" id="swal-file" class="swal2-file" />
         </div>
         <div style="text-align: left;">
@@ -160,7 +159,7 @@ const RevisionVehiculos: React.FC = () => {
       `,
       showCancelButton: true,
       confirmButtonText: "Aprobar Vehículo",
-      confirmButtonColor: "#28a745", // Verde
+      confirmButtonColor: "#28a745",
       cancelButtonText: "Cancelar",
       cancelButtonColor: "#6c757d",
       
@@ -168,38 +167,39 @@ const RevisionVehiculos: React.FC = () => {
         const fileInput = document.getElementById("swal-file") as HTMLInputElement;
         const commentInput = document.getElementById("swal-comment") as HTMLInputElement;
         
+        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+            Swal.showValidationMessage('⚠️ Es obligatorio cargar el archivo del Estudio de Seguridad para aprobar.');
+            return false; 
+        }
         return {
-           file: (fileInput && fileInput.files && fileInput.files[0]) ? fileInput.files[0] : null,
+           file: fileInput.files[0],
            comment: commentInput ? commentInput.value : ""
         };
       }
     });
 
-    // Si el usuario cancela, no hacemos nada
-    if (!formValues) return;
+    if (!formValues) return; 
 
     const { file, comment } = formValues;
 
     try {
-        // Mostramos cargando
-        Swal.fire({ title: 'Procesando...', text: 'Actualizando información...', didOpen: () => Swal.showLoading() });
+        Swal.fire({ title: 'Procesando...', text: 'Subiendo archivo y aprobando...', didOpen: () => Swal.showLoading() });
 
-        // 1. Si hay archivo, lo subimos primero
-        if (file) {
-            const formDataArchivo = new FormData();
-            formDataArchivo.append("archivo", file);
-            formDataArchivo.append("placa", veh.placa);
-            await axios.put(`${API_BASE}/vehiculos/subir-estudio-seguridad`, formDataArchivo);
-        }
+        // 1. Subir archivo 
+        const formDataArchivo = new FormData();
+        formDataArchivo.append("archivo", file);
+        formDataArchivo.append("placa", veh.placa);
+        await axios.put(`${API_BASE}/vehiculos/subir-estudio-seguridad`, formDataArchivo);
 
-        // 2. Ejecutamos la aprobación (enviando el comentario si existe)
+        // 2. Ejecutar aprobación
         await ejecutarAprobacion(veh, comment);
 
     } catch (error) {
         console.error(error);
-        Swal.fire("Error", "Ocurrió un error al procesar la aprobación o subir el archivo.", "error");
+        Swal.fire("Error", "Ocurrió un error al subir el archivo o aprobar.", "error");
     }
   };
+
 
   // Función auxiliar para llamar al backend de aprobación
   const ejecutarAprobacion = async (veh: Vehiculo, observaciones: string) => {
@@ -296,8 +296,6 @@ const RevisionVehiculos: React.FC = () => {
           <div className="datos-grid">
             <p><strong>Placa:</strong> {veh.placa}</p>
             <p><strong>Estado:</strong> {veh.estadoIntegra}</p>
-            <p><strong>ID Usuario (Registro):</strong> {veh.idUsuario}</p>
-            <p><strong>Usuario Integra (Auditor):</strong> {veh.usuarioIntegra || "No asignado"}</p>
             
             {/* Visualización condicional de observaciones (Verde o Amarillo) */}
             {veh.observaciones && (
@@ -595,6 +593,12 @@ const RevisionVehiculos: React.FC = () => {
                     {expandedId === veh._id && (
                         <div className="vehiculo-body">
                            <RenderDatosVehiculo veh={veh} />
+
+                           <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center' }}>
+                           <HvVehiculos vehiculo={veh} />
+                              </div>
+    
+
                         </div>
                     )}
                   </div>

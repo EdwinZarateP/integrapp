@@ -1,0 +1,41 @@
+/* Estilos para el botón HTML (Interfaz de usuario) */
+.btn-descarga-pdf {
+    background-color: #e74c3c; /* Rojo */
+    color: white;
+    border: 1px solid white; /* Borde para resaltar en fondos oscuros */
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none !important; /* Importante para el componente PDFDownloadLink */
+    font-family: Arial, sans-serif;
+}
+
+.btn-descarga-pdf:hover {
+    background-color: #c0392b;
+    transform: scale(1.02);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.btn-descarga-pdf:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Animación de carga para el icono spinner */
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

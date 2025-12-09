@@ -3,6 +3,7 @@ import { Page, Text, View, Document, StyleSheet, Image, PDFDownloadLink } from '
 import { FaFilePdf, FaSpinner } from 'react-icons/fa';
 import axios from 'axios';
 import "./estilos.css";
+import logo from "../../Imagenes/albatros.png";
 
 const API_BASE = "http://127.0.0.1:8000";
 
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     huellasContainer: { flexDirection: 'row', flexWrap: 'wrap', border: '1px solid #000', marginTop: 5 },
     huellaBox: { width: '20%', height: 90, borderRight: '1px solid #000', borderBottom: '1px solid #000', padding: 2, alignItems: 'center', justifyContent: 'flex-start' },
     
-    // ESTILO IMPORTANTE PARA LA IMAGEN
+    // ESTILO IMPORTANTE PARA LA IMAGEN DE HUELLA
     huellaImageContainer: { 
         width: 50, 
         height: 60, 
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
         marginBottom: 5, 
         justifyContent: 'center', 
         alignItems: 'center',
-        backgroundColor: '#f9f9f9' // Fondo gris muy claro para ver si el box existe
+        backgroundColor: '#f9f9f9' 
     },
     huellaImage: { 
         width: '100%', 
@@ -102,9 +103,14 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
                 {/* CABECERA */}
                 <View style={styles.headerBox}>
                     <View style={styles.row}>
-                        <View style={[styles.col, { width: '20%', justifyContent: 'center', alignItems: 'center' }]}>
-                            <Text style={{fontWeight:'bold'}}>INTEGRA</Text>
+                        <View style={[styles.col, { width: '20%', justifyContent: 'center', alignItems: 'center', padding: 2 }]}>
+                             <Image 
+                                src={logo} 
+                                style={{ width: '25%', height: 'auto', objectFit: 'contain' }} 
+                             />
                         </View>
+                        {/* --------------------- */}
+
                         <View style={[styles.col, { width: '60%' }]}>
                             <Text style={{ textAlign: 'center', fontSize: 10, fontWeight: 'bold', marginTop: 5 }}>FORMATO - HOJA DE VIDA CONDUCTOR VEHÍCULO</Text>
                             <Text style={{ textAlign: 'center', fontSize: 8 }}>INTEGRA CADENA DE SERVICIOS S.A.S.</Text>

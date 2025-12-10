@@ -13,7 +13,9 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
 
 interface UsuarioBackend {
   id: string;
-  usuario: string;
+  nombre: string;
+  usuario: string; 
+  correo: string;  
   perfil: string;
 }
 
@@ -23,7 +25,8 @@ interface RespuestaBackend {
 }
 
 const LoginUsuariosSeguridad = () => {
-  const [usuario, setUsuario] = useState("");
+  // CAMBIO 1: Estado 'usuario' ahora es 'correo'
+  const [correo, setCorreo] = useState("");
   const [clave, setClave] = useState("");
   const [mostrarClave, setMostrarClave] = useState(false);
   const [error, setError] = useState("");
@@ -31,12 +34,13 @@ const LoginUsuariosSeguridad = () => {
 
   // 🔹 1. Cargar cookies al abrir
   useEffect(() => {
-    const savedUser = Cookies.get("seguridadUsuario");
+    // CAMBIO 2: Leemos la cookie de correo
+    const savedCorreo = Cookies.get("seguridadCorreo");
     const savedPass = Cookies.get("seguridadClave");
     const savedId = Cookies.get("seguridadId");
     const savedPerfil = Cookies.get("seguridadPerfil");
 
-    if (savedUser) setUsuario(savedUser);
+    if (savedCorreo) setCorreo(savedCorreo);
     if (savedPass) setClave(savedPass);
 
     // Si ya hay login → entrar automático
@@ -52,13 +56,14 @@ const LoginUsuariosSeguridad = () => {
     try {
       const response = await axios.post<RespuestaBackend>(
         `${API_BASE}/baseusuarios/loginseguridad`,
-        { usuario, clave }
+        { correo, clave }
       );
 
       const data = response.data.usuario;
 
       // 🔹 Guardar cookies por 30 días
-      Cookies.set("seguridadUsuario", data.usuario, { expires: 30 });
+      Cookies.set("seguridadNombre", data.nombre, { expires: 30 });
+      Cookies.set("seguridadCorreo", data.correo, { expires: 30 });
       Cookies.set("seguridadClave", clave, { expires: 30 });
       Cookies.set("seguridadId", data.id, { expires: 30 });
       Cookies.set("seguridadPerfil", data.perfil, { expires: 30 });
@@ -74,46 +79,44 @@ const LoginUsuariosSeguridad = () => {
       }, 800);
 
     } catch (err) {
-      setError("Usuario o clave incorrectos.");
+      console.error(err);
+      setError("Correo o clave incorrectos, o no tiene permisos.");
     }
   };
 
   return (
     <div className="LoginSeguridad-contenedor" style={{ position: 'relative' }}>
       
-      {/* 2. AQUI INTEGRAMOS EL HEADER LOGO */}
-      {/* Usamos absolute para forzarlo arriba sin romper el centrado del login */}
+      {/* HEADER LOGO */}
       <div style={{ position: "absolute", top: 0, left: 0, width: "100%", zIndex: 10 }}>
         <HeaderLogo />
       </div>
 
-      {/* 1. ELEMENTOS FUERA DE LA TARJETA BLANCA */}
-      
-      {/* Logo */}
+      {/* ELEMENTOS FUERA DE LA TARJETA */}
       <img src={logo} alt="logo" className="LoginSeguridad-logo" />
 
-      {/* Título de Marca (IntegrApp) con colores separados */}
       <div className="LoginSeguridad-titulo-brand">
         <span>Ingreso</span>
         <span>Seguridad</span>
       </div>
 
-      {/* 2. TARJETA BLANCA (FORMULARIO) */}
+      {/* TARJETA BLANCA (FORMULARIO) */}
       <form className="LoginSeguridad-formulario" onSubmit={manejarLogin}>
         
-        {/* Input Usuario */}
-        <label className="LoginSeguridad-etiqueta">Usuario</label>
+        {/* CAMBIO 5: Input visualmente cambiado a Correo */}
+        <label className="LoginSeguridad-etiqueta">Correo Electrónico</label>
         <div className="LoginSeguridad-inputWrapper">
             <input
-            type="text"
-            placeholder="Ingrese su usuario"
-            value={usuario}
-            onChange={(e) => setUsuario(e.target.value)}
+            type="email" // Tipo email para mejor validación en móviles
+            placeholder="ejemplo@integral.com"
+            value={correo}
+            onChange={(e) => setCorreo(e.target.value)}
             className="LoginSeguridad-input"
+            required
             />
         </div>
 
-        {/* Input Clave */}
+        {/* Input Clave (Igual que antes) */}
         <label className="LoginSeguridad-etiqueta">Clave</label>
         <div className="LoginSeguridad-inputWrapper">
           <input
@@ -124,7 +127,6 @@ const LoginUsuariosSeguridad = () => {
             className="LoginSeguridad-input"
           />
           
-          {/* Botón del ojito */}
           <button
             type="button"
             onClick={() => setMostrarClave(!mostrarClave)}
@@ -150,7 +152,7 @@ const LoginUsuariosSeguridad = () => {
           Ingresar
         </button>
 
-        {/* Error dentro de la tarjeta */}
+        {/* Error */}
         {error && <p className="LoginSeguridad-mensajeError">{error}</p>}
       </form>
     </div>

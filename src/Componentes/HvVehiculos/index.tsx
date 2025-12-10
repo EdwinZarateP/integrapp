@@ -5,7 +5,8 @@ import axios from 'axios';
 import "./estilos.css";
 import logo from "../../Imagenes/albatros.png";
 
-const API_BASE = "http://127.0.0.1:8000";
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 // --- TIPOS ---
 import { Vehiculo } from '../../Paginas/revision';
@@ -243,7 +244,6 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
                             <View key={`der-${i}`} style={styles.huellaBox}>
                                 <View style={styles.huellaImageContainer}>
                                     {urlHuella ? (
-                                        // IMPORTANTE: 'src' directo sin objeto complejo para Base64
                                         <Image src={urlHuella} style={styles.huellaImage} />
                                     ) : (
                                         <Text style={{fontSize:6, color:'#999'}}>SIN HUELLA</Text>
@@ -256,14 +256,12 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
 
                     <Text style={[styles.headerGreen, { width: '100%' }]}>MANO IZQUIERDA</Text>
                     {NombresHuellasIzquierda.map((nombre, i) => {
-                        // Izquierda es indices 5 al 9
                         const urlHuella = getHuella(i + 5);
 
                         return (
                             <View key={`izq-${i}`} style={[styles.huellaBox, i === 4 ? { borderRight: 'none' } : {}]}>
                                 <View style={styles.huellaImageContainer}>
                                     {urlHuella ? (
-                                        // IMPORTANTE: 'src' directo
                                         <Image src={urlHuella} style={styles.huellaImage} />
                                     ) : (
                                         <Text style={{fontSize:6, color:'#999'}}>SIN HUELLA</Text>
@@ -299,17 +297,16 @@ const HvVehiculos: React.FC<HvVehiculosProps> = ({ vehiculo }) => {
     const [cargandoHuellas, setCargandoHuellas] = useState(false);
     const [listoParaDescargar, setListoParaDescargar] = useState(false);
 
-    const documentoBusqueda = vehiculo.tenedDocumento || vehiculo.tenedor || vehiculo.condCedulaCiudadania || vehiculo.idUsuario;
+    const documentoBusqueda = vehiculo.condCedulaCiudadania; 
 
     const prepararDescarga = async () => {
         if (listoParaDescargar) return; 
 
-        console.log("🔍 Buscando huellas para:", documentoBusqueda);
+        console.log("🔍 Buscando huellas para conductor:", documentoBusqueda);
         setCargandoHuellas(true);
         try {
             const res = await axios.get<HuellasResponse>(`${API_BASE}/verificacion/obtener-huellas-pdf/${documentoBusqueda}`);
 
-            // Validamos que tengamos datos reales
             if (res.data && res.data.encontrado && Array.isArray(res.data.huellas)) {
                 console.log(`✅ Huellas encontradas: ${res.data.huellas.filter(h => h).length} imágenes`);
                 setHuellas(res.data.huellas);
@@ -347,10 +344,10 @@ const HvVehiculos: React.FC<HvVehiculosProps> = ({ vehiculo }) => {
                     style={{ textDecoration: 'none' }}
                 >
                     {({ loading }) => (
-                         <>
+                          <>
                             <FaFilePdf />
                             {loading ? " GENERANDO PDF..." : " CLICK PARA GUARDAR"}
-                         </>
+                          </>
                     )}
                 </PDFDownloadLink>
             )}

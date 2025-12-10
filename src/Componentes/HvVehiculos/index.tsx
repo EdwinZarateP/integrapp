@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Page, Text, View, Document, StyleSheet, Image, PDFDownloadLink } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, Image, pdf, Svg, Path } from '@react-pdf/renderer';
 import { FaFilePdf, FaSpinner } from 'react-icons/fa';
 import axios from 'axios';
 import "./estilos.css";
 import logo from "../../Imagenes/albatros.png";
-
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
@@ -36,7 +35,8 @@ const styles = StyleSheet.create({
     docCol: { flex: 1, padding: 0, borderRight: '1px solid #000', display: 'flex', flexDirection: 'column' },
     docColContent: { padding: 2, flexGrow: 1 },
     checkRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2, justifyContent: 'space-between', paddingRight: 2 },
-    checkBox: { width: 10, height: 10, border: '1px solid #000', alignItems: 'center', justifyContent: 'center', fontSize: 7, fontWeight: 'bold' },
+    // Ajuste checkBox para centrar bien el SVG
+    checkBox: { width: 10, height: 10, border: '1px solid #000', alignItems: 'center', justifyContent: 'center' },
     
     // Huellas
     huellasContainer: { flexDirection: 'row', flexWrap: 'wrap', border: '1px solid #000', marginTop: 5 },
@@ -66,18 +66,29 @@ const styles = StyleSheet.create({
 
 const upper = (text?: string) => text ? text.toUpperCase() : "";
 
+// --- 2. CAMBIO EN CHECKITEM: USAMOS SVG PARA EL CHULO ---
 const CheckItem = ({ label, checked }: { label: string, checked: boolean }) => (
     <View style={styles.checkRow}>
         <Text style={{ fontSize: 6, flex: 1, paddingRight: 2 }}>{label.toUpperCase()}</Text>
         <View style={styles.checkBox}>
-            <Text>{checked ? 'X' : ''}</Text>
+            {checked && (
+                <Svg viewBox="0 0 24 24" style={{ width: 8, height: 8 }}>
+                    <Path 
+                        d="M20 6L9 17l-5-5" 
+                        stroke="#777777" 
+                        strokeWidth={3} 
+                        fill="none" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                    />
+                </Svg>
+            )}
         </View>
     </View>
 );
 
 const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }) => {
     
-    // Helper seguro
     const getHuella = (idx: number) => {
         if (huellas && huellas.length > idx && huellas[idx]) {
             return huellas[idx];
@@ -88,15 +99,8 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
     const NombresHuellasDerecha = ["PULGAR", "ÍNDICE", "MEDIO", "ANULAR", "MEÑIQUE"];
     const NombresHuellasIzquierda = ["PULGAR", "ÍNDICE", "MEDIO", "ANULAR", "MEÑIQUE"];
 
-    const docs = veh.documentos || {};
-    
-    const hasDoc = (keyCandidates: string[]) => {
-        for (const key of keyCandidates) {
-            const val = docs[key];
-            if (val && val !== "null" && val !== "undefined" && val !== "") return true;
-        }
-        return false;
-    };
+    // 3. LÓGICA: Siempre devuelve TRUE para que todo salga marcado
+    const hasDoc = (_keyCandidates: string[]) => true;
 
     return (
         <Document>
@@ -110,8 +114,6 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
                                 style={{ width: '25%', height: 'auto', objectFit: 'contain' }} 
                              />
                         </View>
-                        {/* --------------------- */}
-
                         <View style={[styles.col, { width: '60%' }]}>
                             <Text style={{ textAlign: 'center', fontSize: 10, fontWeight: 'bold', marginTop: 5 }}>FORMATO - HOJA DE VIDA CONDUCTOR VEHÍCULO</Text>
                             <Text style={{ textAlign: 'center', fontSize: 8 }}>INTEGRA CADENA DE SERVICIOS S.A.S.</Text>
@@ -130,37 +132,37 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
                     <View style={styles.docCol}>
                         <Text style={styles.headerGreen}>1. VEHÍCULO</Text>
                         <View style={styles.docColContent}>
-                            <CheckItem label="Tarjeta de Propiedad" checked={hasDoc(['tarjetaPropiedad', 'tarjeta Propiedad'])} />
+                            <CheckItem label="Tarjeta de Propiedad" checked={hasDoc(['tarjetaPropiedad'])} />
                             <CheckItem label="SOAT" checked={hasDoc(['soat'])} />
-                            <CheckItem label="Fotos" checked={hasDoc(['fotos', 'cond Foto', 'vehFotos'])} />
-                            <CheckItem label="Revisión Tecnomecánica" checked={hasDoc(['revisionTecnomecanica', 'revision Tecnomecanica'])} />
-                            <CheckItem label="Tarjeta de Remolque" checked={hasDoc(['tarjetaRemolque', 'tarjeta Remolque'])} />
-                            <CheckItem label="Póliza Resp. Civil" checked={hasDoc(['polizaResponsabilidadCivil', 'poliza Responsabilidad', 'polizaResponsabilidad'])} />
+                            <CheckItem label="Fotos" checked={hasDoc(['fotos'])} />
+                            <CheckItem label="Revisión Tecnomecánica" checked={hasDoc(['revisionTecnomecanica'])} />
+                            <CheckItem label="Tarjeta de Remolque" checked={hasDoc(['tarjetaRemolque'])} />
+                            <CheckItem label="Póliza Resp. Civil" checked={hasDoc(['polizaResponsabilidadCivil'])} />
                         </View>
                     </View>
                     <View style={styles.docCol}>
                         <Text style={styles.headerGreen}>2. CONDUCTOR</Text>
                         <View style={styles.docColContent}>
-                            <CheckItem label="Doc. Identidad Conductor" checked={hasDoc(['documentoIdentidadConductor', 'documento Identidad Conductor'])} />
-                            <CheckItem label="Licencia Conducción Vig." checked={hasDoc(['licenciaConduccion', 'licencia'])} />
-                            <CheckItem label="Planilla EPS y ARL" checked={hasDoc(['planillaEpsArl', 'planilla Eps Arl'])} />
-                            <CheckItem label="Foto Conductor" checked={hasDoc(['fotoConductor', 'cond Foto', 'condFoto'])} />
-                            <CheckItem label="Cert. Bancaria Conductor" checked={hasDoc(['certificacionBancariaConductor', 'cond Certificacion Bancaria', 'condCertificacionBancaria'])} />
+                            <CheckItem label="Doc. Identidad Conductor" checked={hasDoc(['documentoIdentidadConductor'])} />
+                            <CheckItem label="Licencia Conducción Vig." checked={hasDoc(['licenciaConduccion'])} />
+                            <CheckItem label="Planilla EPS y ARL" checked={hasDoc(['planillaEpsArl'])} />
+                            <CheckItem label="Foto Conductor" checked={hasDoc(['fotoConductor'])} />
+                            <CheckItem label="Cert. Bancaria Conductor" checked={hasDoc(['certificacionBancariaConductor'])} />
                         </View>
                     </View>
                     <View style={[styles.docCol, { borderRight: 'none' }]}>
                         <Text style={styles.headerGreen}>3. TENEDOR</Text>
                         <View style={styles.docColContent}>
-                            <CheckItem label="Doc. Identidad Tenedor" checked={hasDoc(['documentoIdentidadTenedor', 'documento Identidad Tenedor'])} />
-                            <CheckItem label="Cert. Bancaria Tenedor" checked={hasDoc(['certificacionBancariaTenedor', 'tened Certificacion Bancaria', 'tenedCertificacionBancaria'])} />
-                            <CheckItem label="Doc. Acredita Tenedor" checked={hasDoc(['documentoAcreditacionTenedor', 'documento Acreditacion Tenedor', 'documentoQueLoAcrediteComoTenedor'])} />
-                            <CheckItem label="RUT Tenedor" checked={hasDoc(['rutTenedor', 'rut Tenedor'])} />
+                            <CheckItem label="Doc. Identidad Tenedor" checked={hasDoc(['documentoIdentidadTenedor'])} />
+                            <CheckItem label="Cert. Bancaria Tenedor" checked={hasDoc(['certificacionBancariaTenedor'])} />
+                            <CheckItem label="Doc. Acredita Tenedor" checked={hasDoc(['documentoAcreditacionTenedor'])} />
+                            <CheckItem label="RUT Tenedor" checked={hasDoc(['rutTenedor'])} />
                         </View>
                         <Text style={[styles.headerGreen, { borderTop: '1px solid #000' }]}>4. PROPIETARIO</Text>
                         <View style={styles.docColContent}>
-                            <CheckItem label="Doc. Identidad Propietario" checked={hasDoc(['documentoIdentidadPropietario', 'documento Identidad Propietario'])} />
-                            <CheckItem label="Cert. Bancaria Propietario" checked={hasDoc(['certificacionBancariaPropietario', 'prop Certificacion Bancaria', 'propCertificacionBancaria'])} />
-                            <CheckItem label="RUT Propietario" checked={hasDoc(['rutPropietario', 'rut Propietario'])} />
+                            <CheckItem label="Doc. Identidad Propietario" checked={hasDoc(['documentoIdentidadPropietario'])} />
+                            <CheckItem label="Cert. Bancaria Propietario" checked={hasDoc(['certificacionBancariaPropietario'])} />
+                            <CheckItem label="RUT Propietario" checked={hasDoc(['rutPropietario'])} />
                         </View>
                     </View>
                 </View>
@@ -293,64 +295,62 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
 };
 
 const HvVehiculos: React.FC<HvVehiculosProps> = ({ vehiculo }) => {
-    const [huellas, setHuellas] = useState<(string | null)[]>([]);
     const [cargandoHuellas, setCargandoHuellas] = useState(false);
-    const [listoParaDescargar, setListoParaDescargar] = useState(false);
 
     const documentoBusqueda = vehiculo.condCedulaCiudadania; 
 
-    const prepararDescarga = async () => {
-        if (listoParaDescargar) return; 
+    const manejarDescargaDirecta = async () => {
+        if (cargandoHuellas) return;
 
         console.log("🔍 Buscando huellas para conductor:", documentoBusqueda);
         setCargandoHuellas(true);
+        
         try {
+            // 1. Obtener datos del API
             const res = await axios.get<HuellasResponse>(`${API_BASE}/verificacion/obtener-huellas-pdf/${documentoBusqueda}`);
-
+            
+            let huellasData: (string | null)[] = [];
+            
             if (res.data && res.data.encontrado && Array.isArray(res.data.huellas)) {
                 console.log(`✅ Huellas encontradas: ${res.data.huellas.filter(h => h).length} imágenes`);
-                setHuellas(res.data.huellas);
+                huellasData = res.data.huellas;
             } else {
-                console.warn("⚠️ No se encontraron huellas.");
-                setHuellas([]);
+                console.warn("⚠️ No se encontraron huellas, generando PDF sin ellas.");
             }
 
+            // 2. Generar el PDF en memoria (Blob)
+            const blob = await pdf(<DocuPDF veh={vehiculo} huellas={huellasData} />).toBlob();
+
+            // 3. Crear un enlace temporal y descargar
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `HV_${vehiculo.placa}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            URL.revokeObjectURL(url);
+
         } catch (error) {
-            console.error("❌ Error API Huellas:", error);
-            setHuellas([]);
+            console.error("❌ Error generando PDF:", error);
+            alert("Hubo un error al generar el PDF.");
         } finally {
             setCargandoHuellas(false);
-            setListoParaDescargar(true);
         }
     };
 
     return (
         <div>
-            {!listoParaDescargar ? (
-                <button 
-                    className="btn-descarga-pdf" 
-                    onClick={prepararDescarga} 
-                    disabled={cargandoHuellas}
-                    onMouseDown={(e) => e.stopPropagation()} 
-                >
-                    {cargandoHuellas ? <FaSpinner className="spin" /> : <FaFilePdf />}
-                    {cargandoHuellas ? " GENERANDO..." : " DESCARGAR HV"}
-                </button>
-            ) : (
-                <PDFDownloadLink
-                    document={<DocuPDF veh={vehiculo} huellas={huellas} />}
-                    fileName={`HV_${vehiculo.placa}.pdf`}
-                    className="btn-descarga-pdf"
-                    style={{ textDecoration: 'none' }}
-                >
-                    {({ loading }) => (
-                          <>
-                            <FaFilePdf />
-                            {loading ? " GENERANDO PDF..." : " CLICK PARA GUARDAR"}
-                          </>
-                    )}
-                </PDFDownloadLink>
-            )}
+            <button 
+                className="btn-descarga-pdf" 
+                onClick={manejarDescargaDirecta} 
+                disabled={cargandoHuellas}
+                onMouseDown={(e) => e.stopPropagation()} 
+            >
+                {cargandoHuellas ? <FaSpinner className="spin" /> : <FaFilePdf />}
+                {cargandoHuellas ? " GENERANDO..." : " DESCARGAR HV"}
+            </button>
         </div>
     );
 };

@@ -6,7 +6,9 @@ import "./estilos.css";
 
 const BarraSeguridad: React.FC = () => {
   const navigate = useNavigate();
-  const usuario = Cookies.get("seguridadUsuario") || "Usuario Seguridad";
+  
+  // CAMBIO 1: Priorizamos el nombre real, si no existe, el usuario, si no, texto genérico
+  const nombreMostrar = Cookies.get("seguridadNombre") || Cookies.get("seguridadUsuario") || "Usuario";
 
   const [menuAbierto, setMenuAbierto] = useState(false);
 
@@ -16,6 +18,10 @@ const BarraSeguridad: React.FC = () => {
   };
 
   const cerrarSesion = () => {
+    // CAMBIO 2: Borramos también las nuevas cookies para limpiar todo
+    Cookies.remove("seguridadNombre");
+    Cookies.remove("seguridadCorreo");
+    
     Cookies.remove("seguridadUsuario");
     Cookies.remove("seguridadClave");
     Cookies.remove("seguridadId");
@@ -52,7 +58,8 @@ const BarraSeguridad: React.FC = () => {
       {/* 2. SECCIÓN DERECHA: USUARIO Y MENÚ */}
       <div className="barra-derecha">
         <div className="barra-usuario">
-          👤 {usuario}
+          {/* CAMBIO 3: Mostramos la variable actualizada */}
+          👤 {nombreMostrar}
         </div>
 
         <div className="hamburguesa-container">

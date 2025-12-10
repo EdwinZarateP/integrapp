@@ -93,7 +93,10 @@
   font-weight: 600;
   opacity: 0.95;
   margin: 0; 
-  padding-right: 10px; 
+  padding-right: 10px;
+  /* CAMBIO VISUAL: Para que "EDWIN ZARATE" se vea "Edwin Zarate" */
+  text-transform: capitalize; 
+  white-space: nowrap; /* Evita que el nombre se parta */
 }
 
 /* ---------------------------

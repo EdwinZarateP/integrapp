@@ -11,8 +11,9 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
 
 interface UsuarioBackend {
   id: string;
-  usuario: string;
+  usuario: string; 
   perfil: string;
+  primerNombre?: string; 
 }
 
 interface RespuestaBackend {
@@ -22,8 +23,7 @@ interface RespuestaBackend {
 }
 
 const LoginConductores = () => {
-  // Estado visual (lo que el usuario escribe)
-  const [usuario, setUsuario] = useState("");
+  const [correo, setCorreo] = useState(""); 
   const [clave, setClave] = useState("");
   const [mostrarClave, setMostrarClave] = useState(false);
   const [error, setError] = useState("");
@@ -32,16 +32,14 @@ const LoginConductores = () => {
 
   // 1. Cargar cookies al abrir
   useEffect(() => {
-    const savedUser = Cookies.get("conductorUsuario");
+    const savedCorreo = Cookies.get("conductorCorreo");
     const savedPass = Cookies.get("conductorClave");
     const savedId = Cookies.get("conductorId");
     const savedPerfil = Cookies.get("conductorPerfil");
-
-    if (savedUser) setUsuario(savedUser);
+    if (savedCorreo) setCorreo(savedCorreo);
     if (savedPass) setClave(savedPass);
 
-    // Login automático si ya existen credenciales válidas
-    if (savedId && savedPerfil && savedUser && savedPass) {
+    if (savedId && savedPerfil && savedCorreo && savedPass) {
       if (savedPerfil === "CONDUCTOR" || savedPerfil === "ADMIN") {
         navigate("/PanelConductores", { replace: true });
       }
@@ -53,14 +51,12 @@ const LoginConductores = () => {
     setError("");
 
     try {
-      // --- LÓGICA AGREGADA ---
-      // Normalizamos el correo: quitamos espacios y convertimos a minúsculas
-      const usuarioNormalizado = usuario.trim().toLowerCase();
+      const correoNormalizado = correo.trim().toLowerCase();
 
       const response = await axios.post<RespuestaBackend>(
         `${API_BASE}/baseusuarios/loginConductor`, 
         { 
-          usuario: usuarioNormalizado, // Enviamos el normalizado
+          usuario: correoNormalizado, 
           clave 
         }
       );
@@ -74,11 +70,15 @@ const LoginConductores = () => {
         return; 
       }
 
-      // 3. Guardar cookies (Guardamos el usuario ya normalizado)
-      Cookies.set("conductorUsuario", usuarioNormalizado, { expires: 30 });
+      // 3. Guardar cookies
+      Cookies.set("conductorCorreo", correoNormalizado, { expires: 30 });
       Cookies.set("conductorClave", clave, { expires: 30 });
       Cookies.set("conductorId", data.id.toString(), { expires: 30 });
       Cookies.set("conductorPerfil", perfilUsuario, { expires: 30 });
+      if (data.primerNombre) {
+          Cookies.set("conductorPrimerNombre", data.primerNombre, { expires: 30 });
+      }
+
 
       // Efecto de éxito
       confetti({
@@ -100,6 +100,7 @@ const LoginConductores = () => {
         Cookies.remove("conductorClave");
         Cookies.remove("conductorId");
         Cookies.remove("conductorPerfil");
+        Cookies.remove("conductorPrimerNombre"); 
         
         setClave(""); 
         setError("Correo o contraseña incorrectos.");
@@ -129,13 +130,12 @@ const LoginConductores = () => {
       
       <form className="LoginConductores-formulario" onSubmit={manejarLogin}>
         <div className="LoginConductores-grupo-input">
-            {/* Etiqueta actualizada para reflejar que es el correo */}
             <label>Correo Electrónico</label>
             <input
-            type="email" // Cambiado a email para mejor UX en móviles
+            type="email" 
             placeholder="ejemplo@correo.com"
-            value={usuario}
-            onChange={(e) => setUsuario(e.target.value)}
+            value={correo}
+            onChange={(e) => setCorreo(e.target.value)}
             className="LoginConductores-input"
             required
             autoComplete="email"

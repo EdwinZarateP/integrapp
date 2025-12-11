@@ -91,30 +91,25 @@ const getOverallDocumentProgress = (secciones: SeccionDocumentos[]) => {
 /* --- BARRA SUPERIOR --- */
 const BarraConductor: React.FC = () => {
   const navigate = useNavigate();
-  const rawUsuario = Cookies.get("conductorUsuario") || "";
-  const nombreRealCookie = Cookies.get("conductorNombre");
+  const primerNombreCookie = Cookies.get("conductorPrimerNombre");
   const [menuAbierto, setMenuAbierto] = useState(false);
 
   const obtenerNombreMostrar = () => {
-    let nombreCompleto = "";
-    if (nombreRealCookie) {
-        nombreCompleto = decodeURIComponent(nombreRealCookie); 
-    } else if (rawUsuario.includes('@')) {
-        nombreCompleto = rawUsuario.split('@')[0];
-    } else {
-        return "CONDUCTOR";
+    if (primerNombreCookie) {
+      return primerNombreCookie.toUpperCase();
     }
-    const primerNombre = nombreCompleto.replace(/[0-9.]/g, ' ').trim().split(/\s+/)[0];
-    return primerNombre.toUpperCase();
+    return "CONDUCTOR";
   };
 
   const irInicio = () => { navigate("/"); };
 
   const cerrarSesion = () => {
-    Cookies.remove("conductorUsuario");
+    Cookies.remove("conductorCorreo"); 
     Cookies.remove("conductorClave");
     Cookies.remove("conductorId");
-    Cookies.remove("conductorNombre");
+    Cookies.remove("conductorPerfil"); 
+    Cookies.remove("conductorPrimerNombre"); 
+    
     navigate("/LoginConductores", { replace: true });
   };
 
@@ -147,7 +142,6 @@ const BarraConductor: React.FC = () => {
     </div>
   );
 };
-
 /* --- COMPONENTE PRINCIPAL --- */
 const PanelConductoresVista: React.FC = () => {
   const navigate = useNavigate();

@@ -427,10 +427,10 @@ const handleFinalizar = async () => {
       }
   };
 
-  const esRechazado = (placa: string | null) => {
-    if (!placa) return false;
-    return vehiculosRechazados.some(v => v.placa === placa);
-  };
+  // const esRechazado = (placa: string | null) => {
+  //   if (!placa) return false;
+  //   return vehiculosRechazados.some(v => v.placa === placa);
+  // };
 
   return (
     <div className="bg-conductor">

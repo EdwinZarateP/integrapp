@@ -7,7 +7,6 @@ import logo from "../../Imagenes/albatros.png";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-// --- TIPOS ---
 import { Vehiculo } from '../../Paginas/revision';
 
 interface HvVehiculosProps {
@@ -18,45 +17,37 @@ interface HuellasResponse {
     encontrado: boolean;
     huellas: (string | null)[]; 
 }
+interface FirmaResponse {
+    firma_b64: string;
+}
 
-// --- ESTILOS DEL PDF ---
+// --- ESTILOS ---
 const styles = StyleSheet.create({
     page: { padding: 30, fontSize: 8, fontFamily: 'Helvetica' },
     headerBox: { border: '1px solid #000', marginBottom: 5 },
     row: { flexDirection: 'row', borderBottom: '1px solid #000' },
     col: { borderRight: '1px solid #000', padding: 2 },
-    headerGreen: { backgroundColor: '#ccffcc', padding: 3, fontWeight: 'bold', fontSize: 7, textAlign: 'center', borderBottom: '1px solid #000' },
+    
+    headerGreen: { backgroundColor: '#bacf65', padding: 3, fontWeight: 'bold', fontSize: 7, textAlign: 'center', borderBottom: '1px solid #000' },
+    
     label: { fontSize: 6, color: '#444', marginBottom: 1, textTransform: 'uppercase' },
     value: { fontSize: 8, fontWeight: 'bold' },
-    sectionTitle: { backgroundColor: '#ccffcc', padding: 2, textAlign: 'center', fontWeight: 'bold', fontSize: 9, border: '1px solid #000', borderBottom: 'none' },
     
-    // Grilla de documentos
+    sectionTitle: { backgroundColor: '#bacf65', padding: 2, textAlign: 'center', fontWeight: 'bold', fontSize: 9, border: '1px solid #000', borderBottom: 'none' },
+    
     docGrid: { flexDirection: 'row', border: '1px solid #000', marginBottom: 5, alignItems: 'stretch' },
     docCol: { flex: 1, padding: 0, borderRight: '1px solid #000', display: 'flex', flexDirection: 'column' },
     docColContent: { padding: 2, flexGrow: 1 },
     checkRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2, justifyContent: 'space-between', paddingRight: 2 },
-    // Ajuste checkBox para centrar bien el SVG
     checkBox: { width: 10, height: 10, border: '1px solid #000', alignItems: 'center', justifyContent: 'center' },
     
-    // Huellas
-    huellasContainer: { flexDirection: 'row', flexWrap: 'wrap', border: '1px solid #000', marginTop: 5 },
-    huellaBox: { width: '20%', height: 90, borderRight: '1px solid #000', borderBottom: '1px solid #000', padding: 2, alignItems: 'center', justifyContent: 'flex-start' },
+    huellasContainer: { border: '1px solid #000', marginTop: 5 },
+    huellasRow: { flexDirection: 'row', width: '100%' }, 
     
-    // ESTILO IMPORTANTE PARA LA IMAGEN DE HUELLA
-    huellaImageContainer: { 
-        width: 50, 
-        height: 60, 
-        marginTop: 5,
-        marginBottom: 5, 
-        justifyContent: 'center', 
-        alignItems: 'center',
-        backgroundColor: '#f9f9f9' 
-    },
-    huellaImage: { 
-        width: '100%', 
-        height: '100%', 
-        objectFit: 'contain' 
-    },
+    huellaBox: { width: '20%', height: 90, borderRight: '1px solid #000', padding: 2, alignItems: 'center', justifyContent: 'flex-start' },
+    
+    huellaImageContainer: { width: 50, height: 60, marginTop: 5, marginBottom: 5, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f9f9f9' },
+    huellaImage: { width: '100%', height: '100%', objectFit: 'contain' },
     
     firmaBox: { height: 60, border: '1px solid #000', marginTop: 5, padding: 5 },
     w50: { width: '50%' },
@@ -66,41 +57,30 @@ const styles = StyleSheet.create({
 
 const upper = (text?: string) => text ? text.toUpperCase() : "";
 
-// --- 2. CAMBIO EN CHECKITEM: USAMOS SVG PARA EL CHULO ---
 const CheckItem = ({ label, checked }: { label: string, checked: boolean }) => (
     <View style={styles.checkRow}>
         <Text style={{ fontSize: 6, flex: 1, paddingRight: 2 }}>{label.toUpperCase()}</Text>
         <View style={styles.checkBox}>
             {checked && (
                 <Svg viewBox="0 0 24 24" style={{ width: 8, height: 8 }}>
-                    <Path 
-                        d="M20 6L9 17l-5-5" 
-                        stroke="#777777" 
-                        strokeWidth={3} 
-                        fill="none" 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                    />
+                    <Path d="M20 6L9 17l-5-5" stroke="#777777" strokeWidth={3} fill="none" strokeLinecap="round" strokeLinejoin="round" />
                 </Svg>
             )}
         </View>
     </View>
 );
 
-const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }) => {
+const DocuPDF = ({ veh, huellas, firmaBlob }: { veh: Vehiculo, huellas: (string | null)[], firmaBlob?: string | null }) => {
     
-    const getHuella = (idx: number) => {
-        if (huellas && huellas.length > idx && huellas[idx]) {
-            return huellas[idx];
-        }
-        return null;
-    };
-
+    // Si la huella es una cadena vacía (""), getHuella devolverá una cadena vacía, lo cual es manejado por el ternario
+    const getHuella = (idx: number) => (huellas && huellas.length > idx && huellas[idx]) ? huellas[idx] : null;
     const NombresHuellasDerecha = ["PULGAR", "ÍNDICE", "MEDIO", "ANULAR", "MEÑIQUE"];
     const NombresHuellasIzquierda = ["PULGAR", "ÍNDICE", "MEDIO", "ANULAR", "MEÑIQUE"];
-
-    // 3. LÓGICA: Siempre devuelve TRUE para que todo salga marcado
+    const getBorderStyle = (index: number) => index === 4 ? { borderRight: 'none' } : {};
     const hasDoc = (_keyCandidates: string[]) => true;
+
+    // firmaBlob ahora contiene la Data URL (Base64) o null, si falló la descarga fresca
+    const imagenFirma = firmaBlob || veh.firmaUrl;
 
     return (
         <Document>
@@ -109,10 +89,7 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
                 <View style={styles.headerBox}>
                     <View style={styles.row}>
                         <View style={[styles.col, { width: '20%', justifyContent: 'center', alignItems: 'center', padding: 2 }]}>
-                             <Image 
-                                src={logo} 
-                                style={{ width: '25%', height: 'auto', objectFit: 'contain' }} 
-                             />
+                             <Image src={logo} style={{ width: '25%', height: 'auto', objectFit: 'contain' }} />
                         </View>
                         <View style={[styles.col, { width: '60%' }]}>
                             <Text style={{ textAlign: 'center', fontSize: 10, fontWeight: 'bold', marginTop: 5 }}>FORMATO - HOJA DE VIDA CONDUCTOR VEHÍCULO</Text>
@@ -126,7 +103,7 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
                     </View>
                 </View>
 
-                {/* DOCUMENTOS REQUERIDOS */}
+                {/* DOCUMENTOS */}
                 <View style={styles.sectionTitle}><Text>DOCUMENTOS REQUERIDOS</Text></View>
                 <View style={styles.docGrid}>
                     <View style={styles.docCol}>
@@ -203,7 +180,7 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
                     </View>
                 </View>
 
-                {/* DATOS PROP Y TENEDOR */}
+                {/* PROPIETARIO Y TENEDOR */}
                 <View style={styles.sectionTitle}><Text>DATOS DEL PROPIETARIO Y TENEDOR</Text></View>
                 <View style={{ border: '1px solid #000', marginBottom: 5 }}>
                     <View style={styles.row}>
@@ -227,7 +204,7 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
                         <View style={[styles.col, styles.w25]}><Text style={styles.label}>MARCA</Text><Text style={styles.value}>{upper(veh.vehMarca)}</Text></View>
                         <View style={[styles.col, styles.w25, { borderRight: 'none' }]}><Text style={styles.label}>COLOR</Text><Text style={styles.value}>{upper(veh.vehColor)}</Text></View>
                     </View>
-                     <View style={[styles.row, { borderBottom: 'none' }]}>
+                    <View style={[styles.row, { borderBottom: 'none' }]}>
                         <View style={[styles.col, styles.w25]}><Text style={styles.label}>CARROCERÍA</Text><Text style={styles.value}>{upper(veh.vehTipoCarroceria)}</Text></View>
                         <View style={[styles.col, styles.w25]}><Text style={styles.label}>SATELITAL</Text><Text style={styles.value}>{upper(veh.vehEmpresaSat)}</Text></View>
                         <View style={[styles.col, styles.w25]}><Text style={styles.label}>USUARIO</Text><Text style={styles.value}>{upper(veh.vehUsuarioSat)}</Text></View>
@@ -235,58 +212,68 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
                     </View>
                 </View>
 
-                {/* --- SECCIÓN HUELLAS DACTILARES --- */}
+                {/* HUELLAS (FILAS CORREGIDAS) */}
                 <View style={styles.sectionTitle}><Text>REGISTRO DACTILAR Y AUTORIZACIÓN</Text></View>
                 <View style={styles.huellasContainer}>
                     <Text style={[styles.headerGreen, { width: '100%' }]}>MANO DERECHA</Text>
-                    {NombresHuellasDerecha.map((nombre, i) => {
-                        const urlHuella = getHuella(i);
-                        
-                        return (
-                            <View key={`der-${i}`} style={styles.huellaBox}>
-                                <View style={styles.huellaImageContainer}>
-                                    {urlHuella ? (
-                                        <Image src={urlHuella} style={styles.huellaImage} />
-                                    ) : (
-                                        <Text style={{fontSize:6, color:'#999'}}>SIN HUELLA</Text>
-                                    )}
+                    <View style={[styles.huellasRow, { borderBottom: '1px solid #000' }]}> 
+                        {NombresHuellasDerecha.map((nombre, i) => {
+                            const urlHuella = getHuella(i);
+                            return (
+                                <View key={`der-${i}`} style={[styles.huellaBox, getBorderStyle(i)]}>
+                                    <View style={styles.huellaImageContainer}>
+                                        {urlHuella ? (
+                                            <Image src={urlHuella} style={styles.huellaImage} />
+                                        ) : (
+                                            <Text style={{fontSize:6, color:'#999'}}>SIN HUELLA</Text>
+                                        )}
+                                    </View>
+                                    <Text style={{ fontSize: 6 }}>{nombre}</Text>
                                 </View>
-                                <Text style={{ fontSize: 6 }}>{nombre}</Text>
-                            </View>
-                        );
-                    })}
+                            );
+                        })}
+                    </View>
 
                     <Text style={[styles.headerGreen, { width: '100%' }]}>MANO IZQUIERDA</Text>
-                    {NombresHuellasIzquierda.map((nombre, i) => {
-                        const urlHuella = getHuella(i + 5);
-
-                        return (
-                            <View key={`izq-${i}`} style={[styles.huellaBox, i === 4 ? { borderRight: 'none' } : {}]}>
-                                <View style={styles.huellaImageContainer}>
-                                    {urlHuella ? (
-                                        <Image src={urlHuella} style={styles.huellaImage} />
-                                    ) : (
-                                        <Text style={{fontSize:6, color:'#999'}}>SIN HUELLA</Text>
-                                    )}
+                    <View style={styles.huellasRow}>
+                        {NombresHuellasIzquierda.map((nombre, i) => {
+                            const urlHuella = getHuella(i + 5);
+                            return (
+                                <View key={`izq-${i}`} style={[styles.huellaBox, getBorderStyle(i)]}>
+                                    <View style={styles.huellaImageContainer}>
+                                        {urlHuella ? (
+                                            <Image src={urlHuella} style={styles.huellaImage} />
+                                        ) : (
+                                            <Text style={{fontSize:6, color:'#999'}}>SIN HUELLA</Text>
+                                        )}
+                                    </View>
+                                    <Text style={{ fontSize: 6 }}>{nombre}</Text>
                                 </View>
-                                <Text style={{ fontSize: 6 }}>{nombre}</Text>
-                            </View>
-                        );
-                    })}
+                            );
+                        })}
+                    </View>
                 </View>
 
                 {/* FIRMA */}
                 <View style={{ flexDirection: 'row', marginTop: 5 }}>
                     <View style={{ width: '70%', paddingRight: 5 }}>
-                         <Text style={{ fontSize: 5, textAlign: 'justify', color: '#555' }}>
-                            AUTORIZO A INTEGRA CADENA DE SERVICIOS S.A.S O A QUIEN EN EL FUTURO REPRESENTE SUS DERECHOS U OSTENTE LA CALIDAD DE ACREEDOR...
+                           <Text style={{ fontSize: 5, textAlign: 'justify', color: '#555' }}>
+                               AUTORIZO A INTEGRA CADENA DE SERVICIOS S.A.S O A QUIEN EN EL FUTURO REPRESENTE SUS DERECHOS U OSTENTE LA CALIDAD DE ACREEDOR...
                         </Text>
                     </View>
                     <View style={{ width: '30%' }}>
-                         <View style={styles.firmaBox}>
-                             <Text style={{ fontSize: 6 }}>FIRMA:</Text>
-                         </View>
-                         <Text style={{ fontSize: 6, textAlign: 'center' }}>C.C. {upper(veh.condCedulaCiudadania)}</Text>
+                           <View style={styles.firmaBox}>
+                                 <Text style={{ fontSize: 6 }}>FIRMA:</Text>
+                                 
+                                 {imagenFirma && (
+                                     <Image 
+                                         src={imagenFirma} 
+                                         style={{ width: '100%', height: 45, objectFit: 'contain', marginTop: 2 }} 
+                                     />
+                                 )}
+
+                           </View>
+                           <Text style={{ fontSize: 6, textAlign: 'center' }}>C.C. {upper(veh.condCedulaCiudadania)}</Text>
                     </View>
                 </View>
             </Page>
@@ -294,34 +281,56 @@ const DocuPDF = ({ veh, huellas }: { veh: Vehiculo, huellas: (string | null)[] }
     );
 };
 
+// *** FUNCIÓN blobToDataURL ELIMINADA ***
+
+
 const HvVehiculos: React.FC<HvVehiculosProps> = ({ vehiculo }) => {
     const [cargandoHuellas, setCargandoHuellas] = useState(false);
-
     const documentoBusqueda = vehiculo.condCedulaCiudadania; 
 
     const manejarDescargaDirecta = async () => {
         if (cargandoHuellas) return;
 
-        console.log("🔍 Buscando huellas para conductor:", documentoBusqueda);
+        console.log("🔍 Buscando huellas y firma...");
         setCargandoHuellas(true);
         
         try {
-            // 1. Obtener datos del API
-            const res = await axios.get<HuellasResponse>(`${API_BASE}/verificacion/obtener-huellas-pdf/${documentoBusqueda}`);
-            
+            // TRAER HUELLAS
+            const resHuellas = await axios.get<HuellasResponse>(`${API_BASE}/verificacion/obtener-huellas-pdf/${documentoBusqueda}`);
             let huellasData: (string | null)[] = [];
-            
-            if (res.data && res.data.encontrado && Array.isArray(res.data.huellas)) {
-                console.log(`✅ Huellas encontradas: ${res.data.huellas.filter(h => h).length} imágenes`);
-                huellasData = res.data.huellas;
-            } else {
-                console.warn("⚠️ No se encontraron huellas, generando PDF sin ellas.");
+            if (resHuellas.data && resHuellas.data.encontrado && Array.isArray(resHuellas.data.huellas)) {
+                // Asegúrate de usar una cadena vacía en lugar de null para mayor robustez
+                huellasData = resHuellas.data.huellas.map(h => h || "");
             }
 
-            // 2. Generar el PDF en memoria (Blob)
-            const blob = await pdf(<DocuPDF veh={vehiculo} huellas={huellasData} />).toBlob();
+            // TRAER FIRMA - AHORA ESPERANDO JSON CON BASE64
+            let firmaDataUrl: string | null = null;
+            try {
+                // LLAMADA MODIFICADA: Esperamos una respuesta JSON (no blob) con la firma Base64
+                // Usamos la interfaz FirmaResponse
+                const resFirma = await axios.get<FirmaResponse>(`${API_BASE}/vehiculos/obtener-firma?placa=${vehiculo.placa}`);
+                
+                if (resFirma.status === 200 && resFirma.data.firma_b64) {
+                    // Extraer la Data URL (Base64) directamente del JSON
+                    firmaDataUrl = resFirma.data.firma_b64;
+                }
+            } catch (err) {
+                // Esto se ejecuta si el endpoint de firma falla (ej. 404, 500)
+                console.warn("No se pudo obtener la firma fresca. Usando URL guardada como fallback.", err);
+            }
 
-            // 3. Crear un enlace temporal y descargar
+            // Usamos la Data URL (Base64) si está disponible, o la URL de la BD como fallback
+            const imagenFirmaFinal = firmaDataUrl || vehiculo.firmaUrl;
+            
+            // GENERAR PDF
+            const blob = await pdf(
+                <DocuPDF 
+                    veh={vehiculo} 
+                    huellas={huellasData} 
+                    firmaBlob={imagenFirmaFinal} 
+                />
+            ).toBlob();
+
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
@@ -331,7 +340,7 @@ const HvVehiculos: React.FC<HvVehiculosProps> = ({ vehiculo }) => {
             document.body.removeChild(link);
             
             URL.revokeObjectURL(url);
-
+            
         } catch (error) {
             console.error("❌ Error generando PDF:", error);
             alert("Hubo un error al generar el PDF.");

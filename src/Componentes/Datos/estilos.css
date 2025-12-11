@@ -177,3 +177,36 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Estilos para el contenedor de la firma */
+.signature-wrapper {
+    border: 2px dashed #bbb;
+    background-color: #fff;
+    border-radius: 8px;
+    height: 200px;
+    width: 100%;
+    margin-bottom: 10px;
+    overflow: hidden;
+    cursor: crosshair;
+}
+
+.signature-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.btn-limpiar-firma {
+    background-color: #95a5a6;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.btn-limpiar-firma:hover {
+    background-color: #7f8c8d;
+}

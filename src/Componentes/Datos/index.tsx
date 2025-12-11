@@ -3,6 +3,7 @@ import municipios from "../../Componentes/Municipios/municipios.json";
 import Swal from 'sweetalert2';
 import './estilos.css';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
 // --- HELPERS PARA MUNICIPIOS ---
 const departamentosUnicos = [...new Set(municipios.map(m => m.DEPARTAMENTO))].sort();
 
@@ -140,7 +141,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/vehiculos/obtener-vehiculo/${placa}`);
+        const response = await fetch(`${API_BASE}/vehiculos/obtener-vehiculo/${placa}`);
         if (!response.ok) throw new Error("Error al obtener la información del vehículo");
         
         const data = await response.json();
@@ -238,7 +239,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     setIsLoading(true);
     try {
       const cleanedFormData = Object.fromEntries(Object.entries(formData).map(([key, value]) => [key, value || ""]));
-      const response = await fetch(`http://127.0.0.1:8000/vehiculos/actualizar-informacion/${placa}`, {
+      const response = await fetch(`${API_BASE}/vehiculos/actualizar-informacion/${placa}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cleanedFormData),
       });
       const result = await response.json();

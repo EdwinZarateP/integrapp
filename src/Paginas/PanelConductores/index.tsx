@@ -261,10 +261,9 @@ const PanelConductoresVista: React.FC = () => {
             showConfirmButton: false
         });
         await fetchVehiculosUsuario();
-        // CAMBIO: Asignar placa y redirigir inmediatamente
         setSelectedPlate(placaCreada);
         setNewPlate("");
-        changeStep(2);
+        setCurrentStep(2);
       } else { 
           Swal.fire("Error", data.detail || "Error al crear", "error"); 
       }
@@ -491,9 +490,8 @@ const handleFinalizar = async () => {
                                     <button 
                                         key={idx}
                                         onClick={() => {
-                                            // CAMBIO: Seleccionar y mover al paso 2 inmediatamente
                                             setSelectedPlate(placaItem);
-                                            changeStep(2);
+                                            setCurrentStep(2);
                                         }}
                                         className="btn-seleccion-vehiculo" 
                                     >

@@ -1,7 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import municipios from "../../Componentes/Municipios/municipios.json";
 import Swal from 'sweetalert2';
+import SignatureCanvas from 'react-signature-canvas'; 
 import './estilos.css';
+
+// Configuración de la API desde variables de entorno
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 // --- HELPERS PARA MUNICIPIOS ---
 const departamentosUnicos = [...new Set(municipios.map(m => m.DEPARTAMENTO))].sort();
@@ -20,7 +24,6 @@ const buscarDepartamentoPorCiudad = (ciudad: string) => {
 };
 
 // --- COMPONENTES UI ---
-
 interface InputFieldProps {
   label: string;
   name: string;
@@ -100,7 +103,6 @@ interface DatosProps {
   placa: string;
   onValidChange?: (isValid: boolean) => void; 
   onCedulaConductorChange?: (cedula: string) => void;
-  // NUEVA PROP para manejar la redirección al guardar con éxito
   onSavedSuccess: () => void;
 }
 
@@ -108,6 +110,10 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [tenedorSame, setTenedorSame] = useState<boolean>(false);
+  const [editandoFirma, setEditandoFirma] = useState(false); // Nuevo estado para controlar vista de firma
+  
+  // Ref para el canvas
+  const sigCanvas = useRef<any>(null);
 
   const phoneFields = ['condCelular', 'condCelularEmergencia', 'condCelularRef', 'propCelular', 'tenedCelular'];
 
@@ -129,7 +135,8 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
   };
 
   const isFormValid = () => {
-    return requiredFields.every((field) => formData[field] && formData[field].trim() !== "");
+    const camposOk = requiredFields.every((field) => formData[field] && formData[field].trim() !== "");
+    return camposOk;
   };
 
   useEffect(() => {
@@ -140,7 +147,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/vehiculos/obtener-vehiculo/${placa}`);
+        const response = await fetch(`${API_BASE}/vehiculos/obtener-vehiculo/${placa}`);
         if (!response.ok) throw new Error("Error al obtener la información del vehículo");
         
         const data = await response.json();
@@ -166,32 +173,19 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     if (placa) fetchData();
   }, [placa]);
 
-  // --- HANDLE CHANGE CORREGIDO ---
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-
-    // 1. Validaciones Numéricas para Celulares
     if (phoneFields.some(field => name.includes(field))) {
         const numericValue = value.replace(/\D/g, '');
         if (numericValue.length > 10) return;
         setFormData(prev => ({ ...prev, [name]: numericValue }));
         return;
     }
-
-    // 2. NUEVAS VALIDACIONES DE RANGOS (Modelo y Antigüedad)
-    // Si el usuario intenta escribir algo fuera del rango, lo ignoramos
     if (value !== "") {
-        // No permitir modelo mayor a 2026
         if (name === 'vehModelo' && parseInt(value) > 2026) return;
-        
-        // No permitir antigüedad mayor a 30 años
         if (name === 'condAntiguedadRef' && parseInt(value) > 30) return;
     }
-
-    // 3. Validación Tenedor (si es igual al propietario)
     if (tenedorSame && name.startsWith("tened")) return;
-
-    // 4. Lógica de Departamentos
     if (name.includes('Depto')) {
         let ciudadField = "";
         if (name === 'condDeptoExpedida') ciudadField = 'condExpedidaEn';
@@ -201,7 +195,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
         if (name === 'propDeptoCiudad') ciudadField = 'propCiudad';
         if (name === 'tenedDeptoExpedida') ciudadField = 'tenedCiudadExpDoc';
         if (name === 'tenedDeptoCiudad') ciudadField = 'tenedCiudad';
-
         setFormData(prev => ({ ...prev, [name]: value, [ciudadField]: "" }));
     } else {
         setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -225,9 +218,27 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     if (newState) handleCopiarDatos();
   };
 
+  // --- FUNCIONES HELPER PARA FIRMA ---
+  const dataURLtoBlob = (dataurl: string) => {
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)![1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    return new Blob([u8arr], { type: mime });
+  };
+
+  const limpiarFirma = () => {
+    if (sigCanvas.current) {
+      sigCanvas.current.clear();
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validar teléfonos
     for (const field of phoneFields) {
         if (formData[field] && formData[field].length !== 10) {
             Swal.fire({ title: "Número incorrecto", text: `El número de celular en el campo "${field}" debe tener exactamente 10 dígitos.`, icon: "warning" });
@@ -236,31 +247,99 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     }
 
     setIsLoading(true);
+    let nuevaUrlFirma = ""; 
+
     try {
-      const cleanedFormData = Object.fromEntries(Object.entries(formData).map(([key, value]) => [key, value || ""]));
-      const response = await fetch(`http://127.0.0.1:8000/vehiculos/actualizar-informacion/${placa}`, {
-        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cleanedFormData),
+      // --- VALIDACIÓN DE FIRMA ---
+      // Usamos getCanvas en lugar de getTrimmedCanvas para evitar errores de librería
+      const hasSignatureDrawn = sigCanvas.current && !sigCanvas.current.isEmpty();
+      const hasSavedSignature = (formData['firmaUrl'] && formData['firmaUrl'].length > 0) || (formData['firma'] && formData['firma'].length > 0);
+
+      if (!hasSignatureDrawn && !hasSavedSignature) {
+          Swal.fire("Falta la firma", "Para guardar los datos es OBLIGATORIO que el conductor firme en el recuadro del final.", "error");
+          setIsLoading(false);
+          return;
+      }
+
+      // --- PASO 1: SUBIR FIRMA (Si hay una nueva dibujada) ---
+      if (hasSignatureDrawn) {
+          const dataURL = sigCanvas.current.getCanvas().toDataURL('image/webp');
+          const blob = dataURLtoBlob(dataURL);
+          const fileFirma = new File([blob], "firma_conductor.webp", { type: "image/webp" });
+
+          const formDataFirma = new FormData();
+          formDataFirma.append("archivo", fileFirma);
+          formDataFirma.append("placa", placa);
+
+          const resFirma = await fetch(`${API_BASE}/vehiculos/subir-firma`, {
+              method: 'PUT',
+              body: formDataFirma
+          });
+
+          if (!resFirma.ok) {
+            const errorData = await resFirma.json().catch(() => ({ detail: "Error desconocido al subir firma" }));
+            throw new Error(errorData.detail || "Fallo al subir la imagen de la firma");
+          }
+
+          const dataRespuesta = await resFirma.json();
+          if (dataRespuesta.url) nuevaUrlFirma = dataRespuesta.url;
+      }
+
+      // --- PASO 2: GUARDAR DATOS DE TEXTO ---
+      const { firma, firmaUrl, ...restFormData } = formData; 
+      
+      const cleanedFormData: any = Object.fromEntries(
+        Object.entries(restFormData).map(([key, value]) => [key, value || ""])
+      );
+
+      // Lógica para decidir qué URL de firma enviar a la BD
+      if (nuevaUrlFirma) {
+          cleanedFormData['firmaUrl'] = nuevaUrlFirma;
+      } else if (hasSignatureDrawn) {
+      } else {
+          cleanedFormData['firmaUrl'] = formData['firmaUrl'] || "";
+      }
+
+      const response = await fetch(`${API_BASE}/vehiculos/actualizar-informacion/${placa}`, {
+        method: 'PUT', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(cleanedFormData),
       });
-      const result = await response.json();
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ detail: "Error desconocido al guardar datos" }));
+        throw new Error(errorData.detail || "Fallo al guardar los datos del formulario");
+      }
+
+      const result = await response.json(); 
       
       Swal.fire({
         title: "¡Datos Guardados!",
-        text: result.message || "La información se ha actualizado correctamente.",
+        text: result.message || "La información y la firma se han actualizado correctamente.",
         icon: "success",
         showCancelButton: true,
         confirmButtonText: "Continuar al Paso 3",
         cancelButtonText: "Quedarme aquí",
         confirmButtonColor: '#27ae60'
-      }).then((result) => {
-        if (result.isConfirmed) {
+      }).then((swalRes) => {
+        if (swalRes.isConfirmed) {
             onSavedSuccess();
         }
       });
 
-    } catch (error) { alert('Hubo un error al actualizar la información'); } finally { setIsLoading(false); }
+    } catch (error: any) { 
+        console.error("Error capturado:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error al guardar',
+            text: error.message || 'Hubo un error inesperado.',
+            confirmButtonColor: '#d33'
+        });
+    } finally { 
+        setIsLoading(false); 
+    }
   };
 
-  // Definición de las secciones del formulario
   const sections = [
     {
       title: 'Información del Conductor',
@@ -300,7 +379,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
         { label: 'Departamento', name: 'condDeptoCiudadRef', options: departamentosUnicos },
         { label: 'Ciudad', name: 'condCiudadRef', options: getCiudadesPorDepto(formData['condDeptoCiudadRef']) },
         { label: 'Nro. Viajes', name: 'condNroViajesRef', type: 'number' },
-        // --- CORRECCIÓN ANTIGÜEDAD (MAX 30) ---
         { label: 'Años Antigüedad', name: 'condAntiguedadRef', type: 'number', inputProps: { min: 0, max: 30 } },
         { label: 'Merc. Transportada', name: 'condMercTransportada' },
       ],
@@ -340,7 +418,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     {
       title: 'Datos del Vehiculo 🚛',
       fields: [
-        // --- CORRECCIÓN MODELO (MAX 2026) ---
         { label: 'Modelo', name: 'vehModelo', type: 'number', inputProps: { min: 1990, max: 2026 } },
         { label: 'Marca', name: 'vehMarca' },
         { label: 'Tipo Carroceria', name: 'vehTipoCarroceria' },
@@ -392,8 +469,95 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
             )}
           </div>
         ))}
+
+        {/* --- SECCIÓN DE FIRMA CON MODO EDICIÓN --- */}
+        <div className="Datos-form-section">
+            <h4>Firma del Conductor </h4>
+            
+            {/* CASO A: YA EXISTE FIRMA Y NO SE ESTÁ EDITANDO */}
+            {formData['firmaUrl'] && !editandoFirma ? (
+                <div className="firma-existente-container" style={{textAlign: 'center', padding: '15px', border: '1px solid #27ae60', borderRadius: '8px', backgroundColor: '#e8f8f5'}}>
+                    <div style={{color: '#27ae60', fontWeight: 'bold', marginBottom: '10px', fontSize: '1.1rem'}}>
+                        ✅ Firma Registrada Exitosamente
+                    </div>
+                    
+                    <p style={{fontSize: '0.9rem', color: '#555'}}>Firma Guardada Actualmente</p>
+                    
+                    <img 
+                        src={formData['firmaUrl']} 
+                        alt="Firma Conductor" 
+                        style={{
+                            maxWidth: '100%', 
+                            height: '150px', 
+                            border: '1px dashed #ccc', 
+                            marginBottom: '15px', 
+                            backgroundColor: 'white'
+                        }} 
+                    />
+
+                    <div>
+                        <button 
+                            type="button" 
+                            className="btn-cambiar-firma"
+                            onClick={() => {
+                                setEditandoFirma(true); 
+                                setTimeout(() => limpiarFirma(), 100); 
+                            }}
+                            style={{
+                                backgroundColor: '#f39c12', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold'
+                            }}
+                        >
+                            🖊️ Cambiar / Volver a firmar
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                /* CASO B: NO HAY FIRMA O SE ESTÁ EDITANDO */
+                <div className="firma-nueva-container">
+                    <p style={{fontSize: '0.9rem', color: '#666', marginBottom: '10px'}}>
+                        {formData['firmaUrl'] 
+                            ? "⚠️ Estás en modo edición. Dibuja la nueva firma abajo para reemplazar la anterior."
+                            : "⚠️ Es obligatorio firmar en el recuadro para poder guardar."}
+                    </p>
+                    
+                    <div className="signature-wrapper" style={{border: '2px dashed #ccc', borderRadius: '8px', overflow: 'hidden'}}>
+                        <SignatureCanvas 
+                            ref={sigCanvas} 
+                            penColor='black'
+                            canvasProps={{className: 'signature-canvas', style: {width: '100%', height: '200px'}}} 
+                            backgroundColor="white"
+                        />
+                    </div>
+                    
+                    <div style={{marginTop: '10px', display: 'flex', gap: '10px'}}>
+                        <button 
+                            type="button" 
+                            onClick={limpiarFirma} 
+                            className="btn-limpiar-firma"
+                            style={{backgroundColor: '#e74c3c', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer'}}
+                        >
+                            Borrar dibujo
+                        </button>
+
+                        {formData['firmaUrl'] && (
+                            <button 
+                                type="button" 
+                                onClick={() => {
+                                    setEditandoFirma(false); 
+                                    limpiarFirma();
+                                }}
+                                style={{backgroundColor: '#7f8c8d', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer'}}
+                            >
+                                Cancelar edición
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+
         <button className="Datos-botonActualizar" type="submit" disabled={isLoading} style={{ marginTop: '1rem' }}>
-          {isLoading ? "Guardando..." : "Guardar Datos"}
+          {isLoading ? "Guardando..." : "Guardar Datos y Firma"}
         </button>
       </form>
     </div>

@@ -515,3 +515,31 @@ body {
       align-items: flex-start;
   }
 }
+
+.btn-info-faltante {
+    grid-column: 1 / -1; 
+    background-color: #fe1919; 
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.2s, transform 0.1s;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(230, 126, 34, 0.3);
+    font-size: 0.95rem;
+}
+
+.btn-info-faltante:hover {
+    background-color: #d35400;
+    transform: translateY(-1px);
+}
+
+.btn-info-faltante .icon-alert {
+    font-size: 1.2rem;
+}

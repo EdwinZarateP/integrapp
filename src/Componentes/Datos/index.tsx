@@ -110,7 +110,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [tenedorSame, setTenedorSame] = useState<boolean>(false);
-  const [editandoFirma, setEditandoFirma] = useState(false); // Nuevo estado para controlar vista de firma
+  const [editandoFirma, setEditandoFirma] = useState(false); 
   
   // Ref para el canvas
   const sigCanvas = useRef<any>(null);
@@ -124,8 +124,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     'condCiudadRef', 'condNroViajesRef', 'condAntiguedadRef', 'condMercTransportada', 'propNombre', 'propDocumento', 'propCiudadExpDoc',
     'propCorreo', 'propCelular', 'propDireccion', 'propCiudad', 'tenedNombre', 'tenedDocumento', 'tenedCiudadExpDoc', 'tenedCorreo',
     'tenedCelular', 'tenedDireccion', 'tenedCiudad', 'vehModelo', 'vehMarca', 'vehTipoCarroceria', 'vehLinea', 'vehColor', 
-    'vehEmpresaSat', 'vehUsuarioSat', 'vehClaveSat', 'RemolPlaca', 'RemolModelo', 'RemolClase', 'RemolTipoCarroceria', 
-    'RemolAlto', 'RemolLargo', 'RemolAncho'
+    'vehEmpresaSat', 'vehUsuarioSat', 'vehClaveSat'
   ];
 
   const calcularAvance = () => {
@@ -251,7 +250,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
 
     try {
       // --- VALIDACIÓN DE FIRMA ---
-      // Usamos getCanvas en lugar de getTrimmedCanvas para evitar errores de librería
       const hasSignatureDrawn = sigCanvas.current && !sigCanvas.current.isEmpty();
       const hasSavedSignature = (formData['firmaUrl'] && formData['firmaUrl'].length > 0) || (formData['firma'] && formData['firma'].length > 0);
 
@@ -431,7 +429,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
       ],
     },
     {
-      title: 'Datos del Remolque ⛟',
+      title: 'Datos del Remolque ⛟ (Opcional)',
       fields: [
         { label: 'Placa Remolque', name: 'RemolPlaca' },
         { label: 'Modelo', name: 'RemolModelo', type: 'number' },

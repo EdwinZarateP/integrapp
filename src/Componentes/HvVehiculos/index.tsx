@@ -85,23 +85,24 @@ const DocuPDF = ({ veh, huellas, firmaBlob }: { veh: Vehiculo, huellas: (string 
     return (
         <Document>
             <Page size="A4" style={styles.page}>
-                {/* CABECERA */}
-                <View style={styles.headerBox}>
-                    <View style={styles.row}>
-                        <View style={[styles.col, { width: '20%', justifyContent: 'center', alignItems: 'center', padding: 2 }]}>
-                             <Image src={logo} style={{ width: '25%', height: 'auto', objectFit: 'contain' }} />
-                        </View>
-                        <View style={[styles.col, { width: '60%' }]}>
-                            <Text style={{ textAlign: 'center', fontSize: 10, fontWeight: 'bold', marginTop: 5 }}>FORMATO - HOJA DE VIDA CONDUCTOR VEHÍCULO</Text>
-                            <Text style={{ textAlign: 'center', fontSize: 8 }}>INTEGRA CADENA DE SERVICIOS S.A.S.</Text>
-                        </View>
-                        <View style={[styles.col, { width: '20%', borderRight: 'none' }]}>
-                            <Text>CÓDIGO: FORM-TRASEG-001</Text>
-                            <Text>VERSIÓN: 8</Text>
-                            <Text>FECHA: {new Date().toLocaleDateString()}</Text>
-                        </View>
-                    </View>
+               {/* CABECERA */}
+            <View style={styles.headerBox}>
+            <View style={styles.row}>
+                    <View style={[styles.col, { width: '20%', justifyContent: 'center', alignItems: 'center', padding: 2 }]}>
+                    <Image src={logo} style={{ width: '25%', height: 'auto', objectFit: 'contain' }} />
+            </View>
+            <View style={[styles.col, { width: '60%' }]}>
+                    <Text style={{ textAlign: 'center', fontSize: 10, fontWeight: 'bold', marginTop: 5 }}>FORMATO - HOJA DE VIDA CONDUCTOR VEHÍCULO</Text>
+                    <Text style={{ textAlign: 'center', fontSize: 8 }}>INTEGRA CADENA DE SERVICIOS S.A.S.</Text>
+            </View>
+            <View style={[styles.col, { width: '20%', borderRight: 'none' }]}>
+                          <Text>CÓDIGO: FORM-TRASEG-001</Text>
+                          <Text>VERSIÓN: 8</Text>
+                {/*  CAMBIAR LA FECHA AQUÍ */}
+                          <Text>FECHA: 5 Enero 2026</Text>
+                  </View>
                 </View>
+            </View>
 
                 {/* DOCUMENTOS */}
                 <View style={styles.sectionTitle}><Text>DOCUMENTOS REQUERIDOS</Text></View>

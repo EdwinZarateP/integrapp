@@ -440,7 +440,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
                 </div>
             ) : (
                 <div className="firma-nueva-container">
-                    <p style={{fontSize: '0.9rem', color: '#666', marginBottom: '10px'}}>{formData['firmaUrl'] ? "⚠️ Estás en modo edición." : "⚠️ Dibuja tu firma a continuación."}</p>
+                    <p style={{fontSize: '0.9rem', color: '#4d4d4dff', marginBottom: '10px'}}>{formData['firmaUrl'] ? "⚠️ Estás en modo edición." : "⚠️ Dibuja tu firma a continuación."}</p>
                     <div className="signature-wrapper" style={{border: '2px dashed #ccc', borderRadius: '8px', overflow: 'hidden'}}><SignatureCanvas ref={sigCanvas} penColor='black' canvasProps={{className: 'signature-canvas', style: {width: '100%', height: '200px'}}} backgroundColor="white" /></div>
                     <div style={{marginTop: '10px', display: 'flex', gap: '10px'}}>
                         <button type="button" onClick={limpiarFirma} className="btn-limpiar-firma" style={{backgroundColor: '#e74c3c', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer'}}>Borrar dibujo</button>

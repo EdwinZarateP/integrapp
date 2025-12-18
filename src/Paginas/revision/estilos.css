@@ -543,3 +543,35 @@ body {
 .btn-info-faltante .icon-alert {
     font-size: 1.2rem;
 }
+.link-ver-doc-swal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #095a1a; 
+  color: #ffffff !important; 
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(13, 103, 8, 0.2);
+  border: 1px solid #1d4d0e;
+}
+
+.link-ver-doc-swal:hover {
+  background-color: #0b640d; 
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(19, 127, 23, 0.3);
+}
+
+.link-ver-doc-swal:active {
+  transform: translateY(0);
+}
+
+/* Icono simulado con CSS antes del texto */
+.link-ver-doc-swal::before {
+  content: "👁️";
+  font-size: 0.9rem;
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "axios"; 
 import Swal from "sweetalert2";
 import { FaSearch, FaTimes, FaExclamationTriangle } from "react-icons/fa"; 
 import HvVehiculos from "../../Componentes/HvVehiculos"; 
@@ -32,7 +32,8 @@ const TODOS_LOS_DOCUMENTOS_DISPLAY = [
     { key: "revisionTecnomecanica", label: "Tecnomecánica" },
     { key: "tarjetaRemolque", label: "Tarjeta Remolque" },
     { key: "polizaResponsabilidad", label: "Póliza Resp." },
-    { key: "condFoto", label: "Foto Conductor" },
+    { key: "condFoto", label: "Foto Conductor (App)" }, 
+    { key: "fotoconductorseguridad", label: "Foto Conductor (Seguridad)" },
     { key: "planillaEpsArl", label: "Planilla EPS/ARL" },
     { key: "documentoIdentidadTenedor", label: "Cédula Tenedor" },
     { key: "documentoIdentidadPropietario", label: "Cédula Propietario" },
@@ -110,6 +111,7 @@ export interface Vehiculo {
   estadoIntegra: string;
   idUsuario: string;
   estudioSeguridad?: string;
+  fotoconductorseguridad?: string;
   observaciones?: string;
   [key: string]: any;
 }
@@ -200,22 +202,59 @@ const RevisionVehiculos: React.FC = () => {
   const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => { if (e.key === 'Enter') action(); };
 
   /* -------------------------------------------------------------------------- */
-  /* APROBACIÓN / RECHAZO                                                     */
+  /* APROBACIÓN / RECHAZO (LÓGICA ACTUALIZADA)                                */
   /* -------------------------------------------------------------------------- */
   const aprobarVehiculo = async (veh: Vehiculo) => {
+    const tieneEstudioPrevio = !!veh.estudioSeguridad;
+
+    // 1. Preparamos el HTML dependiendo de si ya tiene estudio
+    let htmlEstudio = "";
+    if (tieneEstudioPrevio) {
+        htmlEstudio = `
+            <div style="text-align: left; margin-bottom: 15px; background: #eff6ff; padding: 10px; border-radius: 6px; border: 1px solid #bfdbfe;">
+                <p style="margin: 0 0 8px 0; color: #1e40af; font-size: 0.9rem; display: flex; align-items: center; gap: 5px;">
+                    <strong>✅ Estudio de Seguridad Vigente</strong>
+                </p>
+                <a href="${veh.estudioSeguridad}" target="_blank" class="link-ver-doc-swal">
+                    Ver documento actual
+                </a>
+                <label style="font-weight:600; font-size: 0.85rem; display:block; margin-bottom:5px; margin-top: 10px; color: #333;">
+                    1. ¿Desea actualizarlo? (Opcional)
+                </label>
+                <input type="file" id="swal-file-estudio" class="swal2-file" style="display:block; width:100%; box-sizing:border-box; font-size: 0.9rem;" />
+            </div>
+        `;
+    } else {
+        htmlEstudio = `
+            <div style="text-align: left; margin-bottom: 15px;">
+                <label style="font-weight:600; font-size: 0.9rem; display:block; margin-bottom:5px;">
+                    1. Cargar Estudio de Seguridad <span style="color:red">* (Obligatorio)</span>
+                </label>
+                <input type="file" id="swal-file-estudio" class="swal2-file" style="display:block; width:100%; box-sizing:border-box;" />
+            </div>
+        `;
+    }
+
+    // 2. Mostramos el Modal
     const { value: formValues } = await Swal.fire({
       title: `Aprobar Vehículo`,
       text: `Gestionar aprobación para placa: ${veh.placa}`,
       html: `
-        <div style="text-align: left; margin-bottom: 5px;">
-            <label style="font-weight:600; font-size: 0.9rem;">
-                1. Cargar Estudio de Seguridad <span style="color:red">* (Obligatorio)</span>
+        ${htmlEstudio}
+
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label style="font-weight:600; font-size: 0.9rem; display:block; margin-bottom:5px;">
+                2. Cargar Foto de Conductor <span style="color:red">* (Obligatorio)</span>
             </label>
-            <input type="file" id="swal-file" class="swal2-file" />
+            <input type="file" id="swal-file-foto" class="swal2-file" accept="image/*" style="display:block; width:100%; box-sizing:border-box;" />
+            <small style="color: #666;">Evidencia de seguridad (Obligatoria).</small>
         </div>
+
         <div style="text-align: left;">
-            <label style="font-weight:600; font-size: 0.9rem;">2. Comentario / Observación (Opcional)</label>
-            <textarea id="swal-comment" class="swal2-textarea" placeholder="Observaciones..."></textarea>
+            <label style="font-weight:600; font-size: 0.9rem; display:block; margin-bottom:5px;">
+                3. Comentario / Observación (Opcional)
+            </label>
+            <textarea id="swal-comment" class="swal2-textarea" placeholder="Observaciones..." style="margin:0; width:100%; box-sizing:border-box;"></textarea>
         </div>
       `,
       showCancelButton: true,
@@ -223,29 +262,97 @@ const RevisionVehiculos: React.FC = () => {
       confirmButtonColor: "#28a745",
       cancelButtonText: "Cancelar",
       cancelButtonColor: "#6c757d",
+      width: '550px',
       preConfirm: () => {
-        const fileInput = document.getElementById("swal-file") as HTMLInputElement;
+        const fileInputEstudio = document.getElementById("swal-file-estudio") as HTMLInputElement;
+        const fileInputFoto = document.getElementById("swal-file-foto") as HTMLInputElement;
         const commentInput = document.getElementById("swal-comment") as HTMLInputElement;
-        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-            Swal.showValidationMessage('⚠️ Es obligatorio cargar el archivo del Estudio de Seguridad.');
-            return false; 
+
+        const archivoEstudioSeleccionado = fileInputEstudio?.files?.[0] || null;
+        const archivoFotoSeleccionado = fileInputFoto?.files?.[0] || null;
+
+        // Validaciones en el frontend
+        if (!tieneEstudioPrevio && !archivoEstudioSeleccionado) {
+            Swal.showValidationMessage('⚠️ Falta el Estudio de Seguridad.');
+            return false;
         }
-        return { file: fileInput.files[0], comment: commentInput ? commentInput.value : "" };
+        if (!archivoFotoSeleccionado) {
+            Swal.showValidationMessage('⚠️ Falta la Foto del Conductor.');
+            return false;
+        }
+
+        return { 
+            fileEstudio: archivoEstudioSeleccionado, 
+            fileFoto: archivoFotoSeleccionado,
+            comment: commentInput ? commentInput.value : "" 
+        };
       }
     });
 
     if (!formValues) return; 
-    const { file, comment } = formValues;
+    const { fileEstudio, fileFoto, comment } = formValues;
+
+    // 3. Proceso de Carga con Manejo de Errores Manual
+    Swal.fire({ 
+        title: 'Procesando...', 
+        html: 'Iniciando carga de archivos...', 
+        allowOutsideClick: false, 
+        didOpen: () => Swal.showLoading() 
+    });
 
     try {
-        Swal.fire({ title: 'Procesando...', didOpen: () => Swal.showLoading() });
-        const formDataArchivo = new FormData();
-        formDataArchivo.append("archivo", file);
-        formDataArchivo.append("placa", veh.placa);
-        await axios.put(`${API_BASE}/vehiculos/subir-estudio-seguridad`, formDataArchivo);
+        // PASO A: Estudio de Seguridad
+        if (fileEstudio) {
+            Swal.getHtmlContainer()!.textContent = 'Subiendo Estudio de Seguridad...';
+            const formDataEstudio = new FormData();
+            formDataEstudio.append("archivo", fileEstudio);
+            formDataEstudio.append("placa", veh.placa);
+            await axios.put(`${API_BASE}/vehiculos/subir-estudio-seguridad`, formDataEstudio);
+        }
+
+        // PASO B: Foto Conductor
+        Swal.getHtmlContainer()!.textContent = 'Subiendo Foto de Conductor...';
+        const formDataFoto = new FormData();
+        formDataFoto.append("archivo", fileFoto);
+        formDataFoto.append("placa", veh.placa);
+        await axios.put(`${API_BASE}/vehiculos/subir-foto-seguridad`, formDataFoto);
+
+        // PASO C: Actualizar Estado
+        Swal.getHtmlContainer()!.textContent = 'Finalizando aprobación...';
         await ejecutarAprobacion(veh, comment);
-    } catch (error) {
-        Swal.fire("Error", "Ocurrió un error al aprobar.", "error");
+
+    } catch (error: any) {
+        console.error("Detalle del error:", error);
+        
+        let mensajeError = "Ocurrió un error inesperado.";
+        
+        if (error.response) {
+            // El servidor respondió con un código de estado fuera del rango 2xx
+            const detalleServidor = error.response.data?.detail || error.message;
+            const urlFallida = error.config?.url || "desconocida";
+
+            if (urlFallida.includes("subir-foto-seguridad")) {
+                mensajeError = `Error al subir la FOTO: ${detalleServidor}`;
+            } else if (urlFallida.includes("subir-estudio-seguridad")) {
+                mensajeError = `Error al subir el ESTUDIO: ${detalleServidor}`;
+            } else if (urlFallida.includes("actualizar-estado")) {
+                mensajeError = `Error al ACTUALIZAR ESTADO: ${detalleServidor}`;
+            } else {
+                mensajeError = `Error del servidor (${error.response.status}): ${detalleServidor}`;
+            }
+        } else if (error.request) {
+            // La petición fue hecha pero no se recibió respuesta
+            mensajeError = "No se recibió respuesta del servidor. Verifique su conexión.";
+        } else {
+            // Algo pasó al configurar la petición
+            mensajeError = error.message;
+        }
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Falló la operación',
+            text: mensajeError
+        });
     }
   };
 
@@ -310,7 +417,7 @@ const RevisionVehiculos: React.FC = () => {
   const handlePageChange = (newPage: number) => { if (newPage >= 1 && newPage <= totalPages) setCurrentPage(newPage); };
 
   /* -------------------------------------------------------------------------- */
-  /* RENDER DATOS                  */
+  /* RENDER DATOS                                                             */
   /* -------------------------------------------------------------------------- */
 
   const RenderDatosVehiculo = ({ veh }: { veh: Vehiculo }) => {
@@ -477,16 +584,21 @@ const RevisionVehiculos: React.FC = () => {
 
           <h4 className="titulo-seccion">📄 Documentos y Fotos</h4>
           
-          <div className="box-estudio-seguridad">
-              {veh.estudioSeguridad ? (
-                <div className="flex items-center gap-4 w-full">
-                  <span className="font-bold text-blue-800">Estudio de Seguridad:</span>
-                  <a href={veh.estudioSeguridad} target="_blank" rel="noopener noreferrer" className="btn-ver-doc-seguridad">
-                    VER DOCUMENTO
-                  </a>
-                </div>
-              ) : <span className="text-red-500 font-bold">Sin estudio de seguridad cargado.</span>}
-          </div>
+          {/*Solo mostrar si es Aprobado (Vista Verde) */}
+          {isAprobado && (
+              <div className="box-estudio-seguridad">
+                  {veh.estudioSeguridad ? (
+                    <div className="flex items-center gap-4 w-full">
+                      <span className="font-bold text-blue-800">Estudio de Seguridad:</span>
+                      <a href={veh.estudioSeguridad} target="_blank" rel="noopener noreferrer" className="btn-ver-doc-seguridad">
+                        VER DOCUMENTO
+                      </a>
+                    </div>
+                  ) : (
+                    <span className="text-red-500 font-bold">Sin estudio de seguridad cargado.</span>
+                  )}
+              </div>
+          )}
 
           <div className="grid-documentos">
              {/* Firma */}
@@ -499,9 +611,9 @@ const RevisionVehiculos: React.FC = () => {
              
              {/* Renderizado de tarjetas de documentos presentes */}
              {TODOS_LOS_DOCUMENTOS_DISPLAY.map((doc) => {
-                 const url = veh[doc.key]; // Buscamos si existe la URL en el objeto raiz
+                 const url = veh[doc.key]; 
                  
-                 // Caso especial: 'fotos' es un array en tu JSON
+                 // Caso especial: 'fotos' es un array en  JSON
                  if (doc.key === "fotos" && Array.isArray(veh.fotos) && veh.fotos.length > 0) {
                      return (
                          <div key="foto-veh" className="documento-card" onClick={() => window.open(veh.fotos[0], "_blank")}>
@@ -522,9 +634,6 @@ const RevisionVehiculos: React.FC = () => {
                  return null;
              })}
           </div>
-          
-          {/* Si no se renderizó ninguna card de arriba (verificación simple) */}
-          {/* Nota: Esta lógica visual es simplificada, si no hay nada se verá vacío. */}
         </div>
     );
   };

@@ -5,8 +5,8 @@
   width: 100%;
   padding: 0;
   height: 100%;
-  overflow-y: auto;
-  /* Si es necesario, ajusta el margin-top para que no se oculte nada */
+  /* IMPORTANTE: Espacio extra al final para que los botones flotantes no tapen la firma */
+  padding-bottom: 120px; 
 }
 
 /* Estilos generales del formulario */
@@ -18,7 +18,6 @@
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-
 }
 
 /* Estilo para cada sección del formulario */
@@ -43,7 +42,7 @@
 /* Contenedor de los inputs dentro de cada sección */
 .Datos-fields-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 2 columnas por defecto */
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
 
@@ -79,25 +78,11 @@
   border-color: #1ab33b;
 }
 
-/* Botón Guardar Cambios */
-.Datos-botonActualizar {
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 7px;
-  font-weight: 600;
-  background-color:rgb(37, 79, 15);
-  color: #fdfdfd;
-}
 
-.Datos-botonActualizar:hover {
-  background-color: rgba(5, 74, 23, 0.908);
-}
-
-/* Barra de avance sticky en la parte superior */
 .Datos-avance-container {
   position: sticky;
   top: 0;
-  background: white; /* Fondo blanco para contraste */
+  background: white;
   padding: 10px;
   display: flex;
   align-items: center;
@@ -128,20 +113,6 @@
   white-space: nowrap;
 }
 
-/* Botón Siguiente en la barra de avance */
-.Datos-boton-siguiente {
-  background: #2F6B3E;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-}
-
-.Datos-boton-siguiente:hover {
-  background: #25632E;
-}
-
 /* Estilos para el contenedor del checkbox */
 .Datos-toggle-tenedor {
   display: flex;
@@ -150,14 +121,12 @@
   margin: 1rem 0;
 }
 
-/* Estilo del checkbox */
 .Datos-checkbox {
   width: 18px;
   height: 18px;
   cursor: pointer;
 }
 
-/* Estilo de la etiqueta */
 .Datos-checkbox-label {
   font-size: 1rem;
   font-weight: 500;
@@ -165,13 +134,11 @@
   cursor: pointer;
 }
 
-/* Efecto al pasar el mouse */
 .Datos-checkbox-label:hover {
   color: #2f6b3e;
 }
 
-
-/* Responsive: en pantallas menores a 900px, las secciones tendrán una sola columna */
+/* Responsive */
 @media (max-width: 900px) {
   .Datos-fields-container {
     grid-template-columns: 1fr;
@@ -209,4 +176,83 @@
 
 .btn-limpiar-firma:hover {
     background-color: #7f8c8d;
+}
+
+/* -------------------------------------------------- */
+/* --- BOTONES FLOTANTES (FIXED) INDIVIDUALES --- */
+/* -------------------------------------------------- */
+
+.Datos-botones-flotantes {
+  position: fixed;
+  bottom: 20px;    
+  right: 20px;    
+
+  
+  z-index: 9999;
+  
+  display: flex;
+  flex-direction: column; 
+  gap: 15px; 
+  align-items: flex-end; 
+}
+
+
+@media (max-width: 600px) {
+    .Datos-botones-flotantes {
+        bottom: 80px; 
+        right: 35%;
+        transform: translateX(50%);
+    }
+}
+
+.btn-guardar-progreso {
+  background-color: #3498db;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+  
+  width: auto;
+  min-width: 220px; 
+  text-align: center;
+}
+
+.btn-guardar-progreso:hover {
+  background-color: #2980b9;
+  transform: translateY(-3px);
+}
+
+.btn-guardar-finalizar {
+  background-color: #27ae60;
+  color: white;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+  box-shadow: 0 4px 8px rgba(39, 174, 96, 0.4);
+  width: auto;
+  min-width: 220px;
+  text-align: center;
+}
+
+.btn-guardar-finalizar:hover {
+  background-color: #219150;
+  transform: translateY(-3px);
+}
+
+.btn-guardar-progreso:disabled,
+.btn-guardar-finalizar:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }

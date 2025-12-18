@@ -4,10 +4,8 @@ import Swal from 'sweetalert2';
 import SignatureCanvas from 'react-signature-canvas'; 
 import './estilos.css';
 
-// Configuración de la API desde variables de entorno
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-// --- HELPERS PARA MUNICIPIOS ---
 const departamentosUnicos = [...new Set(municipios.map(m => m.DEPARTAMENTO))].sort();
 
 const getCiudadesPorDepto = (depto: string) => {
@@ -111,8 +109,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
   const [isLoading, setIsLoading] = useState(false);
   const [tenedorSame, setTenedorSame] = useState<boolean>(false);
   const [editandoFirma, setEditandoFirma] = useState(false); 
-  
-  // Ref para el canvas
   const sigCanvas = useRef<any>(null);
 
   const phoneFields = ['condCelular', 'condCelularEmergencia', 'condCelularRef', 'propCelular', 'tenedCelular'];
@@ -148,7 +144,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
       try {
         const response = await fetch(`${API_BASE}/vehiculos/obtener-vehiculo/${placa}`);
         if (!response.ok) throw new Error("Error al obtener la información del vehículo");
-        
         const data = await response.json();
         if (data.data) {
           const loadedData = data.data;
@@ -158,13 +153,11 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
             'propCiudadExpDoc': 'propDeptoExpedida', 'propCiudad': 'propDeptoCiudad', 'tenedCiudadExpDoc': 'tenedDeptoExpedida',
             'tenedCiudad': 'tenedDeptoCiudad'
           };
-
           Object.keys(cityToDeptoMap).forEach(cityField => {
              if (loadedData[cityField]) {
                 departamentosCalculados[cityToDeptoMap[cityField]] = buscarDepartamentoPorCiudad(loadedData[cityField]);
              }
           });
-
           setFormData((prevData) => ({ ...prevData, ...loadedData, ...departamentosCalculados }));
         }
       } catch (error) { console.error("Error cargando la información del vehículo:", error); }
@@ -217,7 +210,6 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
     if (newState) handleCopiarDatos();
   };
 
-  // --- FUNCIONES HELPER PARA FIRMA ---
   const dataURLtoBlob = (dataurl: string) => {
     const arr = dataurl.split(',');
     const mime = arr[0].match(/:(.*?);/)![1];
@@ -229,74 +221,50 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
   };
 
   const limpiarFirma = () => {
-    if (sigCanvas.current) {
-      sigCanvas.current.clear();
-    }
+    if (sigCanvas.current) sigCanvas.current.clear();
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const procesarGuardado = async (esFinalizar: boolean, e: React.MouseEvent) => {
     e.preventDefault();
-    
-    // Validar teléfonos
     for (const field of phoneFields) {
         if (formData[field] && formData[field].length !== 10) {
             Swal.fire({ title: "Número incorrecto", text: `El número de celular en el campo "${field}" debe tener exactamente 10 dígitos.`, icon: "warning" });
             return;
         }
     }
-
     setIsLoading(true);
     let nuevaUrlFirma = ""; 
 
     try {
-      // --- VALIDACIÓN DE FIRMA ---
       const hasSignatureDrawn = sigCanvas.current && !sigCanvas.current.isEmpty();
       const hasSavedSignature = (formData['firmaUrl'] && formData['firmaUrl'].length > 0) || (formData['firma'] && formData['firma'].length > 0);
 
-      if (!hasSignatureDrawn && !hasSavedSignature) {
-          Swal.fire("Falta la firma", "Para guardar los datos es OBLIGATORIO que el conductor firme en el recuadro del final.", "error");
+      if (esFinalizar && !hasSignatureDrawn && !hasSavedSignature) {
+          Swal.fire("Falta la firma", "Para continuar, es OBLIGATORIO que el conductor firme.", "error");
           setIsLoading(false);
           return;
       }
 
-      // --- PASO 1: SUBIR FIRMA (Si hay una nueva dibujada) ---
       if (hasSignatureDrawn) {
           const dataURL = sigCanvas.current.getCanvas().toDataURL('image/webp');
           const blob = dataURLtoBlob(dataURL);
           const fileFirma = new File([blob], "firma_conductor.webp", { type: "image/webp" });
-
           const formDataFirma = new FormData();
           formDataFirma.append("archivo", fileFirma);
           formDataFirma.append("placa", placa);
-
-          const resFirma = await fetch(`${API_BASE}/vehiculos/subir-firma`, {
-              method: 'PUT',
-              body: formDataFirma
-          });
-
-          if (!resFirma.ok) {
-            const errorData = await resFirma.json().catch(() => ({ detail: "Error desconocido al subir firma" }));
-            throw new Error(errorData.detail || "Fallo al subir la imagen de la firma");
-          }
-
+          const resFirma = await fetch(`${API_BASE}/vehiculos/subir-firma`, { method: 'PUT', body: formDataFirma });
+          if (!resFirma.ok) throw new Error("Fallo al subir la imagen de la firma");
           const dataRespuesta = await resFirma.json();
           if (dataRespuesta.url) nuevaUrlFirma = dataRespuesta.url;
       }
 
-      // --- PASO 2: GUARDAR DATOS DE TEXTO ---
       const { firma, firmaUrl, ...restFormData } = formData; 
-      
       const cleanedFormData: any = Object.fromEntries(
         Object.entries(restFormData).map(([key, value]) => [key, value || ""])
       );
 
-      // Lógica para decidir qué URL de firma enviar a la BD
-      if (nuevaUrlFirma) {
-          cleanedFormData['firmaUrl'] = nuevaUrlFirma;
-      } else if (hasSignatureDrawn) {
-      } else {
-          cleanedFormData['firmaUrl'] = formData['firmaUrl'] || "";
-      }
+      if (nuevaUrlFirma) cleanedFormData['firmaUrl'] = nuevaUrlFirma;
+      else cleanedFormData['firmaUrl'] = formData['firmaUrl'] || "";
 
       const response = await fetch(`${API_BASE}/vehiculos/actualizar-informacion/${placa}`, {
         method: 'PUT', 
@@ -304,38 +272,27 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
         body: JSON.stringify(cleanedFormData),
       });
       
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: "Error desconocido al guardar datos" }));
-        throw new Error(errorData.detail || "Fallo al guardar los datos del formulario");
-      }
-
-      const result = await response.json(); 
+      if (!response.ok) throw new Error("Fallo al guardar los datos");
+      await response.json(); 
       
-      Swal.fire({
-        title: "¡Datos Guardados!",
-        text: result.message || "La información y la firma se han actualizado correctamente.",
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonText: "Continuar al Paso 3",
-        cancelButtonText: "Quedarme aquí",
-        confirmButtonColor: '#27ae60'
-      }).then((swalRes) => {
-        if (swalRes.isConfirmed) {
-            onSavedSuccess();
-        }
-      });
-
+      if (esFinalizar) {
+          Swal.fire({
+            title: "¡Datos Completados!",
+            text: "Información guardada. Pasando a documentos.",
+            icon: "success",
+            confirmButtonColor: '#27ae60'
+          }).then(() => onSavedSuccess());
+      } else {
+          Swal.fire({
+            title: "Progreso Guardado",
+            text: "Datos guardados exitosamente. Puedes volver más tarde.",
+            icon: "info",
+            confirmButtonColor: '#3498db'
+          });
+      }
     } catch (error: any) { 
-        console.error("Error capturado:", error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error al guardar',
-            text: error.message || 'Hubo un error inesperado.',
-            confirmButtonColor: '#d33'
-        });
-    } finally { 
-        setIsLoading(false); 
-    }
+        Swal.fire({ icon: 'error', title: 'Error', text: error.message || 'Error inesperado.', confirmButtonColor: '#d33' });
+    } finally { setIsLoading(false); }
   };
 
   const sections = [
@@ -451,7 +408,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
         </div>
       </div>
 
-      <form className="Datos-Form-datos-generales" onSubmit={handleSubmit}>
+      <div className="Datos-Form-datos-generales">
         {sections.map(({ title, fields }) => (
           <div key={title}>
             {title === "Toggle Tenedor" && (
@@ -468,96 +425,41 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
           </div>
         ))}
 
-        {/* --- SECCIÓN DE FIRMA CON MODO EDICIÓN --- */}
+        {/* --- SECCIÓN DE FIRMA --- */}
         <div className="Datos-form-section">
             <h4>Firma del Conductor </h4>
-            
-            {/* CASO A: YA EXISTE FIRMA Y NO SE ESTÁ EDITANDO */}
             {formData['firmaUrl'] && !editandoFirma ? (
                 <div className="firma-existente-container" style={{textAlign: 'center', padding: '15px', border: '1px solid #27ae60', borderRadius: '8px', backgroundColor: '#e8f8f5'}}>
-                    <div style={{color: '#27ae60', fontWeight: 'bold', marginBottom: '10px', fontSize: '1.1rem'}}>
-                        ✅ Firma Registrada Exitosamente
-                    </div>
-                    
-                    <p style={{fontSize: '0.9rem', color: '#555'}}>Firma Guardada Actualmente</p>
-                    
-                    <img 
-                        src={formData['firmaUrl']} 
-                        alt="Firma Conductor" 
-                        style={{
-                            maxWidth: '100%', 
-                            height: '150px', 
-                            border: '1px dashed #ccc', 
-                            marginBottom: '15px', 
-                            backgroundColor: 'white'
-                        }} 
-                    />
-
+                    <div style={{color: '#27ae60', fontWeight: 'bold', marginBottom: '10px', fontSize: '1.1rem'}}>✅ Firma Registrada Exitosamente</div>
+                    <img src={formData['firmaUrl']} alt="Firma Conductor" style={{maxWidth: '100%', height: '150px', border: '1px dashed #ccc', marginBottom: '15px', backgroundColor: 'white'}} />
                     <div>
-                        <button 
-                            type="button" 
-                            className="btn-cambiar-firma"
-                            onClick={() => {
-                                setEditandoFirma(true); 
-                                setTimeout(() => limpiarFirma(), 100); 
-                            }}
-                            style={{
-                                backgroundColor: '#f39c12', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold'
-                            }}
-                        >
+                        <button type="button" className="btn-cambiar-firma" onClick={() => { setEditandoFirma(true); setTimeout(() => limpiarFirma(), 100); }} style={{backgroundColor: '#f39c12', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold'}}>
                             🖊️ Cambiar / Volver a firmar
                         </button>
                     </div>
                 </div>
             ) : (
-                /* CASO B: NO HAY FIRMA O SE ESTÁ EDITANDO */
                 <div className="firma-nueva-container">
-                    <p style={{fontSize: '0.9rem', color: '#666', marginBottom: '10px'}}>
-                        {formData['firmaUrl'] 
-                            ? "⚠️ Estás en modo edición. Dibuja la nueva firma abajo para reemplazar la anterior."
-                            : "⚠️ Es obligatorio firmar en el recuadro para poder guardar."}
-                    </p>
-                    
-                    <div className="signature-wrapper" style={{border: '2px dashed #ccc', borderRadius: '8px', overflow: 'hidden'}}>
-                        <SignatureCanvas 
-                            ref={sigCanvas} 
-                            penColor='black'
-                            canvasProps={{className: 'signature-canvas', style: {width: '100%', height: '200px'}}} 
-                            backgroundColor="white"
-                        />
-                    </div>
-                    
+                    <p style={{fontSize: '0.9rem', color: '#666', marginBottom: '10px'}}>{formData['firmaUrl'] ? "⚠️ Estás en modo edición." : "⚠️ Dibuja tu firma a continuación."}</p>
+                    <div className="signature-wrapper" style={{border: '2px dashed #ccc', borderRadius: '8px', overflow: 'hidden'}}><SignatureCanvas ref={sigCanvas} penColor='black' canvasProps={{className: 'signature-canvas', style: {width: '100%', height: '200px'}}} backgroundColor="white" /></div>
                     <div style={{marginTop: '10px', display: 'flex', gap: '10px'}}>
-                        <button 
-                            type="button" 
-                            onClick={limpiarFirma} 
-                            className="btn-limpiar-firma"
-                            style={{backgroundColor: '#e74c3c', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer'}}
-                        >
-                            Borrar dibujo
-                        </button>
-
-                        {formData['firmaUrl'] && (
-                            <button 
-                                type="button" 
-                                onClick={() => {
-                                    setEditandoFirma(false); 
-                                    limpiarFirma();
-                                }}
-                                style={{backgroundColor: '#7f8c8d', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer'}}
-                            >
-                                Cancelar edición
-                            </button>
-                        )}
+                        <button type="button" onClick={limpiarFirma} className="btn-limpiar-firma" style={{backgroundColor: '#e74c3c', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer'}}>Borrar dibujo</button>
+                        {formData['firmaUrl'] && (<button type="button" onClick={() => { setEditandoFirma(false); limpiarFirma(); }} style={{backgroundColor: '#7f8c8d', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer'}}>Cancelar edición</button>)}
                     </div>
                 </div>
             )}
         </div>
+      </div>
 
-        <button className="Datos-botonActualizar" type="submit" disabled={isLoading} style={{ marginTop: '1rem' }}>
-          {isLoading ? "Guardando..." : "Guardar Datos y Firma"}
-        </button>
-      </form>
+      {/* --- BOTONES DE ACCIÓN (FIXED) --- */}
+      <div className="Datos-botones-flotantes">
+          <button type="button" onClick={(e) => procesarGuardado(false, e)} disabled={isLoading} className="btn-guardar-progreso">
+              {isLoading ? "Guardando..." : "💾 Guardar Progreso"}
+          </button>
+          <button type="button" onClick={(e) => procesarGuardado(true, e)} disabled={isLoading} className="btn-guardar-finalizar">
+              {isLoading ? "Procesando..." : "✅ Continuar"}
+          </button>
+      </div>
     </div>
   );
 };

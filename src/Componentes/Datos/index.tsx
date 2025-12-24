@@ -75,6 +75,7 @@ const gruposSanguineos = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
 const epsColombia = ["Sura", "Sanitas", "Compensar", "Coomeva", "Salud Total"];
 const arlColombia = ["Positiva", "Sura", "Colpatria", "Bolívar", "Axa Colpatria"];
 const parentescos = ["Padre", "Madre", "Hijo(a)", "Hermano(a)", "Esposo(a)", "Abuelo(a)", "Tio(a)", "Otro"];
+const tiposCarroceria = ["S.R.S.","FURGON","ESTACAS","TANQUE","VOLCO","TOLVA","RECOLECTOR COMPARTADOR","PANEL","CAMABAJA","VAN","PLANCHON","PORTACONTENEDORES","PLATAFORMA","HOMIGONERO","BOTELLERO",];
 
 const FormSection: React.FC<FormSectionProps> = ({ title, fields, formData, handleChange, disabled = false }) => (
   <div className="Datos-form-section">
@@ -375,7 +376,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
       fields: [
         { label: 'Modelo', name: 'vehModelo', type: 'number', inputProps: { min: 1990, max: 2026 } },
         { label: 'Marca', name: 'vehMarca' },
-        { label: 'Tipo Carroceria', name: 'vehTipoCarroceria' },
+        { label: "Tipo Carroceria", name: "vehTipoCarroceria", options: tiposCarroceria },
         { label: 'Línea', name: 'vehLinea' },
         { label: 'Color', name: 'vehColor' },
         { label: 'Repotenciado', name: 'vehRepotenciado', options: ["Sí", "No"] },
@@ -391,7 +392,7 @@ const Datos: React.FC<DatosProps> = ({ placa, onValidChange, onCedulaConductorCh
         { label: 'Placa Remolque', name: 'RemolPlaca' },
         { label: 'Modelo', name: 'RemolModelo', type: 'number' },
         { label: 'Clase/config', name: 'RemolClase' },
-        { label: 'Tipo Carroceria', name: 'RemolTipoCarroceria' },
+        { label: "Tipo Carroceria", name: "RemolTipoCarroceria", options: tiposCarroceria },
         { label: 'Alto (m)', name: 'RemolAlto', type: 'number', inputProps: { min: 1, max: 30 } },
         { label: 'Largo (m)', name: 'RemolLargo', type: 'number', inputProps: { min: 1, max: 30 } },
         { label: 'Ancho (m)', name: 'RemolAncho', type: 'number', inputProps: { min: 1, max: 30 } },

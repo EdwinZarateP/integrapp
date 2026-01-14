@@ -191,9 +191,9 @@
 .TablaPedidos-row--expanded { box-shadow: inset 0 0 0 9999px #faf3cd; }
 
 /* Columnas destacadas (Total Teórico y Total Solicitado) */
-.TablaPedidos-table td:nth-child(16),
-.TablaPedidos-table td:nth-child(21) { font-weight: 800; background-color:var(--verde);color: white; }
-.TablaPedidos-table td:nth-child(17) { font-weight: 800; color: rgb(185, 24, 24); }
+.TablaPedidos-table td:nth-child(17),
+.TablaPedidos-table td:nth-child(22) { font-weight: 800; background-color:var(--verde);color: white; }
+.TablaPedidos-table td:nth-child(18) { font-weight: 800; color: rgb(185, 24, 24); }
 
 /* Subtabla (detalle) */
 .TablaPedidos-details { background: #f9f9f9; }

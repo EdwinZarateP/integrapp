@@ -1105,7 +1105,8 @@ const TablaPedidos: React.FC = () => {
                 <th></th>
                 <th>Vehículo</th>
                 <th>Acciones</th>
-                <th>Tipo</th>
+                <th>Veh sugerido</th>
+                <th>Veh solicitado</th>
                 <th>Destino Final</th>
                 <th>Estados</th>
                 <th>Puntos</th>
@@ -1198,6 +1199,7 @@ const TablaPedidos: React.FC = () => {
                       </td>
 
                       <td>{(g.tipo_vehiculo_sicetac || '').split('_')[0]}</td>
+                      <td>{(g.tipo_vehiculo || '').split('_')[0]}</td>
                       <td>{g.destino}</td>
                       <td>{estados.join(', ')}</td>
                       <td>{g.total_puntos_vehiculo}</td>

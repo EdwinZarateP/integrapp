@@ -48,7 +48,7 @@ const extraccionManifiestos = () => {
   useEffect(() => {
     const fetchData = async () => {
       const loginUrl =
-        "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/auth/loginDbCustomer";
+        "https://api.nescanis.com/vulcano/cloud/v1/auth/loginDbCustomer";
 
       const loginPayload = {
         username: "134APIINTEGRA",
@@ -74,7 +74,7 @@ const extraccionManifiestos = () => {
         const token = loginrespuesta.data.data.access_token;
 
         const queryUrl =
-          "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/vulcano/customer/00134/index";
+          "https://api.nescanis.com/vulcano/cloud/v1/vulcano/customer/00134/index";
         const queryPayload = {
           pageSize: 1000,
           rptId: 26,

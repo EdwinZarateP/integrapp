@@ -32,7 +32,7 @@ const ExtraccionPagosNoAplicados = () => {
   useEffect(() => {
     const obtenerPagos = async () => {
       const urlInicioSesion =
-        "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/auth/loginDbCustomer";
+        "https://api.nescanis.com/vulcano/cloud/v1/auth/loginDbCustomer";
 
       const datosInicioSesion = {
         username: "134APIINTEGRA",
@@ -59,7 +59,7 @@ const ExtraccionPagosNoAplicados = () => {
 
         // ✅ Tipar la respuesta de consulta
         const urlConsulta =
-          "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/vulcano/customer/00134/index";
+          "https://api.nescanis.com/vulcano/cloud/v1/vulcano/customer/00134/index";
 
         const datosConsulta = {
           pageSize: 1000,

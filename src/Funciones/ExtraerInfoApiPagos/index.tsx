@@ -49,7 +49,7 @@ const ExtraccionPagos = () => {
     }
 
     // 1) Login para obtener token
-    const loginUrl = "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/auth/loginDbCustomer";
+    const loginUrl = "https://api.nescanis.com/vulcano/cloud/v1/auth/loginDbCustomer";
     const loginPayload = {
       username: "134APIINTEGRA",
       idname: "eyJpdiI6Inl1cHZlZWFOQnc4TFB1a1hkS1VMWGc9PSIsInZhbHVlIjoia1JDRWduZ3FFZmZvRmZYUkJ3Q1JpT2RSU1htRHZkRzhQSkg0ekE5S2xwcz0iLCJtYWMiOiJjNjQxZjdlNDVlMzcwZTEzYzY4Mzc1MGYwNjI3MWQyOTI2ZTAzY2NhZDk1YjQ3MDgwYjg3ODEzODEyYzY3NzI5IiwidGFnIjoiIn0=",
@@ -71,7 +71,7 @@ const ExtraccionPagos = () => {
 
     // 2) Consulta de pagos con try/catch extendido
     const queryUrl =
-      "https://api_v1.vulcanoappweb.com/vulcano-web/api/cloud/v1/vulcano/customer/00134/index";
+      "https://api.nescanis.com/vulcano/cloud/v1/vulcano/customer/00134/index";
     const queryPayload = {
       pageSize: 1000,
       rptId: 27,

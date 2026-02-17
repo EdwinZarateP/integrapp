@@ -26,6 +26,8 @@ import PanelConductoresVista from '../PanelConductores/index';
 import OlvidoClaveConductor from '../OlvidoClaveConductor/index';
 import DescargableBotRecolecciones from '../descargables/index'
 import Indicadores from '../Indicadores/index'
+import Indicadoresfmc from '../Indicadores-fmc/index'
+
 import "./estilos.css";
 
 const App: React.FC = () => {
@@ -58,6 +60,7 @@ const App: React.FC = () => {
         <Route path="/RegistroConductor" element={<RegistroConductor />} />
         <Route path="/OlvidoClaveConductor" element={<OlvidoClaveConductor />} />
         <Route path="/indicadores" element={<Indicadores />} />
+        <Route path="/indicadoresfmc" element={<Indicadoresfmc />} />        
         <Route path="/descargables" element={<DescargableBotRecolecciones />} />
         <Route path="*" element={<NoEncontrado />} />
       </Routes>

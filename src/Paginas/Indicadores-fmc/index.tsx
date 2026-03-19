@@ -7,7 +7,7 @@ const Indicadoresfmc: React.FC = () => {
       <iframe
         className="Indicadores-iframe"
         title="fmc"
-        src="https://app.powerbi.com/reportEmbed?reportId=0e518d11-b76b-42c0-97ab-c0afae62982f&autoAuth=true&ctid=ea185721-3793-484c-bdb8-995797ce0ecc"
+        src="https://app.powerbi.com/view?r=eyJrIjoiNzk3OTNkZDYtNTQ0YS00NTZiLThjOWQtM2Y4NzIwODExM2ZiIiwidCI6ImVhMTg1NzIxLTM3OTMtNDg0Yy1iZGI4LTk5NTc5N2NlMGVjYyIsImMiOjR9"
         allowFullScreen
       />
     </div>
